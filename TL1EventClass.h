@@ -12,13 +12,13 @@ class TL1EventClass
         bool Next();
         void GetEntry(int i);
 
-        L1Analysis::L1AnalysisL1CaloTowerDataFormat   * fCaloTowers;
-        L1Analysis::L1AnalysisRecoJetDataFormat       * fJets;
-        L1Analysis::L1AnalysisRecoMetDataFormat       * fSums;
-        L1Analysis::L1AnalysisL1UpgradeDataFormat     * fUpgrade;
-        L1Analysis::L1AnalysisRecoVertexDataFormat    * fVertex;
-        L1Analysis::L1AnalysisRecoMetFilterDataFormat * fMetFilters;
-        L1Analysis::L1AnalysisRecoMuon2DataFormat     * fMuons;     
+        std::shared_ptr<L1Analysis::L1AnalysisL1CaloTowerDataFormat>   fCaloTowers;
+        std::shared_ptr<L1Analysis::L1AnalysisRecoJetDataFormat>       fJets;
+        std::shared_ptr<L1Analysis::L1AnalysisRecoMetDataFormat>       fSums;
+        std::shared_ptr<L1Analysis::L1AnalysisL1UpgradeDataFormat>     fUpgrade;
+        std::shared_ptr<L1Analysis::L1AnalysisRecoVertexDataFormat>    fVertex;
+        std::shared_ptr<L1Analysis::L1AnalysisRecoMetFilterDataFormat> fMetFilters;
+        std::shared_ptr<L1Analysis::L1AnalysisRecoMuon2DataFormat>     fMuons;     
 
     private:
         std::shared_ptr<TL1DataClass> caloTower, jetReco, metFilterReco, muonReco, recoTree, upgrade;
