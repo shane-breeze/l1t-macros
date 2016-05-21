@@ -10,17 +10,11 @@
 #include "L1Trigger/L1TNtuples/interface/L1AnalysisRecoJetDataFormat.h"
 #include "L1Trigger/L1TNtuples/interface/L1AnalysisRecoMetDataFormat.h"
 
-class TL1JetRecoClass
+class TL1JetRecoClass : public TL1DataClass
 {
-    private:
-        void Fill();
-
-        std::unique_ptr<TChain> fChain;
-        std::unique_ptr<TTreeReader> fReader;
-
     public:
-        TL1JetRecoClass(std::string chainPath, std::string inDir);
-        bool Next();
+        using TL1DataClass::TL1DataClass;
+        void Fill();
 
         TTreeReaderValue<UShort_t>        nJets;
         TTreeReaderValue<vector<float>>   e;
@@ -83,18 +77,6 @@ class TL1JetRecoClass
         TTreeReaderValue<UShort_t>        hcalFlag;
 };
 
-TL1JetRecoClass::TL1JetRecoClass(std::string chainPath, std::string inDir)
-{
-    std::shared_ptr<TChain> chain(new TChain(chainPath.c_str()) );
-    chain->Add( Form("%s/*.root",inDir.c_str()) );
-    fChain = chain;
-
-    std::shared_ptr<TTreeReader> reader(new TTreeReader(fChain.get()));
-    fReader = reader;
-
-    Fill();
-}
-
 void TL1JetRecoClass::Fill()
 {
     nJets        = TTreeReaderValue<UShort_t>     (*fReader, "nJets");
@@ -155,11 +137,6 @@ void TL1JetRecoClass::Fill()
     sumEt        = TTreeReaderValue<Float_t> (*fReader, "sumEt");
     ecalFlag     = TTreeReaderValue<UShort_t>(*fReader, "ecalFlag");
     hcalFlag     = TTreeReaderValue<UShort_t>(*fReader, "hcalFlag");
-}
-
-bool TL1JetRecoClass::Next()
-{
-    return fReader->Next();
 }
 
 #endif
