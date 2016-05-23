@@ -4,6 +4,7 @@
 #include "TL1DataClass.h"
 
 #include <string>
+#include <memory>
 
 class TL1EventClass
 {
