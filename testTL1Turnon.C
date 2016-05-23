@@ -28,7 +28,7 @@ void testTL1Turnon()
     std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
     std::shared_ptr<TL1EventClass> event(new TL1EventClass(inDir));
 
-    std::vector<std::shared_ptr<TL1Turnon>> turnons;
+    std::vector<TL1Turnon*> turnons;
 
     // caloMetBE
     turnons.emplace_back(new TL1Turnon());
@@ -115,6 +115,10 @@ void testTL1Turnon()
     }
 
     rootFile->Close();
+
+    for(TL1Turnon * turnon : turnons)
+        delete turnon;
+    turnons.clear();
 }
 
 vector<double> metBins()
