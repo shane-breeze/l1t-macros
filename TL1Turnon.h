@@ -19,8 +19,6 @@
 class TL1Turnon
 {
     public:
-        ~TL1Turnon();
-
         void InitDists();
         void Fill(const double & xVal, const double & seedVal);
         void DrawDists();
@@ -40,9 +38,9 @@ class TL1Turnon
         void SetMyStyle(int palette, double rmarg);
         void SetColor(float fraction, int index);
 
-        vector<std::shared_ptr<TH1F>> fDists;
-        vector<std::shared_ptr<TGraphAsymmErrors>> fTurnons;
-        vector<std::shared_ptr<TF1>> fFits;
+        std::vector<TH1F*> fDists;
+        std::vector<TGraphAsymmErrors*> fTurnons;
+        std::vector<TF1*> fFits;
 
         std::string fSampleName, fTriggerName, fRun;
         std::string fSampleTitle, fTriggerTitle;
@@ -52,11 +50,6 @@ class TL1Turnon
         std::string fOutName;
         bool fDoFit;
 };
-
-TL1Turnon::~TL1Turnon()
-{
-    cout << "Attempting to delete TL1Turnon" << endl;
-}
 
 void TL1Turnon::InitDists()
 {
@@ -87,7 +80,7 @@ void TL1Turnon::DrawDists()
         if(i==0) fDists[i]->Draw();
         else fDists[i]->Draw("same");
         fDists[i]->Write();
-        leg->AddEntry(fDists[i].get(), Form("%s > %g GeV", fSeedTitle.c_str(), fSeeds[i]));
+        leg->AddEntry(fDists[i], Form("%s > %g GeV", fSeedTitle.c_str(), fSeeds[i]));
     }
     can->SetLogy();
     leg->Draw();
@@ -122,7 +115,7 @@ void TL1Turnon::DrawTurnons()
     std::shared_ptr<TLegend> leg(new TLegend(0.62,0.15,0.87,0.15+0.2*fSeeds.size()/5.0));
     for(int i=1; i<fSeeds.size(); ++i)
     {
-        fTurnons.emplace_back(new TGraphAsymmErrors(fDists[i].get(), fDists[0].get()));
+        fTurnons.emplace_back(new TGraphAsymmErrors(fDists[i], fDists[0]));
         fTurnons[i-1]->SetLineColor(fDists[i]->GetLineColor());
         fTurnons[i-1]->SetMarkerColor(fDists[i]->GetMarkerColor());
         fTurnons[i-1]->GetXaxis()->SetTitle(fDists[i]->GetXaxis()->GetTitle());
@@ -131,9 +124,9 @@ void TL1Turnon::DrawTurnons()
         if( i == 1 ) fTurnons[i-1]->Draw("ap");
         else fTurnons[i-1]->Draw("psame");
         fTurnons[i-1]->Write();
-        fFits.emplace_back(new TF1(fit(fTurnons[i-1].get(), fSeeds[i])));
+        fFits.emplace_back(new TF1(fit(fTurnons[i-1], fSeeds[i])));
         if( fDoFit ) fFits[i-1]->Draw("lsame");
-        leg->AddEntry(fTurnons[i-1].get(), Form("%s > %g",fSeedTitle.c_str(),fSeeds[i]));
+        leg->AddEntry(fTurnons[i-1], Form("%s > %g",fSeedTitle.c_str(),fSeeds[i]));
     }
     leg->Draw();
     
