@@ -18,13 +18,13 @@ void testTL1Turnon()
     std::string run = "273301";
     bool doFit = true;
 
-    std::shared_ptr<TFile> rootFile(new TFile(Form("%s_%s_r%s.root",sample.c_str(),triggerName.c_str(),run.c_str()), "UPDATE"));
+    TFile* rootFile = new TFile(Form("%s_%s_r%s.root",sample.c_str(),triggerName.c_str(),run.c_str()), "UPDATE");
 
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
     std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
-    std::shared_ptr<TL1EventClass> event(new TL1EventClass(inDir));
+    TL1EventClass* event = new TL1EventClass(inDir);
 
-    std::vector<std::shared_ptr<TL1Turnon>> turnons;
+    std::vector<TL1Turnon*> turnons;
 
     // caloMetBE
     turnons.emplace_back(new TL1Turnon());

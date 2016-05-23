@@ -57,10 +57,10 @@ class TL1Turnon
         void SetMyStyle(int palette, double rmarg);
         void SetColor(float fraction, int index);
 
-        std::shared_ptr<TStyle> fMyStyle;
-        vector<std::shared_ptr<TH1F>> fDists;
-        vector<std::shared_ptr<TGraphAsymmErrors>> fTurnons;
-        vector<std::shared_ptr<TF1>> fFits;
+        TStyle * fMyStyle;
+        vector<TH1F*> fDists;
+        vector<TGraphAsymmErrors*> fTurnons;
+        vector<TF1*> fFits;
 
         std::string fSampleName, fTriggerName, fRun;
         std::string fSampleTitle, fTriggerTitle;
@@ -99,19 +99,19 @@ void TL1Turnon::Fill(const double & xVal, const double & seedVal)
 
 void TL1Turnon::DrawDists()
 {
-    std::shared_ptr<TCanvas> can(new TCanvas("c1","c1")); 
-    std::shared_ptr<TLegend> leg(new TLegend(0.55,0.35,0.85,0.55));
+    TCanvas* can = new TCanvas("c1","c1");
+    TLegend* leg = new TLegend(0.55,0.35,0.85,0.55);
     for(unsigned i=0; i<fDists.size(); ++i)
     {
         if(i==0) fDists[i]->Draw();
         else fDists[i]->Draw("same");
         fDists[i]->Write();
-        leg->AddEntry(fDists[i].get(), Form("%s > %g GeV", fSeedTitle.c_str(), fSeeds[i]));
+        leg->AddEntry(fDists[i], Form("%s > %g GeV", fSeedTitle.c_str(), fSeeds[i]));
     }
     can->SetLogy();
     leg->Draw();
 
-    std::shared_ptr<TLatex> latex(new TLatex());
+    TLatex* latex = new TLatex();
     latex->SetNDC();
     latex->SetTextFont(42);
     latex->SetTextAlign(32);
@@ -137,11 +137,11 @@ void TL1Turnon::DrawDists()
 
 void TL1Turnon::DrawTurnons()
 {
-    std::shared_ptr<TCanvas> can(new TCanvas("c1","c1"));
-    std::shared_ptr<TLegend> leg(new TLegend(0.62,0.15,0.87,0.15+0.2*fSeeds.size()/5.0));
+    TCanvas* can = new TCanvas("c1","c1");
+    TLegend* leg = new TLegend(0.62,0.15,0.87,0.15+0.2*fSeeds.size()/5.0);
     for(int i=1; i<fSeeds.size(); ++i)
     {
-        fTurnons.emplace_back(new TGraphAsymmErrors(fDists[i].get(), fDists[0].get()));
+        fTurnons.emplace_back(new TGraphAsymmErrors(fDists[i], fDists[0]));
         fTurnons[i-1]->SetLineColor(fDists[i]->GetLineColor());
         fTurnons[i-1]->SetMarkerColor(fDists[i]->GetMarkerColor());
         fTurnons[i-1]->GetXaxis()->SetTitle(fDists[i]->GetXaxis()->GetTitle());
@@ -150,18 +150,18 @@ void TL1Turnon::DrawTurnons()
         if( i == 1 ) fTurnons[i-1]->Draw("ap");
         else fTurnons[i-1]->Draw("psame");
         fTurnons[i-1]->Write();
-        fFits.emplace_back(new TF1(fit(fTurnons[i-1].get(), fSeeds[i])));
+        fFits.emplace_back(new TF1(fit(fTurnons[i-1], fSeeds[i])));
         if( fDoFit ) fFits[i-1]->Draw("lsame");
-        leg->AddEntry(fTurnons[i-1].get(), Form("%s > %g",fSeedTitle.c_str(),fSeeds[i]));
+        leg->AddEntry(fTurnons[i-1], Form("%s > %g",fSeedTitle.c_str(),fSeeds[i]));
     }
     leg->Draw();
     
-    std::shared_ptr<TLatex> latex(new TLatex());
+    TLatex* latex = new TLatex();
     latex->SetNDC();
     latex->SetTextFont(42);
     double min = fXBins.front();
     double max = fXBins.back();
-    std::shared_ptr<TLine> line(new TLine(min,1.,max,1.));
+    TLine* line = new TLine(min,1.,max,1.);
     line->SetLineStyle(7);
     line->DrawClone();
     if( fSampleName == "Data" )
