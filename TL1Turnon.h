@@ -5,6 +5,13 @@
 #include <memory>
 
 #include <TStyle.h>
+#include <TF1.h>
+#include <TH1F.h>
+#include <TGraphAsymmErrors.h>
+#include <TCanvas.h>
+#include <TLegend.h>
+#include <TLatex.h>
+#include <TLine.h>
 
 #include "TL1EventClass.h"
 #include "tdrstyle.C"
@@ -13,9 +20,7 @@ class TL1Turnon
 {
     public:
         TL1Turnon();
-        ~TL1Turnon();
 
-        void InitRootFile();
         void InitDists();
         void Fill(const double & xVal, const double & seedVal);
         void DrawDists();
@@ -23,7 +28,7 @@ class TL1Turnon
         TF1 fit(TGraphAsymmErrors * eff, int p50);
 
         void SetSample(const std::string & sampleName, const std::string & sampleTitle);
-        void SetTrigger(const std::string & triggerName, const std::String & triggerTitle);
+        void SetTrigger(const std::string & triggerName, const std::string & triggerTitle);
         void SetRun(const std::string & run);
         void SetSeeds(const vector<double> & seeds);
         void SetXBins(const vector<double> & xBins);
@@ -49,37 +54,27 @@ class TL1Turnon
         const bool & IsFit(bool doFit) const;
 
     private:
+        void SetMyStyle(int palette, double rmarg);
         void SetColor(float fraction, int index);
 
         std::shared_ptr<TStyle> fMyStyle;
         vector<std::shared_ptr<TH1F>> fDists;
         vector<std::shared_ptr<TGraphAsymmErrors>> fTurnons;
-        std::shared_ptr<TFile> fRootFile;
+        vector<std::shared_ptr<TF1>> fFits;
 
         std::string fSampleName, fTriggerName, fRun;
         std::string fSampleTitle, fTriggerTitle;
         vector<double> fSeeds, fXBins;
         std::string fXName, fSeedName;
         std::string fXTitle, fSeedTitle;
-        std::string outName;
+        std::string fOutName;
         bool fDoFit;
 };
 
 TL1Turnon::TL1Turnon() :
-    fMyStyle(new TStyle(TDRStyle())),
-    fRootFile(new TFile())
+    fMyStyle(new TStyle(TDRStyle()))
 {
-    SetMyStyle(55,0.07,fMyStyle.Get());
-}
-
-TL1Turnon::~TL1Turnon()
-{
-    fRootFile->Close();
-}
-
-void TL1Turnon::InitRootFile()
-{
-    fRootFile->OpenFile(Form("%s.root",fOutName.c_str()));
+    SetMyStyle(55,0.07);
 }
 
 void TL1Turnon::InitDists()
@@ -97,8 +92,8 @@ void TL1Turnon::Fill(const double & xVal, const double & seedVal)
 {
     for(unsigned i=0; i<fSeeds.size(); ++i)
     {
-        if( seedVal >= fSeeds[i] )
-            fDists.Fill(xVal);
+        if( !(seedVal >= fSeeds[i]) ) break;
+        fDists[i]->Fill(xVal);
     }
 }
 
@@ -110,7 +105,8 @@ void TL1Turnon::DrawDists()
     {
         if(i==0) fDists[i]->Draw();
         else fDists[i]->Draw("same");
-        leg->AddEntry(fDists[i], Form("%s > %g GeV", fSeedTitle.c_str(), fSeeds[i]));
+        fDists[i]->Write();
+        leg->AddEntry(fDists[i].get(), Form("%s > %g GeV", fSeedTitle.c_str(), fSeeds[i]));
     }
     can->SetLogy();
     leg->Draw();
@@ -125,7 +121,7 @@ void TL1Turnon::DrawDists()
         latex->DrawLatex(0.89,0.80,"#it{Preliminary}");
         latex->SetTextAlign(31);
         std::string runNo = "run " + fRun + ", ";
-        latex->DrawLatex(0.92, 0.92, Form("%s%s, #sqrt{s} = 13 TeV",runNo.c_str(),fTriggerName.c_str()));
+        latex->DrawLatex(0.92, 0.92, Form("%s%s, #sqrt{s} = 13 TeV",runNo.c_str(),fTriggerTitle.c_str()));
     }
     else
     {
@@ -137,29 +133,26 @@ void TL1Turnon::DrawDists()
 
     std::string outName = Form("dists_%s.pdf", fOutName.c_str());
     can->SaveAs(outName.c_str());
-    fRootFile->cd();
-    can->Write();
 }
 
-void TL1Turnons::DrawTurnons()
+void TL1Turnon::DrawTurnons()
 {
-    vector<std::shared_ptr<TGraphAsymmErrors>> graphs;
-    vector<std::shared_ptr<TFit>> fits;
     std::shared_ptr<TCanvas> can(new TCanvas("c1","c1"));
     std::shared_ptr<TLegend> leg(new TLegend(0.62,0.15,0.87,0.15+0.2*fSeeds.size()/5.0));
     for(int i=1; i<fSeeds.size(); ++i)
     {
-        graphs.emplace_back(new TGraphAsymmErrors(fDists[i].get(), fDists[0].get()));
-        graphs[i-1]->SetLineColor(fDists[i]->GetLineColor());
-        graphs[i-1]->SetMarkerColor(fDists[i]->GetMarkerColor());
-        graphs[i-1]->GetXaxis()->SetTitle(fDists[i]->GetXaxis()->GetTitle());
-        graphs[i-1]->GetXaxis()->SetLimits(fXBins.front(), fYBins.back());
-        graphs[i-1]->GetYaxis()->SetTitle("Efficiency");
-        if( i == 1 ) graphs[i-1]->Draw("ap");
-        else graphs[i-1]->Draw("psame");
-        fits.emplace_back(new TF1(fit(graphs[i-1].Get(), fSeeds[i])));
-        if( fDoFit ) fits[i-1]->Draw("lsame");
-        leg->AddEntry(graphs[i-1], Form("%s > %g",fSeedTitle.c_str(),fSeeds[i]));
+        fTurnons.emplace_back(new TGraphAsymmErrors(fDists[i].get(), fDists[0].get()));
+        fTurnons[i-1]->SetLineColor(fDists[i]->GetLineColor());
+        fTurnons[i-1]->SetMarkerColor(fDists[i]->GetMarkerColor());
+        fTurnons[i-1]->GetXaxis()->SetTitle(fDists[i]->GetXaxis()->GetTitle());
+        fTurnons[i-1]->GetXaxis()->SetLimits(fXBins.front(), fXBins.back());
+        fTurnons[i-1]->GetYaxis()->SetTitle("Efficiency");
+        if( i == 1 ) fTurnons[i-1]->Draw("ap");
+        else fTurnons[i-1]->Draw("psame");
+        fTurnons[i-1]->Write();
+        fFits.emplace_back(new TF1(fit(fTurnons[i-1].get(), fSeeds[i])));
+        if( fDoFit ) fFits[i-1]->Draw("lsame");
+        leg->AddEntry(fTurnons[i-1].get(), Form("%s > %g",fSeedTitle.c_str(),fSeeds[i]));
     }
     leg->Draw();
     
@@ -177,7 +170,7 @@ void TL1Turnons::DrawTurnons()
         latex->DrawLatex(0.17,0.79,"#it{Preliminary}");
         latex->SetTextAlign(31);
         std::string runNo = "run " + fRun + ", ";
-        latex->DrawLatex(0.92, 0.92, Form("%s%s, #sqrt{s} = 13 TeV",runNo.c_str(),fTriggerName.c_str()));
+        latex->DrawLatex(0.92, 0.92, Form("%s%s, #sqrt{s} = 13 TeV",runNo.c_str(),fTriggerTitle.c_str()));
     }
     else
     {
@@ -190,13 +183,9 @@ void TL1Turnons::DrawTurnons()
     }
 
     can->SaveAs(Form("effs_%s.pdf",fOutName.c_str()));
-    fRootFile->cd();
-    can->Write();
-
-    return temp;
 }
 
-TF1 fit(TGraphAsymmErrors * eff, int p50)
+TF1 TL1Turnon::fit(TGraphAsymmErrors * eff, int p50)
 {
     TF1 fitFcn( "fit_fcn","[0]*0.5*(1+TMath::Erf((x-[1])/(sqrt([2]))))",fXBins.front(),fXBins.back());
     if( fDoFit )
@@ -217,7 +206,7 @@ void TL1Turnon::SetSample(const std::string & sampleName, const std::string & sa
     fSampleTitle = sampleTitle;
 }
 
-void TL1Turnon::SetTrigger(const std::string & triggerName, const std::String & triggerTitle)
+void TL1Turnon::SetTrigger(const std::string & triggerName, const std::string & triggerTitle)
 {
     fTriggerName = triggerName;
     fTriggerTitle = triggerTitle;
@@ -348,6 +337,15 @@ void TL1Turnon::SetColor(float fraction, int index)
     }
     fDists[index]->SetLineColor(colour);
     fDists[index]->SetMarkerColor(colour);
+}
+
+void TL1Turnon::SetMyStyle(int palette, double rmarg)
+{
+    fMyStyle->SetCanvasDefW(800);
+    fMyStyle->SetNumberContours(255);
+    fMyStyle->SetPalette(palette);
+    fMyStyle->SetPadRightMargin(rmarg);
+    fMyStyle->cd();
 }
 
 #endif
