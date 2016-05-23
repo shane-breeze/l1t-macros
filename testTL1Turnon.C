@@ -8,9 +8,13 @@ vector<double> metBins();
 vector<double> mhtBins();
 vector<double> ettBins();
 vector<double> httBins();
+void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 
 void testTL1Turnon()
 {
+    std::shared_ptr<TStyle> myStyle(new TStyle(TDRStyle()));
+    SetMyStyle(55, 0.07, myStyle.get());
+
     // Basic
     std::string sample = "Data";
     std::string triggerName = "SingleMu";
@@ -18,13 +22,13 @@ void testTL1Turnon()
     std::string run = "273301";
     bool doFit = true;
 
-    TFile* rootFile = new TFile(Form("%s_%s_r%s.root",sample.c_str(),triggerName.c_str(),run.c_str()), "UPDATE");
+    std::shared_ptr<TFile> rootFile(new TFile(Form("%s_%s_r%s.root",sample.c_str(),triggerName.c_str(),run.c_str()), "UPDATE"));
 
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
     std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
-    TL1EventClass* event = new TL1EventClass(inDir);
+    std::shared_ptr<TL1EventClass> event(new TL1EventClass(inDir));
 
-    std::vector<TL1Turnon*> turnons;
+    std::vector<std::shared_ptr<TL1Turnon>> turnons;
 
     // caloMetBE
     turnons.emplace_back(new TL1Turnon());
@@ -161,4 +165,14 @@ vector<double> httBins()
     for(double binLowerEdge=600.0; binLowerEdge<800.1; binLowerEdge+=50.0) temp.push_back(binLowerEdge);
     return temp;
 
+}
+
+void SetMyStyle(int palette, double rmarg, TStyle * myStyle)
+{
+    myStyle->SetCanvasDefW(800);
+    myStyle->SetCanvasDefH(600);
+    myStyle->SetNumberContours(255);
+    myStyle->SetPalette(palette);
+    myStyle->SetPadRightMargin(rmarg);
+    myStyle->cd();
 }
