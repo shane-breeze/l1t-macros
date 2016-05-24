@@ -9,10 +9,6 @@ void tdrGrid(TStyle tdrStyle, bool gridOn) {
 
 // fixOverlay: Redraws the axis
 
-void fixOverlay() {
-  gPad->RedrawAxis();
-}
-
 TStyle TDRStyle() {
   TStyle tdrStyle("tdrStyle","Style for P-TDR");
 
