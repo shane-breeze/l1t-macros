@@ -165,7 +165,7 @@ void TL1EventClass::RecalculateVariables()
     }
     fRecalcMht = sqrt(jetEx*jetEx + jetEy*jetEy);
     fRecalcMhtPhi = TMath::ATan(jetEy/jetEx);
-    if( jetEx < 0.0 ) fRecalcMhtPhi = TMath::Pi() - fRecalcMhtPhi;
+    if( jetEx > 0.0 ) fRecalcMhtPhi = TMath::Pi() - fRecalcMhtPhi;
     fRecalcHtt = jetEt;
 }
 
