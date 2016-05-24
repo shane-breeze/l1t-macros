@@ -25,7 +25,7 @@ class TL1DataClass
 TL1DataClass::TL1DataClass(std::string chainPath, std::string inDir) :
     fChain(new TChain(chainPath.c_str()))
 {
-    fChain->Add( Form("%s/*_1.root",inDir.c_str()), -1);
+    fChain->Add( Form("%s/*.root",inDir.c_str()), -1);
 }
 
 Long64_t TL1DataClass::GetEntries()

@@ -90,22 +90,22 @@ void testTL1Turnon()
         // Sums
         bool passSumsFilter = event->SumsFilter();
         //-------------------//
-
-        if( !passMuonFilter ) continue;
-
+        
         event->GetL1Variables();
         event->RecalculateVariables();
         double recalcMht = event->fRecalcMht;
         double recalcMhtPhi = event->fRecalcMhtPhi;
-        double recalcHtt = event->fRecalcHtt;
+
+        turnons[3]->Fill(event->fSums->Ht, event->fL1Htt);
+        //turnons[3]->Fill(recalcHtt, event->fL1Htt);
+
+        if( !passMuonFilter ) continue;
         
         if( passSumsFilter )
             turnons[0]->Fill(event->fSums->caloMetBE, event->fL1Met);
         //turnons[1]->Fill(event->fSums->mHt, event->fL1Mht);
         turnons[1]->Fill(recalcMht, event->fL1Mht);
         turnons[2]->Fill(event->fSums->caloSumEtBE, event->fL1Ett);
-        turnons[3]->Fill(event->fSums->Ht, event->fL1Htt);
-        //turnons[3]->Fill(recalcHtt, event->fL1Htt);
     }
 
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)

@@ -4,7 +4,6 @@
 #include <string>
 #include <memory>
 
-#include <TStyle.h>
 #include <TF1.h>
 #include <TH1F.h>
 #include <TGraphAsymmErrors.h>
@@ -35,7 +34,6 @@ class TL1Turnon
         void SetOutName(const std::string & outName);
         void SetFit(const bool & doFit);
     private:
-        void SetMyStyle(int palette, double rmarg);
         void SetColor(float fraction, int index);
 
         std::vector<std::shared_ptr<TH1F>> fDists;

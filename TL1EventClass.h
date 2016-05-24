@@ -118,7 +118,7 @@ bool TL1EventClass::MuonFilter() const
         double pt = fMuons->pt[jMuon];
         double iso = fMuons->iso[jMuon];
         double isLoose = fMuons->isLooseMuon[jMuon];
-        if( pt>=20.0 && iso<=0.05 && isLoose==1.0 )
+        if( pt>=20.0 && iso<=0.1 && isLoose==1.0 )
             pass = true;
     }
     return pass;
@@ -165,6 +165,7 @@ void TL1EventClass::RecalculateVariables()
     }
     fRecalcMht = sqrt(jetEx*jetEx + jetEy*jetEy);
     fRecalcMhtPhi = TMath::ATan(jetEy/jetEx);
+    if( jetEx < 0.0 ) fRecalcMhtPhi = TMath::Pi() - fRecalcMhtPhi;
     fRecalcHtt = jetEt;
 }
 
