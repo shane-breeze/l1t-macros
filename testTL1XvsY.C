@@ -110,7 +110,7 @@ void testTL1XvsY()
         bool passSumsFilter = event->SumsFilter();
         //-------------------//
 
-        event->GetL1Variables();
+        event->GetL1Sums();
         xvsy[3]->Fill(event->fSums->Ht, event->fL1Htt);
         //xvsy[3]->Fill(recalcHtt, event->fL1Htt);
         

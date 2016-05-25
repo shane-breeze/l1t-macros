@@ -57,7 +57,7 @@ void testTL1XvsY()
 
     while( event->Next() )
     {
-        event->GetL1Variables();
+        event->GetL1Sums();
          
     }
 

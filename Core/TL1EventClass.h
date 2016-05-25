@@ -28,7 +28,7 @@ class TL1EventClass
         bool SumsFilter() const;
 
         void RecalculateVariables();
-        void GetL1Variables();
+        void GetL1Sums();
 
         double fRecalcMht, fRecalcMhtPhi, fRecalcHtt;
         double fL1Met, fL1Mht, fL1Ett, fL1Htt, fL1MetPhi, fL1MhtPhi;
@@ -169,7 +169,7 @@ void TL1EventClass::RecalculateVariables()
     fRecalcHtt = jetEt;
 }
 
-void TL1EventClass::GetL1Variables()
+void TL1EventClass::GetL1Sums()
 {
     for(int iter=0; iter<fUpgrade->nSums; ++iter)
     {

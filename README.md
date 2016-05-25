@@ -30,4 +30,4 @@ where `inDir` is the path to your Ntuples (can be multiple or single - it loads 
     ~~~~~
 - `GetEntry(int i)` skips to a particular entry. This does not change the position of `Next()`
 - The other functions are Filters that I use and functions which set additional variables that I use
-- `GetL1Variables()` extracts the L1 variables from the array-leaves
+- `GetL1Sums()` extracts the L1 variables from the array-leaves
