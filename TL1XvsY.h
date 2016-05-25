@@ -13,8 +13,8 @@
 #include <TLatex.h>
 #include <TLine.h>
 
-#include "TL1EventClass.h"
-#include "tdrstyle.C"
+#include "Core/TL1EventClass.h"
+#include "Core/tdrstyle.C"
 
 class TL1XvsY
 {

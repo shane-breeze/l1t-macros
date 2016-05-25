@@ -2,7 +2,7 @@
 #include <vector>
 #include <algorithm>
 
-#include "TL1EventClass.h"
+#include "Core/TL1EventClass.h"
 #include "TL1XvsY.h"
 
 vector<double> bins(double max);
