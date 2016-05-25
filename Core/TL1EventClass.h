@@ -29,9 +29,11 @@ class TL1EventClass
 
         void RecalculateVariables();
         void GetL1Sums();
+        void GetL1Jets();
 
         double fRecalcMht, fRecalcMhtPhi, fRecalcHtt;
         double fL1Met, fL1Mht, fL1Ett, fL1Htt, fL1MetPhi, fL1MhtPhi;
+        std::vector<double> fL1JetEt, fL1JetPhi, fL1JetEta;
 
         std::shared_ptr<L1Analysis::L1AnalysisL1CaloTowerDataFormat>   fCaloTowers;
         std::shared_ptr<L1Analysis::L1AnalysisRecoJetDataFormat>       fJets;
@@ -158,9 +160,9 @@ void TL1EventClass::RecalculateVariables()
         bool passJetFilter = this->JetFilter(iJet);
         if( passJetFilter )
         {
-            jetEx += fJets->et[iJet]*TMath::Cos(fJets->phi[iJet]);
-            jetEy += fJets->et[iJet]*TMath::Sin(fJets->phi[iJet]);
-            jetEt += fJets->et[iJet];
+            jetEx += fJets->etCorr[iJet]*TMath::Cos(fJets->phi[iJet]);
+            jetEy += fJets->etCorr[iJet]*TMath::Sin(fJets->phi[iJet]);
+            jetEt += fJets->etCorr[iJet];
         }
     }
     fRecalcMht = sqrt(jetEx*jetEx + jetEy*jetEy);
@@ -189,6 +191,22 @@ void TL1EventClass::GetL1Sums()
                 fL1Mht = et;
                 fL1MhtPhi = phi;
             }
+        }
+    }
+}
+
+void TL1EventClass::GetL1Jets()
+{
+    fL1JetEt.clear();
+    fL1JetEta.clear();
+    fL1JetPhi.clear();
+    for(unsigned iJet=0; iJet<fUpgrade->nJets; ++iJet)
+    {
+        if( fUpgrade->jetBx[iJet] == 0 )
+        {
+            fL1JetEt.push_back(fUpgrade->jetEt[iJet]);
+            fL1JetEta.push_back(fUpgrade->jetEta[iJet]);
+            fL1JetPhi.push_back(fUpgrade->jetPhi[iJet]);
         }
     }
 }
