@@ -91,7 +91,7 @@ void testTL1Turnon()
         bool passSumsFilter = event->SumsFilter();
         //-------------------//
         
-        event->GetL1Variables();
+        event->GetL1Sums();
         event->RecalculateVariables();
         double recalcMht = event->fRecalcMht;
         double recalcMhtPhi = event->fRecalcMhtPhi;

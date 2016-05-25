@@ -101,7 +101,7 @@ void testTL1Resolution()
         bool passSumsFilter = event->SumsFilter();
         //-------------------//
 
-        event->GetL1Variables();
+        event->GetL1Sums();
         if( event->fSums->Ht >= 0.01 && event->fL1Htt >= 0.01 ) resolution[3]->Fill(event->fSums->Ht, event->fL1Htt);
         //resolution[3]->Fill(recalcHtt, event->fL1Htt);
 
