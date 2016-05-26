@@ -158,19 +158,36 @@ bool TL1EventClass::SumsFilter() const
 void TL1EventClass::RecalculateVariables()
 {
     double jetEx(0.0), jetEy(0.0), jetEt(0.0);
+    unsigned jetCount(0);
     for(int iJet=0; iJet<fJets->nJets; ++iJet)
     {
         bool passJetFilter = this->JetFilter(iJet);
-        if( !passJetFilter ) continue;
         if( fJets->etCorr[iJet] < 30.0 ) continue;
+        if( !passJetFilter )
+        {
+            jetEx = -999.9;
+            jetEy = -999.9;
+            jetEt = -999.9;
+            break;
+        }
         jetEx += fJets->etCorr[iJet]*TMath::Cos(fJets->phi[iJet]);
         jetEy += fJets->etCorr[iJet]*TMath::Sin(fJets->phi[iJet]);
         jetEt += fJets->etCorr[iJet];
+        ++jetCount;
     }
-    fRecalcMht = sqrt(jetEx*jetEx + jetEy*jetEy);
-    fRecalcMhtPhi = TMath::Pi() + TMath::ATan(jetEy/jetEx);
-    if( jetEx > 0.0 ) fRecalcMhtPhi = TMath::Pi() - fRecalcMhtPhi;
-    fRecalcHtt = jetEt;
+    if( jetCount == 1 )
+    {
+        fRecalcMht = sqrt(jetEx*jetEx + jetEy*jetEy);
+        fRecalcMhtPhi = TMath::Pi() + TMath::ATan(jetEy/jetEx);
+        if( jetEx > 0.0 ) fRecalcMhtPhi = TMath::Pi() - fRecalcMhtPhi;
+        fRecalcHtt = jetEt;
+    }
+    else
+    {
+        fRecalcMht = -999.9;
+        fRecalcMhtPhi = -999.9;
+        fRecalcHtt = -999.9;
+    }
 }
 
 void TL1EventClass::GetL1Sums()

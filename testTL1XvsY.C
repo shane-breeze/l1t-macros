@@ -5,7 +5,7 @@
 #include "Core/TL1EventClass.h"
 #include "TL1XvsY.h"
 
-vector<double> bins(double max);
+vector<double> bins(double max, double width=1.0, double min=0.0);
 vector<double> phiBins();
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 
@@ -100,11 +100,11 @@ void testTL1XvsY()
     xvsy[6]->SetSample(sample,"");
     xvsy[6]->SetTrigger(triggerName,triggerTitle);
     xvsy[6]->SetRun(run);
-    xvsy[6]->SetXBins(bins(300.0));
-    xvsy[6]->SetX("mht","Reco H_{T}^{miss} (GeV)");
-    xvsy[6]->SetYBins(bins(300.0));
-    xvsy[6]->SetY("l1mht","L1 H_{T}^{miss} (GeV)");
-    xvsy[6]->SetOutName(triggerName+"_mht_vs_l1Mht");
+    xvsy[6]->SetXBins(bins(300.0,2.0));
+    xvsy[6]->SetX("recalcMht","Recalc Reco H_{T}^{miss} (GeV)");
+    xvsy[6]->SetYBins(bins(300.0,2.0));
+    xvsy[6]->SetY("recalcl1mht","Recalc L1 H_{T}^{miss} (GeV)");
+    xvsy[6]->SetOutName(triggerName+"_recalcMht_vs_recalcL1Mht_1jet");
 
     for(auto it=xvsy.begin(); it!=xvsy.end(); ++it)
         (*it)->InitPlots();
@@ -130,10 +130,10 @@ void testTL1XvsY()
         xvsy[3]->Fill(event->fSums->Ht, event->fL1Htt);
         //xvsy[3]->Fill(recalcHtt, event->fL1Htt);
         
-        xvsy[6]->Fill(event->fSums->mHt, event->fL1Mht);
+        if( recalcMht != -999.9 ) xvsy[6]->Fill(recalcMht, event->fFPL1Mht);
 
         if( !passMuonFilter ) continue;
-        
+
         if( passSumsFilter )
             xvsy[0]->Fill(event->fSums->caloMetBE, event->fL1Met);
         //xvsy[1]->Fill(event->fSums->mHt, event->fL1Mht);
@@ -162,10 +162,10 @@ void testTL1XvsY()
     rootFile->Close();
 }
 
-vector<double> bins(double max)
+vector<double> bins(double max, double width=1.0, double min=0.0)
 {
     vector<double> temp;
-    for(double binLowerEdge=0.0; binLowerEdge<=max; binLowerEdge+= 1.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge=min; binLowerEdge<=max; binLowerEdge+= width) temp.push_back(binLowerEdge);
     return temp;
 }
 
