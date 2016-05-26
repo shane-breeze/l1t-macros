@@ -16,21 +16,21 @@ This is only called inside TL1EventClass.h. No need to call it in your own macro
 
 Create objects of this class. Initialise like so:
 
-~~~~~
+`````C++
 TL1EventClass event(inDir)
-~~~~~
+`````
 
 where `inDir` is the path to your Ntuples (can be multiple or single - it loads all root-files in this directory).
 
 - Constructor initializes member variables and points these to the branches.
 - `Next()` loops to the next event returning true if it exists. Use like so:
 
-    ~~~~~
+    `````C++
     while( event.Next() )
     {
         std::cout << event->fSums->nJets << std::endl;
     }
-    ~~~~~
+    `````
 
 - `GetEntry(int i)` skips to a particular entry. This does not change the position of `Next()`.
 - The other functions are Filters that I use and functions which set additional variables that I use.
