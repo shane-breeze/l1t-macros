@@ -1,7 +1,7 @@
 #include <string>
 #include <vector>
 
-#include "TL1EventClass.h"
+#include "Core/TL1EventClass.h"
 #include "TL1Turnon.h"
 
 vector<double> metBins();
@@ -91,7 +91,7 @@ void testTL1Turnon()
         bool passSumsFilter = event->SumsFilter();
         //-------------------//
         
-        event->GetL1Variables();
+        event->GetL1Sums();
         event->RecalculateVariables();
         double recalcMht = event->fRecalcMht;
         double recalcMhtPhi = event->fRecalcMhtPhi;

@@ -2,12 +2,11 @@
 #include <vector>
 #include <algorithm>
 
-#include "TL1EventClass.h"
+#include "Core/TL1EventClass.h"
 #include "TL1XvsY.h"
 
 vector<double> bins(double max);
 vector<double> phiBins();
-double phiSwap(double xPhi, double yPhi);
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 
 void testTL1XvsY()
@@ -110,7 +109,7 @@ void testTL1XvsY()
         bool passSumsFilter = event->SumsFilter();
         //-------------------//
 
-        event->GetL1Variables();
+        event->GetL1Sums();
         xvsy[3]->Fill(event->fSums->Ht, event->fL1Htt);
         //xvsy[3]->Fill(recalcHtt, event->fL1Htt);
         
@@ -160,12 +159,6 @@ vector<double> phiBins()
     vector<double> temp;
     for(double binLowerEdge=0.0; binLowerEdge<=TMath::Pi(); binLowerEdge+= (TMath::Pi())/36.) temp.push_back(binLowerEdge);
     return temp;
-}
-
-double phiSwap(double xPhi, double yPhi)
-{
-    if( abs(yPhi-xPhi)<abs(yPhi+xPhi) ) return 1.0;
-    else return -1.0;
 }
 
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle)
