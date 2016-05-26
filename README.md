@@ -38,7 +38,7 @@ where `inDir` is the path to your Ntuples (can be multiple or single - it loads 
 
 ## Skeleton
 
-~~~~~
+`````C++
 std::string inDir = "/path/to/root/files/directory"
 TL1EventClass * event = new TL1EventClass(inDir);
 
@@ -88,3 +88,4 @@ while( event->Next() )
         bool jetFilter = event->JetFilter(iJet);
     }
 }
+`````
