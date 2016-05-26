@@ -30,10 +30,13 @@ class TL1EventClass
         void RecalculateVariables();
         void GetL1Sums();
         void GetL1Jets();
+        void GetFPL1Mht();
 
         double fRecalcMht, fRecalcMhtPhi, fRecalcHtt;
         double fL1Met, fL1Mht, fL1Ett, fL1Htt, fL1MetPhi, fL1MhtPhi;
         std::vector<double> fL1JetEt, fL1JetPhi, fL1JetEta;
+        
+        double fFPL1Mht, fFPL1MhtPhi;
 
         std::shared_ptr<L1Analysis::L1AnalysisL1CaloTowerDataFormat>   fCaloTowers;
         std::shared_ptr<L1Analysis::L1AnalysisRecoJetDataFormat>       fJets;
@@ -158,15 +161,14 @@ void TL1EventClass::RecalculateVariables()
     for(int iJet=0; iJet<fJets->nJets; ++iJet)
     {
         bool passJetFilter = this->JetFilter(iJet);
-        if( passJetFilter )
-        {
-            jetEx += fJets->etCorr[iJet]*TMath::Cos(fJets->phi[iJet]);
-            jetEy += fJets->etCorr[iJet]*TMath::Sin(fJets->phi[iJet]);
-            jetEt += fJets->etCorr[iJet];
-        }
+        if( !passJetFilter ) continue;
+        if( fJets->etCorr[iJet] < 30.0 ) continue;
+        jetEx += fJets->etCorr[iJet]*TMath::Cos(fJets->phi[iJet]);
+        jetEy += fJets->etCorr[iJet]*TMath::Sin(fJets->phi[iJet]);
+        jetEt += fJets->etCorr[iJet];
     }
     fRecalcMht = sqrt(jetEx*jetEx + jetEy*jetEy);
-    fRecalcMhtPhi = TMath::ATan(jetEy/jetEx);
+    fRecalcMhtPhi = TMath::Pi() + TMath::ATan(jetEy/jetEx);
     if( jetEx > 0.0 ) fRecalcMhtPhi = TMath::Pi() - fRecalcMhtPhi;
     fRecalcHtt = jetEt;
 }
@@ -209,6 +211,21 @@ void TL1EventClass::GetL1Jets()
             fL1JetPhi.push_back(fUpgrade->jetPhi[iJet]);
         }
     }
+}
+
+void TL1EventClass::GetFPL1Mht()
+{
+    double sumEx(0.0), sumEy(0.0);
+    for(unsigned iJet=0; iJet<fL1JetEt.size(); ++iJet)
+    {
+        if( abs(fL1JetEta[iJet]) >= 3.0 ) continue;
+        if( fL1JetEt[iJet] < 30.0 ) continue;
+        sumEx += fL1JetEt[iJet]*TMath::Cos(fL1JetPhi[iJet]);
+        sumEy += fL1JetEt[iJet]*TMath::Sin(fL1JetPhi[iJet]);
+    }
+    fFPL1Mht = TMath::Sqrt(sumEx*sumEx + sumEy*sumEy);
+    fFPL1MhtPhi = TMath::Pi()+TMath::ATan(sumEy/sumEx);
+    if( sumEx > 0.0 ) fFPL1MhtPhi = TMath::Pi() - fFPL1MhtPhi;
 }
 
 #endif

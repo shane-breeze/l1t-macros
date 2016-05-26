@@ -95,6 +95,16 @@ void testTL1XvsY()
     xvsy[5]->SetY("l1httphi","L1 H_{T}^{miss} Phi");
     xvsy[5]->SetOutName(triggerName+"_recalcMhtPhi_vs_l1MhtPhi");
 
+    // l1MhtFloat
+    xvsy.emplace_back(new TL1XvsY());
+    xvsy[6]->SetSample(sample,"");
+    xvsy[6]->SetTrigger(triggerName,triggerTitle);
+    xvsy[6]->SetRun(run);
+    xvsy[6]->SetXBins(bins(300.0));
+    xvsy[6]->SetX("mht","Reco H_{T}^{miss} (GeV)");
+    xvsy[6]->SetYBins(bins(300.0));
+    xvsy[6]->SetY("l1mht","L1 H_{T}^{miss} (GeV)");
+    xvsy[6]->SetOutName(triggerName+"_mht_vs_l1Mht");
 
     for(auto it=xvsy.begin(); it!=xvsy.end(); ++it)
         (*it)->InitPlots();
@@ -109,22 +119,27 @@ void testTL1XvsY()
         bool passSumsFilter = event->SumsFilter();
         //-------------------//
 
+        event->GetL1Jets();
         event->GetL1Sums();
-        xvsy[3]->Fill(event->fSums->Ht, event->fL1Htt);
-        //xvsy[3]->Fill(recalcHtt, event->fL1Htt);
-        
-        if( !passMuonFilter ) continue;
-
+        event->GetFPL1Mht();
         event->RecalculateVariables();
         double recalcMht = event->fRecalcMht;
         double recalcMhtPhi = event->fRecalcMhtPhi;
         double recalcHtt = event->fRecalcHtt;
+
+        xvsy[3]->Fill(event->fSums->Ht, event->fL1Htt);
+        //xvsy[3]->Fill(recalcHtt, event->fL1Htt);
+        
+        xvsy[6]->Fill(event->fSums->mHt, event->fL1Mht);
+
+        if( !passMuonFilter ) continue;
         
         if( passSumsFilter )
             xvsy[0]->Fill(event->fSums->caloMetBE, event->fL1Met);
         //xvsy[1]->Fill(event->fSums->mHt, event->fL1Mht);
         xvsy[1]->Fill(recalcMht, event->fL1Mht);
         xvsy[2]->Fill(event->fSums->caloSumEtBE, event->fL1Ett);
+
 
         double xPhiMet = min( (float)abs(event->fSums->caloMetPhiBE), (float)abs(2*TMath::Pi()-event->fSums->caloMetPhiBE) );
         double yPhiMet = min( (float)abs(event->fL1MetPhi), (float)abs(2*TMath::Pi()-event->fL1MetPhi) );

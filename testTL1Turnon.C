@@ -92,10 +92,14 @@ void testTL1Turnon()
         //-------------------//
         
         event->GetL1Sums();
+        event->GetL1Jets();
+        event->GetFPL1Mht();
         event->RecalculateVariables();
         double recalcMht = event->fRecalcMht;
         double recalcMhtPhi = event->fRecalcMhtPhi;
 
+        turnons[1]->Fill(recalcMht, event->fFPL1Mht);
+        //turnons[1]->Fill(event->fSums->mHt, event->fL1Mht);
         turnons[3]->Fill(event->fSums->Ht, event->fL1Htt);
         //turnons[3]->Fill(recalcHtt, event->fL1Htt);
 
@@ -103,8 +107,6 @@ void testTL1Turnon()
         
         if( passSumsFilter )
             turnons[0]->Fill(event->fSums->caloMetBE, event->fL1Met);
-        //turnons[1]->Fill(event->fSums->mHt, event->fL1Mht);
-        turnons[1]->Fill(recalcMht, event->fL1Mht);
         turnons[2]->Fill(event->fSums->caloSumEtBE, event->fL1Ett);
     }
 

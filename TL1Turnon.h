@@ -120,6 +120,7 @@ void TL1Turnon::DrawTurnons()
         fTurnons[i-1]->GetXaxis()->SetTitle(fDists[i]->GetXaxis()->GetTitle());
         fTurnons[i-1]->GetXaxis()->SetLimits(fXBins.front(), fXBins.back());
         fTurnons[i-1]->GetYaxis()->SetTitle("Efficiency");
+        fTurnons[i-1]->SetMaximum(1.1);
         if( i == 1 ) fTurnons[i-1]->Draw("ap");
         else fTurnons[i-1]->Draw("psame");
         fTurnons[i-1]->Write();
