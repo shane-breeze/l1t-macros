@@ -85,8 +85,8 @@ void TL1XvsY::DrawPlots()
         latex->SetTextAlign(31);
         latex->DrawLatex(0.92, 0.92, Form("%s, #sqrt{s} = 13 TeV",fSampleTitle.c_str()));
     }
-    latex->SetTextAlign(32);
-    latex->DrawLatex(0.18,0.92,"n_{j}^{MHT}=1");
+    latex->SetTextAlign(11);
+    latex->DrawLatex(0.18,0.92,fAddMark.c_str());
 
     std::shared_ptr<TLine> line(new TLine());
     line->SetLineStyle(7);
@@ -141,7 +141,7 @@ void TL1XvsY::SetOutName(const std::string & outName)
     fOutName = outName;
 }
 
-void SetAddMark(const std::string & addMark)
+void TL1XvsY::SetAddMark(const std::string & addMark)
 {
     fAddMark = addMark;
 }

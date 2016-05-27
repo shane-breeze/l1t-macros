@@ -56,11 +56,11 @@ void testTL1XvsY()
     xvsy[2]->SetSample(sample,"");
     xvsy[2]->SetTrigger(triggerName,triggerTitle);
     xvsy[2]->SetRun(run);
-    xvsy[2]->SetXBins(bins(600.0));
-    xvsy[2]->SetX("caloEttBE","Total Calo E_{T} no HF (GeV)");
-    xvsy[2]->SetYBins(bins(600.0));
-    xvsy[2]->SetY("l1ett","L1 Total E_{T}");
-    xvsy[2]->SetOutName(triggerName+"_caloEttBE_vs_l1Ett");
+    xvsy[2]->SetXBins(bins(600.0,10));
+    xvsy[2]->SetX("recoEtt","Reco Total E_{T} (GeV)");
+    xvsy[2]->SetYBins(bins(600.0,10));
+    xvsy[2]->SetY("l1Ett","L1 Total E_{T}");
+    xvsy[2]->SetOutName(triggerName+"_recoEtt_vs_l1Ett");
 
     // htt
     xvsy.emplace_back(new TL1XvsY());
@@ -100,11 +100,12 @@ void testTL1XvsY()
     xvsy[6]->SetSample(sample,"");
     xvsy[6]->SetTrigger(triggerName,triggerTitle);
     xvsy[6]->SetRun(run);
-    xvsy[6]->SetXBins(bins(300.0,2.0));
+    xvsy[6]->SetXBins(bins(200.0,2.5));
     xvsy[6]->SetX("recalcMht","Recalc Reco H_{T}^{miss} (GeV)");
-    xvsy[6]->SetYBins(bins(300.0,2.0));
+    xvsy[6]->SetYBins(bins(200.0,2.5));
     xvsy[6]->SetY("recalcl1mht","Recalc L1 H_{T}^{miss} (GeV)");
-    xvsy[6]->SetOutName(triggerName+"_recalcMht_vs_recalcL1Mht_1jet");
+    xvsy[6]->SetOutName(triggerName+"_recalcMht_vs_recalcL1Mht");
+    //xvsy[6]->SetAddMark("n_{j}^{MHT}=4");
 
     for(auto it=xvsy.begin(); it!=xvsy.end(); ++it)
         (*it)->InitPlots();
@@ -123,6 +124,7 @@ void testTL1XvsY()
         event->GetL1Sums();
         event->GetFPL1Mht();
         event->RecalculateVariables();
+        event->RecalculateRecoEtt();
         double recalcMht = event->fRecalcMht;
         double recalcMhtPhi = event->fRecalcMhtPhi;
         double recalcHtt = event->fRecalcHtt;
@@ -130,7 +132,7 @@ void testTL1XvsY()
         xvsy[3]->Fill(event->fSums->Ht, event->fL1Htt);
         //xvsy[3]->Fill(recalcHtt, event->fL1Htt);
         
-        if( recalcMht != -999.9 ) xvsy[6]->Fill(recalcMht, event->fFPL1Mht);
+        if( recalcMht != -999.9 && recalcMht != 0.0 && event->fFPL1Mht != 0.0 ) xvsy[6]->Fill(recalcMht, event->fFPL1Mht);
 
         if( !passMuonFilter ) continue;
 

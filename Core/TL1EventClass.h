@@ -5,6 +5,7 @@
 #include <memory>
 
 #include <TMath.h>
+#include <TVector2.h>
 
 #include "TL1DataClass.h"
 
@@ -32,9 +33,16 @@ class TL1EventClass
         void GetL1Jets();
         void GetFPL1Mht();
 
+        void RecalculatedL1Ett();
+        void RecalculateRecoEtt();
+
         double fRecalcMht, fRecalcMhtPhi, fRecalcHtt;
         double fL1Met, fL1Mht, fL1Ett, fL1Htt, fL1MetPhi, fL1MhtPhi;
         std::vector<double> fL1JetEt, fL1JetPhi, fL1JetEta;
+
+        bool fMhtPassFlag;
+
+        double fRecalcL1Ett, fRecalcRecoEtt;
         
         double fFPL1Mht, fFPL1MhtPhi;
 
@@ -74,6 +82,8 @@ TL1EventClass::TL1EventClass(std::string inDir) :
     muonReco->SetBranchAddress("Muon", &fMuons);
     recoTree->SetBranchAddress("Vertex", &fVertex);
     upgrade->SetBranchAddress("L1Upgrade", &fUpgrade);
+
+    fMhtPassFlag = true;
 }
 
 bool TL1EventClass::Next()
@@ -157,7 +167,8 @@ bool TL1EventClass::SumsFilter() const
 
 void TL1EventClass::RecalculateVariables()
 {
-    double jetEx(0.0), jetEy(0.0), jetEt(0.0);
+    std::shared_ptr<TVector2> mht(new TVector2(0.,0.));
+    double jetEt(0.0);
     unsigned jetCount(0);
     for(int iJet=0; iJet<fJets->nJets; ++iJet)
     {
@@ -165,29 +176,42 @@ void TL1EventClass::RecalculateVariables()
         if( fJets->etCorr[iJet] < 30.0 ) continue;
         if( !passJetFilter )
         {
-            jetEx = -999.9;
-            jetEy = -999.9;
-            jetEt = -999.9;
+            fMhtPassFlag = false;
             break;
         }
-        jetEx += fJets->etCorr[iJet]*TMath::Cos(fJets->phi[iJet]);
-        jetEy += fJets->etCorr[iJet]*TMath::Sin(fJets->phi[iJet]);
+        std::shared_ptr<TVector2> jet(new TVector2(0.,0.));
+        jet->SetMagPhi(fJets->etCorr[iJet], fJets->phi[iJet]);
         jetEt += fJets->etCorr[iJet];
         ++jetCount;
+
+        *(mht.get()) -= *(jet.get());
     }
-    if( jetCount == 1 )
+    fRecalcMht = mht->Mod();
+    fRecalcMhtPhi = mht->Phi();
+    fRecalcHtt = jetEt;
+}
+
+void TL1EventClass::RecalculatedL1Ett()
+{
+    int iEtaMax = 28;
+    Double_t sumEt = 0.0;
+    for(unsigned jTower=0; jTower<fCaloTowers->nTower; ++jTower)
     {
-        fRecalcMht = sqrt(jetEx*jetEx + jetEy*jetEy);
-        fRecalcMhtPhi = TMath::Pi() + TMath::ATan(jetEy/jetEx);
-        if( jetEx > 0.0 ) fRecalcMhtPhi = TMath::Pi() - fRecalcMhtPhi;
-        fRecalcHtt = jetEt;
+        int ieta = fCaloTowers->ieta[jTower];
+        int iet  = fCaloTowers->iet[jTower];
+        if( abs(ieta) <= iEtaMax )
+            sumEt += 0.5 * (double)iet;
     }
-    else
-    {
-        fRecalcMht = -999.9;
-        fRecalcMhtPhi = -999.9;
-        fRecalcHtt = -999.9;
-    }
+    fRecalcL1Ett = sumEt;
+}
+
+void TL1EventClass::RecalculateRecoEtt()
+{
+    double jetEt(0.0);
+    for(int iJet=0; iJet<fJets->nJets; ++iJet)
+        if( fJets->etCorr[iJet] >= 30.0 )
+            jetEt += fJets->etCorr[iJet];
+    fRecalcRecoEtt = jetEt;
 }
 
 void TL1EventClass::GetL1Sums()
