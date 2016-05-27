@@ -8,6 +8,7 @@
 vector<double> bins(double max, double width=1.0, double min=0.0);
 vector<double> phiBins();
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
+double FoldPhi(double phi);
 
 void testTL1XvsY()
 {
@@ -112,50 +113,29 @@ void testTL1XvsY()
 
     while( event->Next() )
     {
-        //----- Filters -----//
-        // Muon loop
-        bool passMuonFilter = event->MuonFilter();
-
-        // Sums
-        bool passSumsFilter = event->SumsFilter();
-        //-------------------//
-
-        event->GetL1Jets();
-        event->GetL1Sums();
-        event->GetFPL1Mht();
-        event->RecalculateVariables();
-        event->RecalculateRecoEtt();
-        double recalcMht = event->fRecalcMht;
-        double recalcMhtPhi = event->fRecalcMhtPhi;
-        double recalcHtt = event->fRecalcHtt;
-
-        xvsy[3]->Fill(event->fSums->Ht, event->fL1Htt);
-        //xvsy[3]->Fill(recalcHtt, event->fL1Htt);
+        //----- HTT -----//
+        xvsy[3]->Fill(event->GetPEvent()->fSums->Ht, event->fL1Htt);
+        //xvsy[3]->Fill(event->fRecalcRecoHtt, event->fL1Htt);
         
-        if( recalcMht != -999.9 && recalcMht != 0.0 && event->fFPL1Mht != 0.0 ) xvsy[6]->Fill(recalcMht, event->fFPL1Mht);
+        //----- MHT -----//
+        xvsy[1]->Fill(event->fRecalcRecoMht, event->fL1Mht);
+        //xvsy[1]->Fill(event->GetPEvent()->fSums->mHt, event->fL1Mht);
+        if( event->fMhtPassFlag && event->fRecalcRecoMht != 0.0 && event->fRecalcL1Mht != 0.0 ) xvsy[6]->Fill(event->fRecalcRecoMht, event->fRecalcL1Mht);
 
-        if( !passMuonFilter ) continue;
+        if( !event->fMuonFilterPassFlag ) continue;
+        //----- MET -----//
+        if( event->fMetFilterPassFlag )
+            xvsy[0]->Fill(event->GetPEvent()->fSums->caloMetBE, event->fL1Met);
 
-        if( passSumsFilter )
-            xvsy[0]->Fill(event->fSums->caloMetBE, event->fL1Met);
-        //xvsy[1]->Fill(event->fSums->mHt, event->fL1Mht);
-        xvsy[1]->Fill(recalcMht, event->fL1Mht);
-        xvsy[2]->Fill(event->fSums->caloSumEtBE, event->fL1Ett);
+        //----- ETT -----//
+        xvsy[2]->Fill(event->GetPEvent()->fSums->caloSumEtBE, event->fL1Ett);
 
+        //----- MET Phi -----//
+        xvsy[4]->Fill(FoldPhi(event->GetPEvent()->fSums->caloMetPhiBE), FoldPhi(event->fL1MetPhi));
 
-        double xPhiMet = min( (float)abs(event->fSums->caloMetPhiBE), (float)abs(2*TMath::Pi()-event->fSums->caloMetPhiBE) );
-        double yPhiMet = min( (float)abs(event->fL1MetPhi), (float)abs(2*TMath::Pi()-event->fL1MetPhi) );
-
-        xvsy[4]->Fill(xPhiMet,yPhiMet);
-
-        double tXPhiMht = recalcMhtPhi;
-        double tYPhiMht = event->fL1MhtPhi;
-        //if( tXPhi > TMath::Pi() ) tXPhi -= 2*TMath::Pi();
-        double xPhiMht = min( (float)abs(tXPhiMht), (float)abs(2*TMath::Pi()-tXPhiMht) );
-        double yPhiMht = min( (float)abs(tYPhiMht), (float)abs(2*TMath::Pi()-tYPhiMht) );
-
-        if( recalcMht > 0.1 && event->fL1Mht > 0.1 ) xvsy[5]->Fill(xPhiMht,yPhiMht);
-        // xvsy[5]->Fill(recalcMhtPhi, event->fL1MhtPhi);
+        //----- MHT Phi -----//
+        if( event->fRecalcRecoMht != 0.0 && event->fL1Mht > 0.0 ) xvsy[5]->Fill(FoldPhi(event->fRecalcRecoMhtPhi), FoldPhi(event->fL1MhtPhi));
+        // xvsy[5]->Fill(event->fRecalcRecoMhtPhi, event->fL1MhtPhi);
     }
 
     for(auto it=xvsy.begin(); it!=xvsy.end(); ++it)
@@ -186,4 +166,9 @@ void SetMyStyle(int palette, double rmarg, TStyle * myStyle)
     myStyle->SetPalette(palette);
     myStyle->SetPadRightMargin(rmarg);
     myStyle->cd();
+}
+
+double FoldPhi(double phi)
+{
+    return min( (float)abs(phi), (float)abs(2*TMath::Pi()-phi) );
 }

@@ -6,6 +6,7 @@
 
 vector<double> bins();
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
+double FoldPhi(double phi);
 
 void testTL1Resolution()
 {
@@ -93,35 +94,29 @@ void testTL1Resolution()
 
     while( event->Next() )
     {
-        //----- Filters -----//
-        // Muon loop
-        bool passMuonFilter = event->MuonFilter();
+        // HTT
+        if( event->GetPEvent()->fSums->Ht != 0.0 && event->fL1Htt != 0.0 ) resolution[3]->Fill(event->GetPEvent()->fSums->Ht, event->fL1Htt);
+        //resolution[3]->Fill(event->fRecalcRecoHtt, event->fL1Htt);
 
-        // Sums
-        bool passSumsFilter = event->SumsFilter();
-        //-------------------//
+        // MHT
+        //resolution[1]->Fill(event->GetPEvent()->fSums->mHt, event->fL1Mht);
+        if( event->fRecalcRecoMht != 0.0 && event->fL1Mht != 0.0 ) resolution[1]->Fill(event->fRecalcRecoMht, event->fL1Mht);
 
-        event->GetL1Sums();
-        if( event->fSums->Ht >= 0.01 && event->fL1Htt >= 0.01 ) resolution[3]->Fill(event->fSums->Ht, event->fL1Htt);
-        //resolution[3]->Fill(recalcHtt, event->fL1Htt);
 
-        if( !passMuonFilter ) continue;
-
-        event->RecalculateVariables();
-        double recalcMht = event->fRecalcMht;
-        double recalcMhtPhi = event->fRecalcMhtPhi;
-        double recalcHtt = event->fRecalcHtt;
-        
+        if( !event->fMuonFilterPassFlag ) continue;
+        // MET
         if( passSumsFilter )
-            if( event->fSums->caloMetBE >= 0.01 && event->fL1Met >= 0.01 ) resolution[0]->Fill(event->fSums->caloMetBE, event->fL1Met);
-        //resolution[1]->Fill(event->fSums->mHt, event->fL1Mht);
-        if( recalcMht >= 0.01 && event->fL1Mht >= 0.01 ) resolution[1]->Fill(recalcMht, event->fL1Mht);
-        if( event->fSums->caloSumEtBE >= 0.01 && event->fL1Ett >= 0.01 ) resolution[2]->Fill(event->fSums->caloSumEtBE, event->fL1Ett);
-        resolution[4]->Fill(event->fSums->caloMetPhiBE, event->fL1MetPhi);
-        double xPhi = event->fSums->mHtPhi;
-        if( xPhi > TMath::Pi() ) xPhi -= 2*TMath::Pi();
-        resolution[5]->Fill(xPhi, event->fL1MhtPhi);
-        //resolution[5]->Fill(recalcMhtPhi, event->fL1MhtPhi);
+            if( event->GetPEvent()->fSums->caloMetBE != 0.0 && event->fL1Met != 0.0 ) resolution[0]->Fill(event->GetPEvent()->fSums->caloMetBE, event->fL1Met);
+
+        // ETT
+        if( event->GetPEvent()->fSums->caloSumEtBE != 0.0 && event->fL1Ett != 0.0 ) resolution[2]->Fill(event->GetPEvent()->fSums->caloSumEtBE, event->fL1Ett);
+
+        // MET Phi
+        resolution[4]->Fill(FoldPhi(event->GetPEvent()->fSums->caloMetPhiBE), FoldPhi(event->fL1MetPhi));
+
+        // MHT Phi
+        resolution[5]->Fill(event->GetPEvent()->fSums->mHtPhi, event->fL1MhtPhi);
+        //resolution[5]->Fill(event->fRecalcRecoMhtPhi, event->fL1MhtPhi);
     }
 
     for(auto it=resolution.begin(); it!=resolution.end(); ++it)
@@ -145,4 +140,9 @@ void SetMyStyle(int palette, double rmarg, TStyle * myStyle)
     myStyle->SetPalette(palette);
     myStyle->SetPadRightMargin(rmarg);
     myStyle->cd();
+}
+
+double FoldPhi(double phi)
+{
+    return min( (float)abs(phi), (float)abs(2*TMath::Pi()-phi) );
 }

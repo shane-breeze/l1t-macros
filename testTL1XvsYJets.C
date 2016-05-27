@@ -14,7 +14,7 @@ struct JetMatch
 
 vector<double> bins(double max);
 vector<double> phiBins();
-double foldPhi(double phi);
+double FoldPhi(double phi);
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 bool GetMatch(TL1EventClass * event, unsigned iRecoJet, JetMatch & match);
 
@@ -108,31 +108,30 @@ void testTL1XvsYJets()
 
     while( event->Next() )
     {
-        event->GetL1Jets();
-        for(unsigned iRecoJet=0; iRecoJet<event->fJets->nJets; ++iRecoJet)
+        for(unsigned iRecoJet=0; iRecoJet<event->GetPEvent()->fJets->nJets; ++iRecoJet)
         {
             // Match reco jet with l1 jet
             JetMatch match;
-            if( !GetMatch(event.get(), iRecoJet, match) ) continue;
+            if( !GetMatch(event->GetPEvent(), iRecoJet, match) ) continue;
 
             if( abs(match.recoJetEta) >= 3.0 )
             {
                 xvsy[2]->Fill(match.recoJetEt, match.l1JetEt);
-                xvsy[5]->Fill(foldPhi(match.recoJetPhi), foldPhi(match.l1JetPhi));
+                xvsy[5]->Fill(FoldPhi(match.recoJetPhi), FoldPhi(match.l1JetPhi));
             }
 
             // Jet filter (tight lepton veto and zero muon multiplicity)
-            if( !event->JetFilter(iRecoJet) ) continue;
+            if( !event->fJetFilterPassFlag[iRecoJet] ) continue;
 
             if( abs(match.recoJetEta) < 1.3 )
             {
                 xvsy[0]->Fill(match.recoJetEt, match.l1JetEt);
-                xvsy[3]->Fill(foldPhi(match.recoJetPhi), foldPhi(match.l1JetPhi));
+                xvsy[3]->Fill(FoldPhi(match.recoJetPhi), FoldPhi(match.l1JetPhi));
             }
             else if( abs(match.recoJetEta) < 3.0 )
             {
                 xvsy[1]->Fill(match.recoJetEt, match.l1JetEt);
-                xvsy[4]->Fill(foldPhi(match.recoJetPhi), foldPhi(match.l1JetPhi));
+                xvsy[4]->Fill(FoldPhi(match.recoJetPhi), FoldPhi(match.l1JetPhi));
             }
         }
     }
@@ -157,7 +156,7 @@ vector<double> phiBins()
     return temp;
 }
 
-double foldPhi(double phi)
+double FoldPhi(double phi)
 {
     return min( (float)abs(phi), (float)abs(2*TMath::Pi()-phi) );
 }
