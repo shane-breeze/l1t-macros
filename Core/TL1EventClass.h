@@ -69,7 +69,7 @@ class TL1EventClass
 TL1EventClass::TL1EventClass(std::string inDir) :
     fPrimitiveEvent(new TL1PrimitiveEventClass(inDir)),
     fMuonFilterPassFlag(true), fMetFilterPassFlag(true),
-    fMhtPassFlag(true),
+    fMhtPassFlag(true)
 {
 }
 
@@ -104,7 +104,7 @@ void TL1EventClass::GetDerivatives()
 
 TL1PrimitiveEventClass const * TL1EventClass::GetPEvent() const
 {
-    return fPrimitiveEvent.get()
+    return fPrimitiveEvent.get();
 }
 
 void TL1EventClass::GetL1Jets()
@@ -112,33 +112,33 @@ void TL1EventClass::GetL1Jets()
     fL1JetEt.clear();
     fL1JetEta.clear();
     fL1JetPhi.clear();
-    for(unsigned iJet=0; iJet<fUpgrade->nJets; ++iJet)
+    for(unsigned iJet=0; iJet<fPrimitiveEvent->fUpgrade->nJets; ++iJet)
     {
-        if( fUpgrade->jetBx[iJet] == 0 )
+        if( fPrimitiveEvent->fUpgrade->jetBx[iJet] == 0 )
         {
-            fL1JetEt.push_back(fUpgrade->jetEt[iJet]);
-            fL1JetEta.push_back(fUpgrade->jetEta[iJet]);
-            fL1JetPhi.push_back(fUpgrade->jetPhi[iJet]);
+            fL1JetEt.push_back(fPrimitiveEvent->fUpgrade->jetEt[iJet]);
+            fL1JetEta.push_back(fPrimitiveEvent->fUpgrade->jetEta[iJet]);
+            fL1JetPhi.push_back(fPrimitiveEvent->fUpgrade->jetPhi[iJet]);
         }
     }
 }
 
 void TL1EventClass::GetL1Sums()
 {
-    for(int iter=0; iter<fUpgrade->nSums; ++iter)
+    for(int iter=0; iter<fPrimitiveEvent->fUpgrade->nSums; ++iter)
     {
-        double et = fUpgrade->sumEt[iter];
-        double phi = fUpgrade->sumPhi[iter];
-        if( fUpgrade->sumBx[iter] == 0 )
+        double et = fPrimitiveEvent->fUpgrade->sumEt[iter];
+        double phi = fPrimitiveEvent->fUpgrade->sumPhi[iter];
+        if( fPrimitiveEvent->fUpgrade->sumBx[iter] == 0 )
         {
-            if(fUpgrade->sumType[iter] == L1Analysis::kTotalEt)   fL1Ett = et;
-            if(fUpgrade->sumType[iter] == L1Analysis::kTotalHt)   fL1Htt = et;
-            if(fUpgrade->sumType[iter] == L1Analysis::kMissingEt)
+            if(fPrimitiveEvent->fUpgrade->sumType[iter] == L1Analysis::kTotalEt)   fL1Ett = et;
+            if(fPrimitiveEvent->fUpgrade->sumType[iter] == L1Analysis::kTotalHt)   fL1Htt = et;
+            if(fPrimitiveEvent->fUpgrade->sumType[iter] == L1Analysis::kMissingEt)
             {
                 fL1Met = et;
                 fL1MetPhi = phi;
             }
-            if(fUpgrade->sumType[iter] == L1Analysis::kMissingHt)
+            if(fPrimitiveEvent->fUpgrade->sumType[iter] == L1Analysis::kMissingHt)
             {
                 fL1Mht = et;
                 fL1MhtPhi = phi;
@@ -181,7 +181,7 @@ void TL1EventClass::JetFilter()
                 && (abs(eta)>2.4||(abs(eta)<=2.4 && chef>0 && (chMult+elMult+muMult)>0 && eef<0.90))){
             jetPass = true;}//this jet has passed
         else{jetPass = false;}//this jet has failed, or is outside the central zone           
-        fJetFilterPassFlags.pushback(jetPass && muMult==0);
+        fJetFilterPassFlags.push_back(jetPass && muMult==0);
     }
 }
 
@@ -224,7 +224,7 @@ void TL1EventClass::GetRecalcRecoHtSums()
     std::shared_ptr<TVector2> mht(new TVector2(0.,0.));
     double jetEt(0.0);
     unsigned jetCount(0);
-    for(int iJet=0; iJet<fJets->nJets; ++iJet)
+    for(int iJet=0; iJet<fPrimitiveEvent->fJets->nJets; ++iJet)
     {
         bool passJetFilter = fJetFilterPassFlags[iJet];
         if( fPrimitiveEvent->fJets->etCorr[iJet] < 30.0 ) continue;
@@ -234,8 +234,8 @@ void TL1EventClass::GetRecalcRecoHtSums()
             break;
         }
         std::shared_ptr<TVector2> jet(new TVector2(0.,0.));
-        jet->SetMagPhi(fJets->etCorr[iJet], fJets->phi[iJet]);
-        jetEt += fJets->etCorr[iJet];
+        jet->SetMagPhi(fPrimitiveEvent->fJets->etCorr[iJet], fPrimitiveEvent->fJets->phi[iJet]);
+        jetEt += fPrimitiveEvent->fJets->etCorr[iJet];
         ++jetCount;
 
         *(mht.get()) -= *(jet.get());
@@ -248,9 +248,9 @@ void TL1EventClass::GetRecalcRecoHtSums()
 void TL1EventClass::GetRecalcRecoEtt()
 {
     double jetEt(0.0);
-    for(int iJet=0; iJet<fJets->nJets; ++iJet)
-        if( fJets->etCorr[iJet] >= 30.0 )
-            jetEt += fJets->etCorr[iJet];
+    for(int iJet=0; iJet<fPrimitiveEvent->fJets->nJets; ++iJet)
+        if( fPrimitiveEvent->fJets->etCorr[iJet] >= 30.0 )
+            jetEt += fPrimitiveEvent->fJets->etCorr[iJet];
     fRecalcRecoEtt = jetEt;
 }
 
