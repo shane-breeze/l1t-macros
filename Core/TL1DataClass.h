@@ -6,7 +6,6 @@
 
 #include <TROOT.h>
 #include <TChain.h>
-#include <TFile.h>
 
 class TL1DataClass
 {

@@ -5,17 +5,8 @@
 #include <memory>
 
 #include <TMath.h>
-#include <TVector2.h>
 
 #include "TL1PrimitiveEventClass.h"
-
-//#include "../160510_l1t-integration-v46p0/CMSSW_8_0_7/src/L1Trigger/L1TNtuples/interface/L1AnalysisL1CaloTowerDataFormat.h"
-//#include "../160510_l1t-integration-v46p0/CMSSW_8_0_7/src/L1Trigger/L1TNtuples/interface/L1AnalysisRecoJetDataFormat.h"
-//#include "../160510_l1t-integration-v46p0/CMSSW_8_0_7/src/L1Trigger/L1TNtuples/interface/L1AnalysisRecoMetDataFormat.h"
-//#include "../160510_l1t-integration-v46p0/CMSSW_8_0_7/src/L1Trigger/L1TNtuples/interface/L1AnalysisL1UpgradeDataFormat.h"
-//#include "../160510_l1t-integration-v46p0/CMSSW_8_0_7/src/L1Trigger/L1TNtuples/interface/L1AnalysisRecoVertexDataFormat.h"
-//#include "../160510_l1t-integration-v46p0/CMSSW_8_0_7/src/L1Trigger/L1TNtuples/interface/L1AnalysisRecoMetFilterDataFormat.h"
-//#include "../160510_l1t-integration-v46p0/CMSSW_8_0_7/src/L1Trigger/L1TNtuples/interface/L1AnalysisRecoMuon2DataFormat.h"
 
 class TL1EventClass
 {
