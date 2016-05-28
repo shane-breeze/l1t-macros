@@ -1,13 +1,8 @@
-#ifndef TL1TURNON_H
-#define TL1TURNON_H
+#ifndef TL1PLOTS_H
+#define TL1PLOTS_H
 
 #include <string>
 #include <memory>
-
-#include <TStyle.h>
-
-#include "Core/TL1EventClass.h"
-#include "Core/tdrstyle.C"
 
 class TL1Plots
 {
@@ -20,13 +15,20 @@ class TL1Plots
         virtual void SetTrigger(const std::string & triggerName, const std::string & triggerTitle);
         virtual void SetRun(const std::string & run);
         virtual void SetOutName(const std::string & outName);
-    protected:
-        template<typename Type>
-        std::vector<std::shared_ptr<Type>> fPlots;
 
+    protected:
+        std::string GetSampleName() const;
+        std::string GetTriggerName() const;
+        std::string GetRun() const;
+        std::string GetSampleTitle() const;
+        std::string GetTriggerTitle() const;
+        std::string GetOutName() const;
+
+    private:
         std::string fSampleName, fTriggerName, fRun;
         std::string fSampleTitle, fTriggerTitle;
         std::string fOutName;
+
 };
 
 void TL1Plots::SetSample(const std::string & sampleName, const std::string & sampleTitle)
@@ -51,17 +53,34 @@ void TL1Plots::SetOutName(const std::string & outName)
     fOutName = outName;
 }
 
-void TL1Plots::SetColor(float fraction, int index)
+std::string TL1Plots::GetSampleName() const
 {
-    double modifier(0.15), colorIndex;
-    int colour(1);
-    if( fraction >= 0.0 )
-    {
-        colorIndex = (fraction * (1.0-2.0*modifier) + modifier) * gStyle->GetNumberOfColors();
-        colour = gStyle->GetColorPalette(colorIndex);
-    }
-    fPlots[index]->SetLineColor(colour);
-    fPlots[index]->SetMarkerColor(colour);
+    return fSampleName;
+}
+
+std::string TL1Plots::GetTriggerName() const
+{
+    return fTriggerName;
+}
+
+std::string TL1Plots::GetRun() const
+{
+    return fRun;
+}
+
+std::string TL1Plots::GetSampleTitle() const
+{
+    return fSampleTitle;
+}
+
+std::string TL1Plots::GetTriggerTitle() const
+{
+    return fTriggerTitle;
+}
+
+std::string TL1Plots::GetOutName() const
+{
+    return fOutName;
 }
 
 #endif

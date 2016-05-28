@@ -21,9 +21,10 @@ class TL1PrimitiveEventClass
         std::shared_ptr<L1Analysis::L1AnalysisRecoMetFilterDataFormat> fMetFilters;
         std::shared_ptr<L1Analysis::L1AnalysisRecoMuon2DataFormat>     fMuons;     
 
+        Long64_t fPos;
+
     private:
         std::shared_ptr<TL1DataClass> caloTower, jetReco, metFilterReco, muonReco, recoTree, upgrade;
-        Long64_t fPos;
 };
 
 TL1PrimitiveEventClass::TL1PrimitiveEventClass(std::string inDir) :

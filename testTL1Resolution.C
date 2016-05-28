@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 
+#include "Core/tdrstyle.C"
 #include "Core/TL1EventClass.h"
 #include "TL1Resolution.h"
 
@@ -19,8 +20,6 @@ void testTL1Resolution()
     std::string triggerTitle = "Single Muon";
     std::string run = "273301";
     bool doFit = true;
-
-    std::shared_ptr<TFile> rootFile(new TFile(Form("%s_%s_r%s.root",sample.c_str(),triggerName.c_str(),run.c_str()), "UPDATE"));
 
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
     std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
@@ -105,7 +104,7 @@ void testTL1Resolution()
 
         if( !event->fMuonFilterPassFlag ) continue;
         // MET
-        if( passSumsFilter )
+        if( event->fMetFilterPassFlag )
             if( event->GetPEvent()->fSums->caloMetBE != 0.0 && event->fL1Met != 0.0 ) resolution[0]->Fill(event->GetPEvent()->fSums->caloMetBE, event->fL1Met);
 
         // ETT
@@ -121,8 +120,6 @@ void testTL1Resolution()
 
     for(auto it=resolution.begin(); it!=resolution.end(); ++it)
         (*it)->DrawPlots();
-
-    rootFile->Close();
 }
 
 vector<double> bins()

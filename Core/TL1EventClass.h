@@ -7,6 +7,7 @@
 #include <TMath.h>
 
 #include "TL1PrimitiveEventClass.h"
+#include "TL1JetMatch.h"
 
 class TL1EventClass
 {
@@ -36,6 +37,10 @@ class TL1EventClass
         bool fMhtPassFlag;
         double fRecalcRecoEtt;
 
+        // L1 and Reco Jet Matching
+        vector<std::shared_ptr<TL1JetMatch>> fJetMatching;
+        void TurnJetMatchingOn();
+
     private:
         std::shared_ptr<TL1PrimitiveEventClass> fPrimitiveEvent;
 
@@ -55,12 +60,16 @@ class TL1EventClass
         // Recalc Reco Ht/Et Sums
         void GetRecalcRecoHtSums();
         void GetRecalcRecoEtt();
+
+        // L1 and Reco Jet Matching
+        void GetJetMatching();
+        bool IsJetMatchingOn;
 };
 
 TL1EventClass::TL1EventClass(std::string inDir) :
     fPrimitiveEvent(new TL1PrimitiveEventClass(inDir)),
     fMuonFilterPassFlag(true), fMetFilterPassFlag(true),
-    fMhtPassFlag(true)
+    fMhtPassFlag(true), IsJetMatchingOn(false)
 {
 }
 
@@ -91,6 +100,8 @@ void TL1EventClass::GetDerivatives()
     
     this->GetRecalcRecoHtSums();
     this->GetRecalcRecoEtt();
+
+    if( IsJetMatchingOn ) this->GetJetMatching();
 }
 
 TL1PrimitiveEventClass const * TL1EventClass::GetPEvent() const
@@ -243,6 +254,37 @@ void TL1EventClass::GetRecalcRecoEtt()
         if( fPrimitiveEvent->fJets->etCorr[iJet] >= 30.0 )
             jetEt += fPrimitiveEvent->fJets->etCorr[iJet];
     fRecalcRecoEtt = jetEt;
+}
+
+void TL1EventClass::GetJetMatching()
+{
+    for(unsigned iRecoJet=0; iRecoJet<fPrimitiveEvent->fJets->nJets; ++iRecoJet)
+    {
+        double recoJetEt = fPrimitiveEvent->fJets->etCorr[iRecoJet];
+        double recoJetEta = fPrimitiveEvent->fJets->eta[iRecoJet];
+        double recoJetPhi = fPrimitiveEvent->fJets->phi[iRecoJet];
+        double minDeltaR = 0.4;
+        unsigned iMinL1Jet = 0;
+        for(unsigned iL1Jet=0; iL1Jet<fL1JetEt.size(); ++iL1Jet)
+        {
+            double l1JetEt = fL1JetEt[iL1Jet];
+            double l1JetEta = fL1JetEta[iL1Jet];
+            double l1JetPhi = fL1JetPhi[iL1Jet];
+            double deltaR = TMath::Sqrt((l1JetEta-recoJetEta)*(l1JetEta-recoJetEta) + (l1JetPhi-recoJetPhi)*(l1JetPhi-recoJetPhi));
+            if( deltaR < minDeltaR )
+            {
+                minDeltaR = deltaR;
+                iMinL1Jet = iL1Jet;
+            }
+        }
+        if( minDeltaR < 0.4 )
+            fJetMatching.emplace_back(new TL1JetMatch(fL1JetEt[iMinL1Jet], fL1JetEta[iMinL1Jet], fL1JetPhi[iMinL1Jet], recoJetEt, recoJetEta, recoJetPhi));
+    }
+}
+
+void TL1EventClass::TurnJetMatchingOn()
+{
+    IsJetMatchingOn = true;
 }
 
 #endif

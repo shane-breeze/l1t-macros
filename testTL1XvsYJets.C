@@ -3,20 +3,13 @@
 #include <algorithm>
 
 #include "Core/TL1EventClass.h"
+#include "Core/TL1JetMatch.h"
 #include "TL1XvsY.h"
-
-struct JetMatch
-{
-    double l1JetEt, recoJetEt;
-    double l1JetEta, recoJetEta;
-    double l1JetPhi, recoJetPhi;
-};
 
 vector<double> bins(double max);
 vector<double> phiBins();
 double FoldPhi(double phi);
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
-bool GetMatch(TL1EventClass * event, unsigned iRecoJet, JetMatch & match);
 
 void testTL1XvsYJets()
 {
@@ -30,11 +23,10 @@ void testTL1XvsYJets()
     std::string run = "273301";
     bool doFit = true;
 
-    std::shared_ptr<TFile> rootFile(new TFile(Form("%s_%s_r%s.root",sample.c_str(),triggerName.c_str(),run.c_str()), "UPDATE"));
-
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
     std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
     std::shared_ptr<TL1EventClass> event(new TL1EventClass(inDir));
+    event->TurnJetMatchingOn();
 
     std::vector<std::shared_ptr<TL1XvsY>> xvsy;
 
@@ -108,38 +100,41 @@ void testTL1XvsYJets()
 
     while( event->Next() )
     {
-        for(unsigned iRecoJet=0; iRecoJet<event->GetPEvent()->fJets->nJets; ++iRecoJet)
+        if( event->GetPEvent()->fPos % 1000 == 0 ) cout << event->GetPEvent()->fPos << endl;
+        for(auto jetMatch : event->fJetMatching)
         {
-            // Match reco jet with l1 jet
-            JetMatch match;
-            if( !GetMatch(event->GetPEvent(), iRecoJet, match) ) continue;
+            double l1Et = jetMatch->GetL1Et();
+            double l1Eta = jetMatch->GetL1Eta();
+            double l1Phi = jetMatch->GetL1Phi();
+            
+            double recoEt = jetMatch->GetRecoEt();
+            double recoEta = jetMatch->GetRecoEta();
+            double recoPhi = jetMatch->GetRecoPhi();
 
-            if( abs(match.recoJetEta) >= 3.0 )
+            if( abs(recoEta) >= 3.0 )
             {
-                xvsy[2]->Fill(match.recoJetEt, match.l1JetEt);
-                xvsy[5]->Fill(FoldPhi(match.recoJetPhi), FoldPhi(match.l1JetPhi));
+                xvsy[2]->Fill(recoEt, l1Et);
+                xvsy[5]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi));
             }
 
             // Jet filter (tight lepton veto and zero muon multiplicity)
-            if( !event->fJetFilterPassFlag[iRecoJet] ) continue;
+            if( !event->fJetFilterPassFlags[iRecoJet] ) continue;
 
-            if( abs(match.recoJetEta) < 1.3 )
+            if( abs(recoEta) < 1.3 )
             {
-                xvsy[0]->Fill(match.recoJetEt, match.l1JetEt);
-                xvsy[3]->Fill(FoldPhi(match.recoJetPhi), FoldPhi(match.l1JetPhi));
+                xvsy[0]->Fill(recoEt, l1Et);
+                xvsy[3]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi));
             }
-            else if( abs(match.recoJetEta) < 3.0 )
+            else if( abs(recoEta) < 3.0 )
             {
-                xvsy[1]->Fill(match.recoJetEt, match.l1JetEt);
-                xvsy[4]->Fill(FoldPhi(match.recoJetPhi), FoldPhi(match.l1JetPhi));
+                xvsy[1]->Fill(recoEt, l1Et);
+                xvsy[4]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi));
             }
         }
     }
 
     for(auto it=xvsy.begin(); it!=xvsy.end(); ++it)
         (*it)->DrawPlots();
-
-    rootFile->Close();
 }
 
 vector<double> bins(double max)
@@ -169,36 +164,4 @@ void SetMyStyle(int palette, double rmarg, TStyle * myStyle)
     myStyle->SetPalette(palette);
     myStyle->SetPadRightMargin(rmarg);
     myStyle->cd();
-}
-
-bool GetMatch(TL1EventClass * event, unsigned iRecoJet, JetMatch & match)
-{
-    double recoJetEt = event->fJets->etCorr[iRecoJet];
-    double recoJetEta = event->fJets->eta[iRecoJet];
-    double recoJetPhi = event->fJets->phi[iRecoJet];
-    double minDeltaR = 0.4;
-    unsigned iMinL1Jet = 0;
-    for(unsigned iL1Jet=0; iL1Jet<event->fL1JetEt.size(); ++iL1Jet)
-    {
-        double l1JetEt = event->fL1JetEt[iL1Jet];
-        double l1JetEta = event->fL1JetEta[iL1Jet];
-        double l1JetPhi = event->fL1JetPhi[iL1Jet];
-        double deltaR = TMath::Sqrt((l1JetEta-recoJetEta)*(l1JetEta-recoJetEta) + (l1JetPhi-recoJetPhi)*(l1JetPhi-recoJetPhi));
-        if( deltaR < minDeltaR )
-        {
-            minDeltaR = deltaR;
-            iMinL1Jet = iL1Jet;
-        }
-    }
-    if( minDeltaR < 0.4 )
-    {
-        match.l1JetEt = event->fL1JetEt[iMinL1Jet];
-        match.l1JetEta = event->fL1JetEta[iMinL1Jet];
-        match.l1JetPhi = event->fL1JetPhi[iMinL1Jet];
-        match.recoJetEt = recoJetEt;
-        match.recoJetEta = recoJetEta;
-        match.recoJetPhi = recoJetPhi;
-        return true;
-    }
-    return false;
 }
