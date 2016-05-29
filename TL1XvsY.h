@@ -3,6 +3,7 @@
 
 #include <string>
 #include <memory>
+#include <vector>
 
 #include <TFile.h>
 #include <TH2F.h>
@@ -23,9 +24,9 @@ class TL1XvsY : public TL1Plots
         virtual void Fill(const double & xVal, const double & yVal);
         virtual void DrawPlots();
 
-        void SetXBins(const vector<double> & xBins);
+        void SetXBins(const std::vector<double> & xBins);
         void SetX(const std::string & xName, const std::string & xTitle);
-        void SetYBins(const vector<double> & yBins);
+        void SetYBins(const std::vector<double> & yBins);
         void SetY(const std::string & yName, const std::string & yTitle);
         void SetAddMark(const std::string & addMark);
     private:
@@ -34,7 +35,7 @@ class TL1XvsY : public TL1Plots
 
         std::string fXName, fXTitle;
         std::string fYName, fYTitle;
-        vector<double> fXBins, fYBins;
+        std::vector<double> fXBins, fYBins;
 
         std::string fAddMark;
 };
@@ -46,7 +47,7 @@ TL1XvsY::~TL1XvsY()
 
 void TL1XvsY::InitPlots()
 {
-    fRootFile = std::shared_ptr<TFile>(new TFile(Form("xy_%s.root",this->GetOutName().c_str()),"NEW"));
+    fRootFile = std::shared_ptr<TFile>(new TFile(Form("xy_%s.root",this->GetOutName().c_str()),"RECREATE"));
     fPlot = std::shared_ptr<TH2F>(new TH2F(Form("xy_%s_vs_%s",fXName.c_str(),fYName.c_str()),"", fXBins.size()-1,&(fXBins)[0], fYBins.size()-1,&(fYBins)[0]));
     fPlot->SetDirectory(0);
     fPlot->GetXaxis()->SetTitle(fXTitle.c_str());
@@ -97,7 +98,7 @@ void TL1XvsY::DrawPlots()
     can->SaveAs(outName.c_str());
 }
 
-void TL1XvsY::SetXBins(const vector<double> & xBins)
+void TL1XvsY::SetXBins(const std::vector<double> & xBins)
 {
     fXBins = xBins;
 }
@@ -108,7 +109,7 @@ void TL1XvsY::SetX(const std::string & xName, const std::string & xTitle)
     fXTitle = xTitle;
 }
 
-void TL1XvsY::SetYBins(const vector<double> & yBins)
+void TL1XvsY::SetYBins(const std::vector<double> & yBins)
 {
     fYBins = yBins;
 }

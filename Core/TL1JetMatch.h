@@ -4,56 +4,41 @@
 class TL1JetMatch
 {
     public:
-        TL1JetMatch(double l1Et, double l1Eta, double l1Phi, double recoEt, double recoEta, double recoPhi);
-        
-        double GetL1Et() const;
-        double GetL1Eta() const;
-        double GetL1Phi() const;
+        TL1JetMatch(unsigned iL1, unsigned iReco);
 
-        double GetRecoEt() const;
-        double GetRecoEta() const;
-        double GetRecoPhi() const;
+        void SetIL1(unsigned iL1);
+        void SetIReco(unsigned iReco);
+        
+        unsigned GetIL1() const;
+        unsigned GetIReco() const;
 
     private:
-        double fL1Et, fL1Eta, fL1Phi;
-        double fRecoEt, fRecoEta, fRecoPhi;
+        unsigned fIL1, fIReco;
 };
 
-TL1JetMatch::TL1JetMatch(double l1Et, double l1Eta, double l1Phi, double recoEt, double recoEta, double recoPhi) :
-    fL1Et(l1Et), fL1Eta(l1Eta), fL1Phi(l1Phi),
-    fRecoEt(recoEt), fRecoEta(recoEta), fRecoPhi(recoPhi)
+TL1JetMatch::TL1JetMatch(unsigned iL1, unsigned iReco) :
+    fIL1(iL1), fIReco(iReco)
 {
 }
 
-
-double TL1JetMatch::GetL1Et() const
+void TL1JetMatch::SetIL1(unsigned iL1)
 {
-    return fL1Et;
+    fIL1 = iL1;
 }
 
-double TL1JetMatch::GetL1Eta() const
+void TL1JetMatch::SetIReco(unsigned iReco)
 {
-    return fL1Eta;
+    fIReco = iReco;
 }
 
-double TL1JetMatch::GetL1Phi() const
+unsigned TL1JetMatch::GetIL1() const
 {
-    return fL1Phi;
+    return fIL1;
 }
 
-double TL1JetMatch::GetRecoEt() const
+unsigned TL1JetMatch::GetIReco() const
 {
-    return fRecoEt;
-}
-
-double TL1JetMatch::GetRecoEta() const
-{
-    return fRecoEta;
-}
-
-double TL1JetMatch::GetRecoPhi() const
-{
-    return fRecoPhi;
+    return fIReco;
 }
 
 #endif

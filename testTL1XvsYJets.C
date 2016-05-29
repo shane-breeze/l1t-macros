@@ -4,6 +4,7 @@
 
 #include "Core/TL1EventClass.h"
 #include "Core/TL1JetMatch.h"
+#include "Core/TL1Progress.C"
 #include "TL1XvsY.h"
 
 vector<double> bins(double max);
@@ -26,7 +27,6 @@ void testTL1XvsYJets()
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
     std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
     std::shared_ptr<TL1EventClass> event(new TL1EventClass(inDir));
-    event->TurnJetMatchingOn();
 
     std::vector<std::shared_ptr<TL1XvsY>> xvsy;
 
@@ -98,18 +98,23 @@ void testTL1XvsYJets()
     for(auto it=xvsy.begin(); it!=xvsy.end(); ++it)
         (*it)->InitPlots();
 
+    unsigned NEntries = event->GetPEvent()->GetNEntries();
     while( event->Next() )
     {
-        if( event->GetPEvent()->fPos % 1000 == 0 ) cout << event->GetPEvent()->fPos << endl;
-        for(auto jetMatch : event->fJetMatching)
+        TL1Progress::PrintProgressBar((float)(event->GetPEvent()->GetPosition()+1)/(float)(NEntries));
+        for(unsigned iRecoJet=0; iRecoJet<event->GetPEvent()->fJets->nJets; ++iRecoJet)
         {
-            double l1Et = jetMatch->GetL1Et();
-            double l1Eta = jetMatch->GetL1Eta();
-            double l1Phi = jetMatch->GetL1Phi();
+            std::shared_ptr<TL1JetMatch> jetMatch(new TL1JetMatch(0, iRecoJet));
+            if( !event->GetMatchedJet(jetMatch.get()) ) continue;
+
+            unsigned iL1Jet = jetMatch->GetIL1();
+            double l1Et = event->fL1JetEt[iL1Jet];
+            double l1Eta = event->fL1JetEta[iL1Jet];
+            double l1Phi = event->fL1JetPhi[iL1Jet];
             
-            double recoEt = jetMatch->GetRecoEt();
-            double recoEta = jetMatch->GetRecoEta();
-            double recoPhi = jetMatch->GetRecoPhi();
+            double recoEt = event->GetPEvent()->fJets->etCorr[iRecoJet];
+            double recoEta = event->GetPEvent()->fJets->eta[iRecoJet];
+            double recoPhi = event->GetPEvent()->fJets->phi[iRecoJet];
 
             if( abs(recoEta) >= 3.0 )
             {

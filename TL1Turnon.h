@@ -55,8 +55,8 @@ TL1Turnon::~TL1Turnon()
 
 void TL1Turnon::InitPlots()
 {
-    fPlotsRoot = std::shared_ptr<TFile>(new TFile(Form("dists_%s.root",this->GetOutName().c_str()),"NEW"));
-    fTurnonsRoot = std::shared_ptr<TFile>(new TFile(Form("effs_%s.root",this->GetOutName().c_str()),"NEW"));
+    fPlotsRoot = std::shared_ptr<TFile>(new TFile(Form("dists_%s.root",this->GetOutName().c_str()),"RECREATE"));
+    fTurnonsRoot = std::shared_ptr<TFile>(new TFile(Form("effs_%s.root",this->GetOutName().c_str()),"RECREATE"));
     for(unsigned i=0; i<fSeeds.size(); ++i)
     {
         fPlots.emplace_back(new TH1F(Form("dist_%s_%s_%g",fXName.c_str(),fSeedName.c_str(),fSeeds[i]),"", fXBins.size()-1,&(fXBins)[0]));

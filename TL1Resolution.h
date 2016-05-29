@@ -3,6 +3,7 @@
 
 #include <string>
 #include <memory>
+#include <vector>
 
 #include <TFile.h>
 #include <TH1F.h>
@@ -21,7 +22,7 @@ class TL1Resolution : public TL1Plots
         virtual void Fill(const double & xVal, const double & yVal);
         virtual void DrawPlots();
 
-        void SetBins(const vector<double> & bins);
+        void SetBins(const std::vector<double> & bins);
         void SetX(const std::string & xName, const std::string & xTitle);
         void SetY(const std::string & yName, const std::string & yTitle);
     private:
@@ -30,7 +31,7 @@ class TL1Resolution : public TL1Plots
 
         std::string fXName, fXTitle;
         std::string fYName, fYTitle;
-        vector<double> fBins;
+        std::vector<double> fBins;
 };
 
 TL1Resolution::~TL1Resolution()
@@ -40,7 +41,7 @@ TL1Resolution::~TL1Resolution()
 
 void TL1Resolution::InitPlots()
 {
-    fRootFile = std::shared_ptr<TFile>(new TFile(Form("res_%s.root",this->GetOutName().c_str()),"NEW"));
+    fRootFile = std::shared_ptr<TFile>(new TFile(Form("res_%s.root",this->GetOutName().c_str()),"RECREATE"));
     fPlot = std::shared_ptr<TH1F>(new TH1F(Form("res_%s_over_%s",fXName.c_str(),fYName.c_str()),"", fBins.size()-1,&(fBins)[0]));
     fPlot->SetDirectory(0);
     fPlot->GetXaxis()->SetTitle(Form("%s / %s",fYTitle.c_str(),fXTitle.c_str()));
@@ -86,7 +87,7 @@ void TL1Resolution::DrawPlots()
     can->SaveAs(outName.c_str());
 }
 
-void TL1Resolution::SetBins(const vector<double> & bins)
+void TL1Resolution::SetBins(const std::vector<double> & bins)
 {
     fBins = bins;
 }

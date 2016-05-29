@@ -5,11 +5,11 @@
 #include "Core/TL1EventClass.h"
 #include "TL1Resolution.h"
 
-vector<double> bins();
+std::vector<double> bins();
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 double FoldPhi(double phi);
 
-void testTL1Resolution()
+void testTL1XvsY()
 {
     std::shared_ptr<TStyle> myStyle(new TStyle(TDRStyle()));
     SetMyStyle(55, 0.07, myStyle.get());
@@ -122,9 +122,9 @@ void testTL1Resolution()
         (*it)->DrawPlots();
 }
 
-vector<double> bins()
+std::vector<double> bins()
 {
-    vector<double> temp;
+    std::vector<double> temp;
     for(double binLowerEdge=-1.0; binLowerEdge<=3.0; binLowerEdge+= 0.02) temp.push_back(binLowerEdge);
     return temp;
 }
@@ -141,5 +141,5 @@ void SetMyStyle(int palette, double rmarg, TStyle * myStyle)
 
 double FoldPhi(double phi)
 {
-    return min( (float)abs(phi), (float)abs(2*TMath::Pi()-phi) );
+    return TMath::Min( (float)abs(phi), (float)abs(2*TMath::Pi()-phi) );
 }
