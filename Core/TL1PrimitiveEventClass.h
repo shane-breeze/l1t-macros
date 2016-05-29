@@ -13,6 +13,9 @@ class TL1PrimitiveEventClass
         bool Next();
         void GetEntry(int i);
 
+        unsigned GetNEntries() const;
+        unsigned GetPosition() const;
+
         std::shared_ptr<L1Analysis::L1AnalysisL1CaloTowerDataFormat>   fCaloTowers;
         std::shared_ptr<L1Analysis::L1AnalysisRecoJetDataFormat>       fJets;
         std::shared_ptr<L1Analysis::L1AnalysisRecoMetDataFormat>       fSums;
@@ -24,6 +27,7 @@ class TL1PrimitiveEventClass
     private:
         std::shared_ptr<TL1DataClass> caloTower, jetReco, metFilterReco, muonReco, recoTree, upgrade;
         Long64_t fPos;
+
 };
 
 TL1PrimitiveEventClass::TL1PrimitiveEventClass(std::string inDir) :
@@ -88,6 +92,16 @@ void TL1PrimitiveEventClass::GetEntry(int i)
     muonReco->GetEntry(i);
     recoTree->GetEntry(i);
     upgrade->GetEntry(i);
+}
+
+unsigned TL1PrimitiveEventClass::GetNEntries() const
+{
+    return caloTower->GetEntries();
+}
+
+unsigned TL1PrimitiveEventClass::GetPosition() const
+{
+    return fPos;
 }
 
 #endif

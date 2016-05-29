@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 
+#include "Core/tdrstyle.C"
 #include "Core/TL1EventClass.h"
 #include "TL1Turnon.h"
 
@@ -79,21 +80,21 @@ void testTL1Turnon()
     turnons[3]->SetFit(doFit);
 
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)
-        (*it)->InitDists();
+        (*it)->InitPlots();
 
     while( event->Next() )
     {
         //----- MHT -----//
-        turnons[1]->Fill(event->fRecalcRecoMht, event->fFPL1Mht);
+        turnons[1]->Fill(event->fRecalcRecoMht, event->fRecalcL1Mht);
         //turnons[1]->Fill(event->GetPEvent()->fSums->mHt, event->fL1Mht);
         
         //----- HTT -----//
         turnons[3]->Fill(event->GetPEvent()->fSums->Ht, event->fL1Htt);
         //turnons[3]->Fill(event->fRecalcRecoHtt, event->fL1Htt);
 
-        if( !passMuonFilter ) continue;
+        if( !event->fMuonFilterPassFlag ) continue;
         //----- MET -----//
-        if( passSumsFilter )
+        if( event->fMetFilterPassFlag )
             turnons[0]->Fill(event->GetPEvent()->fSums->caloMetBE, event->fL1Met);
 
         //----- ETT -----//
@@ -102,7 +103,7 @@ void testTL1Turnon()
 
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)
     {
-        (*it)->DrawDists();
+        (*it)->DrawPlots();
         (*it)->DrawTurnons();
     }
 
