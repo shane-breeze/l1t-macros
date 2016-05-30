@@ -22,8 +22,6 @@ void testTL1XvsY()
     std::string triggerTitle = "Single Muon";
     std::string run = "273301";
 
-    std::shared_ptr<TFile> rootFile(new TFile(Form("%s_%s_r%s.root",sample.c_str(),triggerName.c_str(),run.c_str()), "UPDATE"));
-
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
     std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
     std::shared_ptr<TL1EventClass> event(new TL1EventClass(inDir));
@@ -107,6 +105,18 @@ void testTL1XvsY()
     xvsy[6]->SetY("recalcl1mht","Recalc L1 H_{T}^{miss} (GeV)");
     xvsy[6]->SetOutName(triggerName+"_recalcMht_vs_recalcL1Mht");
     //xvsy[6]->SetAddMark("n_{j}^{MHT}=4");
+    
+    // l1EttNjet vs recoEttNjet
+    xvsy.emplace_back(new TL1XvsY());
+    xvsy[7]->SetSample(sample,"");
+    xvsy[7]->SetTrigger(triggerName,triggerTitle);
+    xvsy[7]->SetRun(run);
+    xvsy[7]->SetXBins(bins(10,1,0));
+    xvsy[7]->SetX("nJetRecoEtt","Njet in Recalc Reco H_{T}^{miss}");
+    xvsy[7]->SetYBins(bins(10,1,0));
+    xvsy[7]->SetY("nJetL1Ett","Njet in Recalc L1 H_{T}^{miss}");
+    xvsy[7]->SetOutName(triggerName+"_nJetRecoMht_vs_nJetL1Mht");
+
 
     for(auto it=xvsy.begin(); it!=xvsy.end(); ++it)
         (*it)->InitPlots();
@@ -124,7 +134,15 @@ void testTL1XvsY()
         //----- MHT -----//
         xvsy[1]->Fill(event->fRecalcRecoMht, event->fL1Mht);
         //xvsy[1]->Fill(event->GetPEvent()->fSums->mHt, event->fL1Mht);
-        if( event->fMhtPassFlag && event->fRecalcRecoMht != 0.0 && event->fRecalcL1Mht != 0.0 ) xvsy[6]->Fill(event->fRecalcRecoMht, event->fRecalcL1Mht);
+        if( event->fMhtPassFlag && event->fRecalcRecoMht != 0.0 && event->fRecalcL1Mht != 0.0 )
+        {
+            xvsy[5]->Fill(FoldPhi(event->fRecalcRecoMhtPhi), FoldPhi(event->fL1MhtPhi));
+            xvsy[6]->Fill(event->fRecalcRecoMht, event->fRecalcL1Mht);
+            xvsy[7]->Fill(event->fNJetRecoMht, event->fNJetL1Mht);
+        }
+        //----- MHT Phi -----//
+        if( event->fRecalcRecoMht != 0.0 && event->fL1Mht > 0.0 ) 
+        // xvsy[5]->Fill(event->fRecalcRecoMhtPhi, event->fL1MhtPhi);
 
         if( !event->fMuonFilterPassFlag ) continue;
         //----- MET -----//
@@ -137,15 +155,10 @@ void testTL1XvsY()
         //----- MET Phi -----//
         xvsy[4]->Fill(FoldPhi(event->GetPEvent()->fSums->caloMetPhiBE), FoldPhi(event->fL1MetPhi));
 
-        //----- MHT Phi -----//
-        if( event->fRecalcRecoMht != 0.0 && event->fL1Mht > 0.0 ) xvsy[5]->Fill(FoldPhi(event->fRecalcRecoMhtPhi), FoldPhi(event->fL1MhtPhi));
-        // xvsy[5]->Fill(event->fRecalcRecoMhtPhi, event->fL1MhtPhi);
     }
 
     for(auto it=xvsy.begin(); it!=xvsy.end(); ++it)
         (*it)->DrawPlots();
-
-    rootFile->Close();
 }
 
 std::vector<double> bins(double max, double width, double min)
