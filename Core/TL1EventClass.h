@@ -88,13 +88,16 @@ void TL1EventClass::GetEntry(int i)
 
 void TL1EventClass::GetDerivatives()
 {
+    // L1
     this->GetL1Jets();
     this->GetL1Sums();
 
+    // Filter
     this->MuonFilter();
     this->JetFilter();
     this->SumsFilter();
 
+    // Recalc
     this->GetRecalcL1Mht();
     this->GetRecalcL1Ett();
     
