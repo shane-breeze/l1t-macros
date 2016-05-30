@@ -132,7 +132,7 @@ void testTL1XvsY()
         //xvsy[3]->Fill(event->fRecalcRecoHtt, event->fL1Htt);
         
         //----- MHT -----//
-        xvsy[1]->Fill(event->fRecalcRecoMht, event->fL1Mht);
+        if( event->fMhtPassFlag && event->fRecalcRecoMht != 0.0 ) xvsy[1]->Fill(event->fRecalcRecoMht, event->fL1Mht);
         //xvsy[1]->Fill(event->GetPEvent()->fSums->mHt, event->fL1Mht);
         if( event->fMhtPassFlag && event->fRecalcRecoMht != 0.0 && event->fRecalcL1Mht != 0.0 )
         {
