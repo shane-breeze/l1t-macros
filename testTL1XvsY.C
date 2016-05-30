@@ -36,7 +36,7 @@ void testTL1XvsY()
     xvsy[0]->SetXBins(bins(200.0,1.0,0.0));
     xvsy[0]->SetX("caloMetBE","Calo E_{T}^{miss} no HF (GeV)");
     xvsy[0]->SetYBins(bins(200.0,1.0,0.0));
-    xvsy[0]->SetY("l1met","L1 E_{T}^{miss} (GeV)");
+    xvsy[0]->SetY("l1Met","L1 E_{T}^{miss} (GeV)");
     xvsy[0]->SetOutName(triggerName+"_caloMetBE_vs_l1Met");
 
     // mht
@@ -45,10 +45,10 @@ void testTL1XvsY()
     xvsy[1]->SetTrigger(triggerName,triggerTitle);
     xvsy[1]->SetRun(run);
     xvsy[1]->SetXBins(bins(200.0,1.0,0.0));
-    xvsy[1]->SetX("mht","H_{T}^{miss} (GeV)");
+    xvsy[1]->SetX("recalcRecoMht","Recalc Reco H_{T}^{miss} (GeV)");
     xvsy[1]->SetYBins(bins(200.0,1.0,0.0));
-    xvsy[1]->SetY("l1htt","L1 H_{T}^{miss}");
-    xvsy[1]->SetOutName(triggerName+"_recalcMht_vs_l1Mht");
+    xvsy[1]->SetY("l1Mht","L1 H_{T}^{miss}");
+    xvsy[1]->SetOutName(triggerName+"_recalcRecoMht_vs_l1Mht");
 
     // caloEttBE
     xvsy.emplace_back(new TL1XvsY());
@@ -67,9 +67,9 @@ void testTL1XvsY()
     xvsy[3]->SetTrigger(triggerName,triggerTitle);
     xvsy[3]->SetRun(run);
     xvsy[3]->SetXBins(bins(600.0,1.0,0.0));
-    xvsy[3]->SetX("htt","Total H_{T} (GeV)");
+    xvsy[3]->SetX("recohtt","Reco Total H_{T} (GeV)");
     xvsy[3]->SetYBins(bins(600.0,1.0,0.0));
-    xvsy[3]->SetY("l1htt","L1 Total H_{T}");
+    xvsy[3]->SetY("l1Htt","L1 Total H_{T}");
     xvsy[3]->SetOutName(triggerName+"_htt_vs_l1Htt");
     
     // caloMetBE Phi
@@ -80,7 +80,7 @@ void testTL1XvsY()
     xvsy[4]->SetXBins(phiBins());
     xvsy[4]->SetX("caloMetBEPhi","Calo E_{T}^{miss} Phi (no HF)");
     xvsy[4]->SetYBins(phiBins());
-    xvsy[4]->SetY("l1metphi","L1 E_{T}^{miss} Phi");
+    xvsy[4]->SetY("l1MetPhi","L1 E_{T}^{miss} Phi");
     xvsy[4]->SetOutName(triggerName+"_caloMetBEPhi_vs_l1MetPhi");
 
     // mht Phi
@@ -89,10 +89,10 @@ void testTL1XvsY()
     xvsy[5]->SetTrigger(triggerName,triggerTitle);
     xvsy[5]->SetRun(run);
     xvsy[5]->SetXBins(phiBins());
-    xvsy[5]->SetX("mhtPhi","H_{T}^{miss} Phi");
+    xvsy[5]->SetX("recalcRecoMhtPhi","Reco H_{T}^{miss} Phi");
     xvsy[5]->SetYBins(phiBins());
-    xvsy[5]->SetY("l1httphi","L1 H_{T}^{miss} Phi");
-    xvsy[5]->SetOutName(triggerName+"_recalcMhtPhi_vs_l1MhtPhi");
+    xvsy[5]->SetY("l1MhtPhi","L1 H_{T}^{miss} Phi");
+    xvsy[5]->SetOutName(triggerName+"_recalcRecoMhtPhi_vs_l1MhtPhi");
 
     // l1MhtFloat
     xvsy.emplace_back(new TL1XvsY());
@@ -100,10 +100,10 @@ void testTL1XvsY()
     xvsy[6]->SetTrigger(triggerName,triggerTitle);
     xvsy[6]->SetRun(run);
     xvsy[6]->SetXBins(bins(200.0,2.5,0.0));
-    xvsy[6]->SetX("recalcMht","Recalc Reco H_{T}^{miss} (GeV)");
+    xvsy[6]->SetX("recalcRecoMht","Recalc Reco H_{T}^{miss} (GeV)");
     xvsy[6]->SetYBins(bins(200.0,2.5,0.0));
     xvsy[6]->SetY("recalcl1mht","Recalc L1 H_{T}^{miss} (GeV)");
-    xvsy[6]->SetOutName(triggerName+"_recalcMht_vs_recalcL1Mht");
+    xvsy[6]->SetOutName(triggerName+"_recalcRecoMht_vs_recalcL1Mht");
     //xvsy[6]->SetAddMark("n_{j}^{MHT}=4");
     
     // l1EttNjet vs recoEttNjet
@@ -116,6 +116,17 @@ void testTL1XvsY()
     xvsy[7]->SetYBins(bins(10,1,0));
     xvsy[7]->SetY("nJetL1Ett","Njet in Recalc L1 H_{T}^{miss}");
     xvsy[7]->SetOutName(triggerName+"_nJetRecoMht_vs_nJetL1Mht");
+
+    // mht
+    xvsy.emplace_back(new TL1XvsY());
+    xvsy[8]->SetSample(sample,"");
+    xvsy[8]->SetTrigger(triggerName,triggerTitle);
+    xvsy[8]->SetRun(run);
+    xvsy[8]->SetXBins(bins(200.0,1.0,0.0));
+    xvsy[8]->SetX("recoMht","Reco H_{T}^{miss} (GeV)");
+    xvsy[8]->SetYBins(bins(200.0,1.0,0.0));
+    xvsy[8]->SetY("l1Mht","L1 H_{T}^{miss}");
+    xvsy[8]->SetOutName(triggerName+"_recoMht_vs_l1Mht");
 
 
     for(auto it=xvsy.begin(); it!=xvsy.end(); ++it)
@@ -132,7 +143,11 @@ void testTL1XvsY()
         //xvsy[3]->Fill(event->fRecalcRecoHtt, event->fL1Htt);
         
         //----- MHT -----//
-        if( event->fMhtPassFlag && event->fRecalcRecoMht != 0.0 ) xvsy[1]->Fill(event->fRecalcRecoMht, event->fL1Mht);
+        cout << event->fMhtPassFlag << "\tL1 = " << event->fRecalcL1Mht << "\tReco = " << event->fRecalcRecoMht << endl;
+        for(int i=0; i<event->GetPEvent()->fJets->nJets; ++i)
+            cout << "\t" << event->GetPEvent()->fJets->muMult[i] << "\t";
+        cout << "\n\n";
+        if( event->fMhtPassFlag && event->fRecalcRecoMht != 0.0 && event->fL1Mht != 0.0 ) xvsy[1]->Fill(event->fRecalcRecoMht, event->fL1Mht);
         //xvsy[1]->Fill(event->GetPEvent()->fSums->mHt, event->fL1Mht);
         if( event->fMhtPassFlag && event->fRecalcRecoMht != 0.0 && event->fRecalcL1Mht != 0.0 )
         {
@@ -140,9 +155,7 @@ void testTL1XvsY()
             xvsy[6]->Fill(event->fRecalcRecoMht, event->fRecalcL1Mht);
             xvsy[7]->Fill(event->fNJetRecoMht, event->fNJetL1Mht);
         }
-        //----- MHT Phi -----//
-        if( event->fRecalcRecoMht != 0.0 && event->fL1Mht > 0.0 ) 
-        // xvsy[5]->Fill(event->fRecalcRecoMhtPhi, event->fL1MhtPhi);
+        if( event->GetPEvent()->fSums->mHt != 0.0 && event->fL1Mht != 0.0 ) xvsy[8]->Fill(event->GetPEvent()->fSums->mHt, event->fL1Mht);
 
         if( !event->fMuonFilterPassFlag ) continue;
         //----- MET -----//

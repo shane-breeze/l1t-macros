@@ -169,6 +169,26 @@ void TL1EventClass::JetFilter()
     {
         std::shared_ptr<L1Analysis::L1AnalysisRecoJetDataFormat> recoJets = fPrimitiveEvent->fJets;
 
+        double eta  = fPrimitiveEvent->fJets->eta[iJet];
+        double nhef = fPrimitiveEvent->fJets->nhef[iJet];
+        double pef  = fPrimitiveEvent->fJets->pef[iJet];
+        double mef  = fPrimitiveEvent->fJets->mef[iJet];
+        double chef = fPrimitiveEvent->fJets->chef[iJet];
+        double eef  = fPrimitiveEvent->fJets->eef[iJet];
+        int chMult  = fPrimitiveEvent->fJets->chMult[iJet];
+        int nhMult  = fPrimitiveEvent->fJets->nhMult[iJet];
+        int phMult  = fPrimitiveEvent->fJets->phMult[iJet];
+        int elMult  = fPrimitiveEvent->fJets->elMult[iJet];
+        int muMult  = fPrimitiveEvent->fJets->muMult[iJet];
+        bool jetPass;
+        if (abs(eta)<=3.00 && nhef<0.90 && pef<0.90 && (chMult+nhMult+phMult+elMult+muMult)>1 && mef<0.8 
+                && (abs(eta)>2.4||(abs(eta)<=2.4 && chef>0 && (chMult+elMult+muMult)>0 && eef<0.90))){
+            jetPass = true;}//this jet has passed
+        else{jetPass = false;}//this jet has failed, or is outside the central zone           
+        fJetFilterPassFlags.push_back(jetPass && muMult==0);
+    }
+
+
 //        // Muon mult filter
         //int muMult  = recoJets->muMult[iJet];
 //        if( muMult != 0 )
@@ -178,7 +198,7 @@ void TL1EventClass::JetFilter()
 //        }
 //
 //        // No hf jets
-        double eta  = recoJets->eta[iJet];
+//        double eta  = recoJets->eta[iJet];
 //        if( TMath::Abs(eta) > 3. )
 //        {
 //            fJetFilterPassFlags.push_back(false);
@@ -186,7 +206,7 @@ void TL1EventClass::JetFilter()
 //        }
 //
 //        // nhef
-        double nhef = recoJets->nhef[iJet];
+//        double nhef = recoJets->nhef[iJet];
 //        if( nhef >= 0.9 )
 //        {
 //            fJetFilterPassFlags.push_back(false);
@@ -194,7 +214,7 @@ void TL1EventClass::JetFilter()
 //        }
 //
 //        // pef
-        double pef  = recoJets->pef[iJet];
+//        double pef  = recoJets->pef[iJet];
 //        if( pef >= 0.9 )
 //        {
 //            fJetFilterPassFlags.push_back(false);
@@ -202,7 +222,7 @@ void TL1EventClass::JetFilter()
 //        }
 //
 //        // mef
-        double mef  = recoJets->mef[iJet];
+//        double mef  = recoJets->mef[iJet];
 //        if( mef >= 0.8 )
 //        {
 //            fJetFilterPassFlags.push_back(false);
@@ -210,12 +230,12 @@ void TL1EventClass::JetFilter()
 //        }
 //
 //        // sumMult
-        //int sumMult = recoJets->chMult[iJet];
-        int chMult = recoJets->chMult[iJet];
-        int elMult = recoJets->elMult[iJet];
-        int muMult = recoJets->muMult[iJet];
-        int nhMult  = recoJets->nhMult[iJet];
-        int phMult  = recoJets->phMult[iJet];
+//        //int sumMult = recoJets->chMult[iJet];
+//        int chMult = recoJets->chMult[iJet];
+//        int elMult = recoJets->elMult[iJet];
+//        int muMult = recoJets->muMult[iJet];
+//        int nhMult  = recoJets->nhMult[iJet];
+//        int phMult  = recoJets->phMult[iJet];
 //        if( sumMult+nhMult+phMult <= 1 )
 //        {
 //            fJetFilterPassFlags.push_back(false);
@@ -236,7 +256,7 @@ void TL1EventClass::JetFilter()
 //        }
 //
 //        // chef
-        double chef = recoJets->chef[iJet];
+//        double chef = recoJets->chef[iJet];
 //        if( chef <= 0 )
 //        {
 //            fJetFilterPassFlags.push_back(false);
@@ -244,7 +264,7 @@ void TL1EventClass::JetFilter()
 //        }
 //
 //        // eef
-        double eef  = recoJets->eef[iJet];
+//        double eef  = recoJets->eef[iJet];
 //        if( eef >= 0.9 )
 //        {
 //            fJetFilterPassFlags.push_back(false);
@@ -253,13 +273,13 @@ void TL1EventClass::JetFilter()
 //
 //        // pass
 //        fJetFilterPassFlags.push_back(true);
-
-        if (abs(eta)<=3.00 && nhef<0.90 && pef<0.90 && (chMult+nhMult+phMult+elMult+muMult)>1 && mef<0.8 && (abs(eta)>2.4||(abs(eta)<=2.4 && chef>0 && (chMult+elMult+muMult)>0 && eef<0.90)))
-        {
-             if( muMult == 0 ) fJetFilterPassFlags.push_back(true);
-             else fJetFilterPassFlags.push_back(false);
-        }
-    }
+//
+//        if (abs(eta)<=3.00 && nhef<0.90 && pef<0.90 && (chMult+nhMult+phMult+elMult+muMult)>1 && mef<0.8 && (abs(eta)>2.4||(abs(eta)<=2.4 && chef>0 && (chMult+elMult+muMult)>0 && eef<0.90)))
+//        {
+//             if( muMult == 0 ) fJetFilterPassFlags.push_back(true);
+//             else fJetFilterPassFlags.push_back(false);
+//        }
+//    }
 }
 
 void TL1EventClass::SumsFilter()
