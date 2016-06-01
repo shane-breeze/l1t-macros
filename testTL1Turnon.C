@@ -1,8 +1,10 @@
 #include <string>
+#include <memory>
 #include <vector>
 
 #include "Core/tdrstyle.C"
 #include "Core/TL1EventClass.h"
+#include "Core/TL1Progress.C"
 #include "TL1Turnon.h"
 
 vector<double> metBins();
@@ -21,21 +23,18 @@ void testTL1Turnon()
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
     std::string run = "273301";
+    std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
     bool doFit = true;
-
-    std::shared_ptr<TFile> rootFile(new TFile(Form("%s_%s_r%s.root",sample.c_str(),triggerName.c_str(),run.c_str()), "UPDATE"));
 
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
     std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
     std::shared_ptr<TL1EventClass> event(new TL1EventClass(inDir));
 
-    std::vector<TL1Turnon*> turnons;
+    std::vector<std::shared_ptr<TL1Turnon>> turnons;
 
     // caloMetBE
     turnons.emplace_back(new TL1Turnon());
-    turnons[0]->SetSample(sample,"");
-    turnons[0]->SetTrigger(triggerName,triggerTitle);
-    turnons[0]->SetRun(run);
+    std::string outDir = outDirBase+"/"+turnons.front()->GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Turnons/";
     turnons[0]->SetSeeds({0.,40.,50.,60.,70.,80.,90.,100.,120.});
     turnons[0]->SetXBins(metBins());
     turnons[0]->SetX("caloMetBE","Calo E_{T}^{miss} no HF (GeV)");
@@ -45,9 +44,6 @@ void testTL1Turnon()
 
     // mht
     turnons.emplace_back(new TL1Turnon());
-    turnons[1]->SetSample(sample,"");
-    turnons[1]->SetTrigger(triggerName,triggerTitle);
-    turnons[1]->SetRun(run);
     turnons[1]->SetSeeds({0.,50.,70.,100.,120.,130.,140.,150.});
     turnons[1]->SetXBins(mhtBins());
     turnons[1]->SetX("mht","H_{T}^{miss} (GeV)");
@@ -57,9 +53,6 @@ void testTL1Turnon()
 
     // caloEttBE
     turnons.emplace_back(new TL1Turnon());
-    turnons[2]->SetSample(sample,"");
-    turnons[2]->SetTrigger(triggerName,triggerTitle);
-    turnons[2]->SetRun(run);
     turnons[2]->SetSeeds({0.,40.,60.});
     turnons[2]->SetXBins(ettBins());
     turnons[2]->SetX("caloEttBE","Total Calo E_{T} no HF (GeV)");
@@ -69,9 +62,6 @@ void testTL1Turnon()
 
     // htt
     turnons.emplace_back(new TL1Turnon());
-    turnons[3]->SetSample(sample,"");
-    turnons[3]->SetTrigger(triggerName,triggerTitle);
-    turnons[3]->SetRun(run);
     turnons[3]->SetSeeds({0.,120.,160.,200.,240.,270.,280.,300.,320.});
     turnons[3]->SetXBins(httBins());
     turnons[3]->SetX("htt","Total H_{T} (GeV)");
@@ -80,10 +70,20 @@ void testTL1Turnon()
     turnons[3]->SetFit(doFit);
 
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)
+    {
+        (*it)->SetSample(sample,"");
+        (*it)->SetTrigger(triggerName,triggerTitle);
+        (*it)->SetRun(run);
+        (*it)->SetOutDir(outDir);
         (*it)->InitPlots();
+    }
 
+    unsigned NEntries = event->GetPEvent()->GetNEntries();
     while( event->Next() )
     {
+        unsigned position = event->GetPEvent()->GetPosition()+1;
+        TL1Progress::PrintProgressBar(position, NEntries);
+
         //----- MHT -----//
         turnons[1]->Fill(event->fRecalcRecoMht, event->fRecalcL1Mht);
         //turnons[1]->Fill(event->GetPEvent()->fSums->mHt, event->fL1Mht);
@@ -106,12 +106,6 @@ void testTL1Turnon()
         (*it)->DrawPlots();
         (*it)->DrawTurnons();
     }
-
-    rootFile->Close();
-
-    for(TL1Turnon * turnon : turnons)
-        delete turnon;
-    turnons.clear();
 }
 
 vector<double> metBins()

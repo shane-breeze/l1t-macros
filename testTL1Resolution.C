@@ -3,13 +3,14 @@
 
 #include "Core/tdrstyle.C"
 #include "Core/TL1EventClass.h"
+#include "Core/TL1Progress.C"
 #include "TL1Resolution.h"
 
 std::vector<double> bins();
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 double FoldPhi(double phi);
 
-void testTL1XvsY()
+void testTL1Resolution()
 {
     std::shared_ptr<TStyle> myStyle(new TStyle(TDRStyle()));
     SetMyStyle(55, 0.07, myStyle.get());
@@ -19,7 +20,7 @@ void testTL1XvsY()
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
     std::string run = "273301";
-    bool doFit = true;
+    std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
 
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
     std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
@@ -29,9 +30,7 @@ void testTL1XvsY()
 
     // caloMetBE
     resolution.emplace_back(new TL1Resolution());
-    resolution[0]->SetSample(sample,"");
-    resolution[0]->SetTrigger(triggerName,triggerTitle);
-    resolution[0]->SetRun(run);
+    std::string outDir = outDirBase+"/"+resolution.front()->GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Resolutions/";
     resolution[0]->SetBins(bins());
     resolution[0]->SetX("caloMetBE","Calo E_{T}^{miss} no HF");
     resolution[0]->SetY("l1met","L1 E_{T}^{miss}");
@@ -39,9 +38,6 @@ void testTL1XvsY()
 
     // mht
     resolution.emplace_back(new TL1Resolution());
-    resolution[1]->SetSample(sample,"");
-    resolution[1]->SetTrigger(triggerName,triggerTitle);
-    resolution[1]->SetRun(run);
     resolution[1]->SetBins(bins());
     resolution[1]->SetX("mht","H_{T}^{miss}");
     resolution[1]->SetY("l1mht","L1 H_{T}^{miss}");
@@ -49,9 +45,6 @@ void testTL1XvsY()
 
     // caloEttBE
     resolution.emplace_back(new TL1Resolution());
-    resolution[2]->SetSample(sample,"");
-    resolution[2]->SetTrigger(triggerName,triggerTitle);
-    resolution[2]->SetRun(run);
     resolution[2]->SetBins(bins());
     resolution[2]->SetX("caloEttBE","Total Calo E_{T} no HF");
     resolution[2]->SetY("l1ett","L1 Total E_{T}");
@@ -59,9 +52,6 @@ void testTL1XvsY()
 
     // htt
     resolution.emplace_back(new TL1Resolution());
-    resolution[3]->SetSample(sample,"");
-    resolution[3]->SetTrigger(triggerName,triggerTitle);
-    resolution[3]->SetRun(run);
     resolution[3]->SetBins(bins());
     resolution[3]->SetX("htt","Total H_{T}");
     resolution[3]->SetY("l1htt","L1 Total H_{T}");
@@ -69,9 +59,6 @@ void testTL1XvsY()
 
     // caloMetBE Phi
     resolution.emplace_back(new TL1Resolution());
-    resolution[4]->SetSample(sample,"");
-    resolution[4]->SetTrigger(triggerName,triggerTitle);
-    resolution[4]->SetRun(run);
     resolution[4]->SetBins(bins());
     resolution[4]->SetX("caloMetBEPhi","Calo E_{T}^{miss} Phi (no HF)");
     resolution[4]->SetY("l1metphi","L1 E_{T}^{miss} Phi");
@@ -79,9 +66,6 @@ void testTL1XvsY()
 
     // mht Phi
     resolution.emplace_back(new TL1Resolution());
-    resolution[5]->SetSample(sample,"");
-    resolution[5]->SetTrigger(triggerName,triggerTitle);
-    resolution[5]->SetRun(run);
     resolution[5]->SetBins(bins());
     resolution[5]->SetX("mhtPhi","H_{T}^{miss} Phi");
     resolution[5]->SetY("l1httphi","L1 Total H_{T} Phi");
@@ -89,10 +73,20 @@ void testTL1XvsY()
 
 
     for(auto it=resolution.begin(); it!=resolution.end(); ++it)
+    {
+        (*it)->SetSample(sample,"");
+        (*it)->SetTrigger(triggerName,triggerTitle);
+        (*it)->SetRun(run);
+        (*it)->SetOutDir(outDir);
         (*it)->InitPlots();
-
+    }
+    
+    unsigned NEntries = event->GetPEvent()->GetNEntries();
     while( event->Next() )
     {
+        unsigned position = event->GetPEvent()->GetPosition()+1;
+        TL1Progress::PrintProgressBar(position, NEntries);
+
         // HTT
         if( event->GetPEvent()->fSums->Ht != 0.0 && event->fL1Htt != 0.0 ) resolution[3]->Fill(event->GetPEvent()->fSums->Ht, event->fL1Htt);
         //resolution[3]->Fill(event->fRecalcRecoHtt, event->fL1Htt);

@@ -21,6 +21,7 @@ void testTL1XvsY()
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
     std::string run = "273301";
+    std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
 
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
     std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
@@ -30,9 +31,7 @@ void testTL1XvsY()
 
     // caloMetBE
     xvsy.emplace_back(new TL1XvsY());
-    xvsy[0]->SetSample(sample,"");
-    xvsy[0]->SetTrigger(triggerName,triggerTitle);
-    xvsy[0]->SetRun(run);
+    std::string outDir = outDirBase+"/"+xvsy.front()->GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/xy/";
     xvsy[0]->SetXBins(bins(200.0,1.0,0.0));
     xvsy[0]->SetX("caloMetBE","Calo E_{T}^{miss} no HF (GeV)");
     xvsy[0]->SetYBins(bins(200.0,1.0,0.0));
@@ -41,9 +40,6 @@ void testTL1XvsY()
 
     // mht
     xvsy.emplace_back(new TL1XvsY());
-    xvsy[1]->SetSample(sample,"");
-    xvsy[1]->SetTrigger(triggerName,triggerTitle);
-    xvsy[1]->SetRun(run);
     xvsy[1]->SetXBins(bins(200.0,1.0,0.0));
     xvsy[1]->SetX("mht","H_{T}^{miss} (GeV)");
     xvsy[1]->SetYBins(bins(200.0,1.0,0.0));
@@ -52,9 +48,6 @@ void testTL1XvsY()
 
     // caloEttBE
     xvsy.emplace_back(new TL1XvsY());
-    xvsy[2]->SetSample(sample,"");
-    xvsy[2]->SetTrigger(triggerName,triggerTitle);
-    xvsy[2]->SetRun(run);
     xvsy[2]->SetXBins(bins(600.0,10,0.0));
     xvsy[2]->SetX("recoEtt","Reco Total E_{T} (GeV)");
     xvsy[2]->SetYBins(bins(600.0,10,0.0));
@@ -63,9 +56,6 @@ void testTL1XvsY()
 
     // htt
     xvsy.emplace_back(new TL1XvsY());
-    xvsy[3]->SetSample(sample,"");
-    xvsy[3]->SetTrigger(triggerName,triggerTitle);
-    xvsy[3]->SetRun(run);
     xvsy[3]->SetXBins(bins(600.0,1.0,0.0));
     xvsy[3]->SetX("htt","Total H_{T} (GeV)");
     xvsy[3]->SetYBins(bins(600.0,1.0,0.0));
@@ -74,9 +64,6 @@ void testTL1XvsY()
     
     // caloMetBE Phi
     xvsy.emplace_back(new TL1XvsY());
-    xvsy[4]->SetSample(sample,"");
-    xvsy[4]->SetTrigger(triggerName,triggerTitle);
-    xvsy[4]->SetRun(run);
     xvsy[4]->SetXBins(phiBins());
     xvsy[4]->SetX("caloMetBEPhi","Calo E_{T}^{miss} Phi (no HF)");
     xvsy[4]->SetYBins(phiBins());
@@ -85,9 +72,6 @@ void testTL1XvsY()
 
     // mht Phi
     xvsy.emplace_back(new TL1XvsY());
-    xvsy[5]->SetSample(sample,"");
-    xvsy[5]->SetTrigger(triggerName,triggerTitle);
-    xvsy[5]->SetRun(run);
     xvsy[5]->SetXBins(phiBins());
     xvsy[5]->SetX("mhtPhi","H_{T}^{miss} Phi");
     xvsy[5]->SetYBins(phiBins());
@@ -96,9 +80,6 @@ void testTL1XvsY()
 
     // l1MhtFloat
     xvsy.emplace_back(new TL1XvsY());
-    xvsy[6]->SetSample(sample,"");
-    xvsy[6]->SetTrigger(triggerName,triggerTitle);
-    xvsy[6]->SetRun(run);
     xvsy[6]->SetXBins(bins(200.0,2.5,0.0));
     xvsy[6]->SetX("recalcMht","Recalc Reco H_{T}^{miss} (GeV)");
     xvsy[6]->SetYBins(bins(200.0,2.5,0.0));
@@ -108,9 +89,6 @@ void testTL1XvsY()
     
     // l1EttNjet vs recoEttNjet
     xvsy.emplace_back(new TL1XvsY());
-    xvsy[7]->SetSample(sample,"");
-    xvsy[7]->SetTrigger(triggerName,triggerTitle);
-    xvsy[7]->SetRun(run);
     xvsy[7]->SetXBins(bins(10,1,0));
     xvsy[7]->SetX("nJetRecoEtt","Njet in Recalc Reco H_{T}^{miss}");
     xvsy[7]->SetYBins(bins(10,1,0));
@@ -119,7 +97,13 @@ void testTL1XvsY()
 
 
     for(auto it=xvsy.begin(); it!=xvsy.end(); ++it)
+    {
+        (*it)->SetSample(sample,"");
+        (*it)->SetTrigger(triggerName,triggerTitle);
+        (*it)->SetRun(run);
+        (*it)->SetOutDir(outDir);
         (*it)->InitPlots();
+    }
 
     unsigned NEntries = event->GetPEvent()->GetNEntries();
     while( event->Next() )
