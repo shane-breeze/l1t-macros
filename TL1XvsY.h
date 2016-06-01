@@ -47,7 +47,7 @@ TL1XvsY::~TL1XvsY()
 
 void TL1XvsY::InitPlots()
 {
-    fRootFile = std::shared_ptr<TFile>(new TFile(Form("xy_%s.root",this->GetOutName().c_str()),"RECREATE"));
+    fRootFile = std::shared_ptr<TFile>(new TFile(Form("%s/xy_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE"));
     fPlot = std::shared_ptr<TH2F>(new TH2F(Form("xy_%s_vs_%s",fXName.c_str(),fYName.c_str()),"", fXBins.size()-1,&(fXBins)[0], fYBins.size()-1,&(fYBins)[0]));
     fPlot->SetDirectory(0);
     fPlot->GetXaxis()->SetTitle(fXTitle.c_str());
@@ -94,7 +94,7 @@ void TL1XvsY::DrawPlots()
     line->SetLineWidth(3);
     line->DrawLine(fXBins.front(),fYBins.front(),fXBins.back(),fYBins.back());
 
-    std::string outName = Form("xy_%s.pdf", this->GetOutName().c_str());
+    std::string outName = Form("%s/xy_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str());
     can->SaveAs(outName.c_str());
 }
 

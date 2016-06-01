@@ -55,8 +55,8 @@ TL1Turnon::~TL1Turnon()
 
 void TL1Turnon::InitPlots()
 {
-    fPlotsRoot = std::shared_ptr<TFile>(new TFile(Form("dists_%s.root",this->GetOutName().c_str()),"RECREATE"));
-    fTurnonsRoot = std::shared_ptr<TFile>(new TFile(Form("effs_%s.root",this->GetOutName().c_str()),"RECREATE"));
+    fPlotsRoot = std::shared_ptr<TFile>(new TFile(Form("%s/dists_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE"));
+    fTurnonsRoot = std::shared_ptr<TFile>(new TFile(Form("%s/effs_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE"));
     for(unsigned i=0; i<fSeeds.size(); ++i)
     {
         fPlots.emplace_back(new TH1F(Form("dist_%s_%s_%g",fXName.c_str(),fSeedName.c_str(),fSeeds[i]),"", fXBins.size()-1,&(fXBins)[0]));
@@ -110,7 +110,7 @@ void TL1Turnon::DrawPlots()
         latex->DrawLatex(0.92, 0.92, Form("%s, #sqrt{s} = 13 TeV",this->GetSampleTitle().c_str()));
     }
 
-    std::string outName = Form("dists_%s.pdf", this->GetOutName().c_str());
+    std::string outName = Form("%s/dists_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str());
     can->SaveAs(outName.c_str());
 }
 
@@ -162,7 +162,7 @@ void TL1Turnon::DrawTurnons()
         latex->DrawLatex(0.92, 0.92, Form("%s, #sqrt{s} = 13 TeV",this->GetSampleTitle().c_str()));
     }
 
-    can->SaveAs(Form("effs_%s.pdf",this->GetOutName().c_str()));
+    can->SaveAs(Form("%s/effs_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str()));
 }
 
 TF1 TL1Turnon::fit(TGraphAsymmErrors * eff, int p50)
