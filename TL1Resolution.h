@@ -41,7 +41,7 @@ TL1Resolution::~TL1Resolution()
 
 void TL1Resolution::InitPlots()
 {
-    fRootFile = std::shared_ptr<TFile>(new TFile(Form("res_%s.root",this->GetOutName().c_str()),"RECREATE"));
+    fRootFile = std::shared_ptr<TFile>(new TFile(Form("%s/res_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE"));
     fPlot = std::shared_ptr<TH1F>(new TH1F(Form("res_%s_over_%s",fXName.c_str(),fYName.c_str()),"", fBins.size()-1,&(fBins)[0]));
     fPlot->SetDirectory(0);
     fPlot->GetXaxis()->SetTitle(Form("%s / %s",fYTitle.c_str(),fXTitle.c_str()));
@@ -83,7 +83,7 @@ void TL1Resolution::DrawPlots()
         latex->DrawLatex(0.92, 0.92, Form("%s, #sqrt{s} = 13 TeV",this->GetSampleTitle().c_str()));
     }
 
-    std::string outName = Form("res_%s.pdf", this->GetOutName().c_str());
+    std::string outName = Form("%s/res_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str());
     can->SaveAs(outName.c_str());
 }
 
