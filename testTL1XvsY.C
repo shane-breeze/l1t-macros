@@ -127,10 +127,6 @@ void testTL1XvsY()
         //xvsy[3]->Fill(event->fRecalcRecoHtt, event->fL1Htt);
         
         //----- MHT -----//
-        cout << event->fMhtPassFlag << "\tL1 = " << event->fRecalcL1Mht << "\tReco = " << event->fRecalcRecoMht << endl;
-        for(int i=0; i<event->GetPEvent()->fJets->nJets; ++i)
-            cout << "\t" << event->GetPEvent()->fJets->muMult[i] << "\t";
-        cout << "\n\n";
         if( event->fMhtPassFlag && event->fRecalcRecoMht != 0.0 && event->fL1Mht != 0.0 ) xvsy[1]->Fill(event->fRecalcRecoMht, event->fL1Mht);
         //xvsy[1]->Fill(event->GetPEvent()->fSums->mHt, event->fL1Mht);
         if( event->fMhtPassFlag && event->fRecalcRecoMht != 0.0 && event->fRecalcL1Mht != 0.0 )
