@@ -373,7 +373,7 @@ bool TL1EventClass::GetMatchedJet(TL1JetMatch * jetMatch)
     unsigned iRecoJet = jetMatch->GetIReco();
     double recoJetEta = fPrimitiveEvent->fJets->eta[iRecoJet];
     double recoJetPhi = fPrimitiveEvent->fJets->phi[iRecoJet];
-    double minDeltaR = 0.4;
+    double minDeltaR = 0.3;
     unsigned iMinL1Jet = 0;
     for(unsigned iL1=0; iL1<fL1JetEt.size(); ++iL1)
     {
@@ -393,7 +393,7 @@ bool TL1EventClass::GetMatchedJet(TL1JetMatch * jetMatch)
             iMinL1Jet = iL1;
         }
     }
-    if( minDeltaR < 0.4 )
+    if( minDeltaR < 0.3 )
     {
         jetMatch->SetIL1(iMinL1Jet);
         return true;
