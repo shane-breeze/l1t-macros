@@ -45,7 +45,7 @@ void TL1Resolution::InitPlots()
     fPlot = std::shared_ptr<TH1F>(new TH1F(Form("res_%s_over_%s",fXName.c_str(),fYName.c_str()),"", fBins.size()-1,&(fBins)[0]));
     fPlot->SetDirectory(0);
     fPlot->GetXaxis()->SetTitle(Form("%s / %s",fYTitle.c_str(),fXTitle.c_str()));
-    fPlot->GetYaxis()->SetTitle("Number of Entries");
+    //fPlot->GetYaxis()->SetTitle("Number of Entries");
 }
 
 void TL1Resolution::Fill(const double & xVal, const double & yVal)
