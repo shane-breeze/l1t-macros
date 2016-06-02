@@ -9,6 +9,7 @@
 
 vector<double> bins(double max);
 vector<double> phiBins();
+vector<double> etaBins();
 double FoldPhi(double phi);
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 
@@ -79,6 +80,13 @@ void testTL1XvsYJets()
     xvsy[5]->SetY("l1JetPhi","L1 Jet Phi");
     xvsy[5]->SetOutName(triggerName+"_jetPhi_vs_l1JetPhi_hf");
 
+    // Jet Eta
+    xvsy.emplace_back(new TL1XvsY());
+    xvsy[6]->SetXBins(etaBins());
+    xvsy[6]->SetX("jetEta","Reco Jet Eta");
+    xvsy[6]->SetYBins(etaBins());
+    xvsy[6]->SetY("l1JetEta","L1 Jet Eta");
+    xvsy[6]->SetOutName(triggerName+"_jetEta_vs_l1JetEta_hf");
 
     for(auto it=xvsy.begin(); it!=xvsy.end(); ++it)
     {
@@ -113,10 +121,15 @@ void testTL1XvsYJets()
             {
                 xvsy[2]->Fill(recoEt, l1Et);
                 xvsy[5]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi));
+                xvsy[6]->Fill(recoEta, l1Eta);
             }
 
             // Jet filter (tight lepton veto and zero muon multiplicity)
             if( !event->fJetFilterPassFlags[iRecoJet] ) continue;
+            if( abs(recoEta) < 3.0 )
+            {
+                xvsy[6]->Fill(recoEta, l1Eta);
+            }
 
             if( abs(recoEta) < 1.3 )
             {
@@ -146,6 +159,13 @@ vector<double> phiBins()
 {
     vector<double> temp;
     for(double binLowerEdge=0.0; binLowerEdge<=TMath::Pi(); binLowerEdge+= (TMath::Pi())/36.) temp.push_back(binLowerEdge);
+    return temp;
+}
+
+vector<double> etaBins()
+{
+    vector<double> temp;
+    for(double binLowerEdge=-5.0; binLowerEdge<=5.0; binLowerEdge+= 0.1) temp.push_back(binLowerEdge);
     return temp;
 }
 
