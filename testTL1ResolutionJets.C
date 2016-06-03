@@ -35,6 +35,7 @@ void testTL1ResolutionJets()
     resolution[0]->SetX("jetEt","Reco Jet E_{T}");
     resolution[0]->SetY("l1JetEt","L1 Jet E_{T})");
     resolution[0]->SetOutName(triggerName+"_jetEt_over_l1JetEt_barrel");
+    resolution[0]->SetAddMark("Barrel");
 
     // Jet Et - end-cap
     resolution.emplace_back(new TL1Resolution());
@@ -42,6 +43,7 @@ void testTL1ResolutionJets()
     resolution[1]->SetX("jetEt","Reco Jet E_{T}");
     resolution[1]->SetY("l1JetEt","L1 Jet E_{T}");
     resolution[1]->SetOutName(triggerName+"_jetEt_over_l1JetEt_endcap");
+    resolution[1]->SetAddMark("Endcap");
 
     // Jet Et - barrel + end-cap
     resolution.emplace_back(new TL1Resolution());
@@ -49,6 +51,7 @@ void testTL1ResolutionJets()
     resolution[2]->SetX("jetEt","Reco Jet E_{T}");
     resolution[2]->SetY("l1JetEt","L1 Jet E_{T}");
     resolution[2]->SetOutName(triggerName+"_jetEt_over_l1JetEt_barrel-endcap");
+    resolution[2]->SetAddMark("Barrel+endcap");
 
     // Jet Et - HF
     resolution.emplace_back(new TL1Resolution());
@@ -56,6 +59,7 @@ void testTL1ResolutionJets()
     resolution[3]->SetX("jetEt","Reco Jet E_{T}");
     resolution[3]->SetY("l1JetEt","L1 Jet E_{T}");
     resolution[3]->SetOutName(triggerName+"_jetEt_over_l1JetEt_hf");
+    resolution[3]->SetAddMark("HF");
 
     // Jet phi - barrel
     resolution.emplace_back(new TL1Resolution());
@@ -63,6 +67,7 @@ void testTL1ResolutionJets()
     resolution[4]->SetX("jetPhi","Reco Jet Phi");
     resolution[4]->SetY("l1JetPhi","L1 Jet Phi");
     resolution[4]->SetOutName(triggerName+"_jetPhi_over_l1JetPhi_barrel");
+    resolution[4]->SetAddMark("Barrel");
 
     // Jet Phi - endcap
     resolution.emplace_back(new TL1Resolution());
@@ -70,6 +75,7 @@ void testTL1ResolutionJets()
     resolution[5]->SetX("jetPhi","Reco Jet Phi");
     resolution[5]->SetY("l1JetPhi","L1 Jet Phi");
     resolution[5]->SetOutName(triggerName+"_jetPhi_over_l1JetPhi_endcap");
+    resolution[3]->SetAddMark("Endcap");
 
     // Jet Phi - barrel + endcap
     resolution.emplace_back(new TL1Resolution());
@@ -77,6 +83,7 @@ void testTL1ResolutionJets()
     resolution[6]->SetX("jetPhi","Reco Jet Phi");
     resolution[6]->SetY("l1JetPhi","L1 Jet Phi");
     resolution[6]->SetOutName(triggerName+"_jetPhi_over_l1JetPhi_barrel-endcap");
+    resolution[3]->SetAddMark("Barrel+endcap");
 
     // Jet Phi - HF
     resolution.emplace_back(new TL1Resolution());
@@ -84,13 +91,14 @@ void testTL1ResolutionJets()
     resolution[7]->SetX("jetPhi","Reco Jet Phi");
     resolution[7]->SetY("l1JetPhi","L1 Jet Phi");
     resolution[7]->SetOutName(triggerName+"_jetPhi_over_l1JetPhi_hf");
+    resolution[3]->SetAddMark("HF");
 
     // Jet Eta
     resolution.emplace_back(new TL1Resolution());
     resolution[8]->SetBins(bins());
     resolution[8]->SetX("jetEta","Reco Jet Eta");
     resolution[8]->SetY("l1JetEta","L1 Jet Eta");
-    resolution[8]->SetOutName(triggerName+"_jetEta_over_l1JetEta_hf");
+    resolution[8]->SetOutName(triggerName+"_jetEta_over_l1JetEta");
 
     for(auto it=resolution.begin(); it!=resolution.end(); ++it)
     {

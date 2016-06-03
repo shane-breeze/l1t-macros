@@ -39,6 +39,7 @@ void testTL1XvsYJets()
     xvsy[0]->SetYBins(bins(300.0));
     xvsy[0]->SetY("l1JetEt","L1 Jet E_{T} (GeV)");
     xvsy[0]->SetOutName(triggerName+"_jetEt_vs_l1JetEt_barrel");
+    xvsy[0]->SetAddMark("Barrel");
 
     // Jet Et - end-cap
     xvsy.emplace_back(new TL1XvsY());
@@ -47,6 +48,7 @@ void testTL1XvsYJets()
     xvsy[1]->SetYBins(bins(300.0));
     xvsy[1]->SetY("l1JetEt","L1 Jet E_{T} (GeV)");
     xvsy[1]->SetOutName(triggerName+"_jetEt_vs_l1JetEt_endcap");
+    xvsy[1]->SetAddMark("Endcap");
 
     // Jet Et - HF
     xvsy.emplace_back(new TL1XvsY());
@@ -55,6 +57,7 @@ void testTL1XvsYJets()
     xvsy[2]->SetYBins(bins(300.0));
     xvsy[2]->SetY("l1JetEt","L1 Jet E_{T} (GeV)");
     xvsy[2]->SetOutName(triggerName+"_jetEt_vs_l1JetEt_hf");
+    xvsy[2]->SetAddMark("HF");
 
     // Jet phi - barrel
     xvsy.emplace_back(new TL1XvsY());
@@ -63,6 +66,7 @@ void testTL1XvsYJets()
     xvsy[3]->SetYBins(phiBins());
     xvsy[3]->SetY("l1JetPhi","L1 Jet Phi");
     xvsy[3]->SetOutName(triggerName+"_jetPhi_vs_l1JetPhi_barrel");
+    xvsy[3]->SetAddMark("Barrel");
 
     // Jet Phi - endcap
     xvsy.emplace_back(new TL1XvsY());
@@ -71,6 +75,7 @@ void testTL1XvsYJets()
     xvsy[4]->SetYBins(phiBins());
     xvsy[4]->SetY("l1JetPhi","L1 Jet Phi");
     xvsy[4]->SetOutName(triggerName+"_jetPhi_vs_l1JetPhi_endcap");
+    xvsy[4]->SetAddMark("Endcap");
 
     // Jet Phi - HF
     xvsy.emplace_back(new TL1XvsY());
@@ -79,6 +84,7 @@ void testTL1XvsYJets()
     xvsy[5]->SetYBins(phiBins());
     xvsy[5]->SetY("l1JetPhi","L1 Jet Phi");
     xvsy[5]->SetOutName(triggerName+"_jetPhi_vs_l1JetPhi_hf");
+    xvsy[5]->SetAddMark("HF");
 
     // Jet Eta
     xvsy.emplace_back(new TL1XvsY());

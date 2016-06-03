@@ -19,11 +19,12 @@ void testTL1Resolution()
     std::string sample = "Data";
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
-    std::string run = "273301";
+    std::string run = "273450";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
 
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
-    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
+    // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
+    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160602_r273450_SingleMu_l1t-int-v53p1";
     std::shared_ptr<TL1EventClass> event(new TL1EventClass(inDir));
 
     std::vector<std::shared_ptr<TL1Resolution>> resolution;
