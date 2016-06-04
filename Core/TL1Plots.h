@@ -23,6 +23,7 @@ class TL1Plots
         virtual void SetRun(const std::string & run);
         virtual void SetOutName(const std::string & outName);
         virtual void SetOutDir(const std::string & outDir);
+        virtual void SetAddMark(const std::string & addMark);
 
         std::string GetDate() const;
 
@@ -34,12 +35,14 @@ class TL1Plots
         std::string GetTriggerTitle() const;
         std::string GetOutName() const;
         std::string GetOutDir() const;
+        std::string GetAddMark() const;
 
     private:
         std::shared_ptr<TDatime> fDate;
         std::string fSampleName, fTriggerName, fRun;
         std::string fSampleTitle, fTriggerTitle;
         std::string fOutName, fOutDir;
+        std::string fAddMark;
 
 };
 
@@ -75,6 +78,11 @@ void TL1Plots::SetOutDir(const std::string & outDir)
     fOutDir = outDir;
 }
 
+void TL1Plots::SetAddMark(const std::string & addMark)
+{
+    fAddMark = addMark;
+}
+
 std::string TL1Plots::GetSampleName() const
 {
     return fSampleName;
@@ -108,6 +116,11 @@ std::string TL1Plots::GetOutName() const
 std::string TL1Plots::GetOutDir() const
 {
     return fOutDir;
+}
+
+std::string TL1Plots::GetAddMark() const
+{
+    return fAddMark;
 }
 
 std::string TL1Plots::GetDate() const
