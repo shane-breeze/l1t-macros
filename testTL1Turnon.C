@@ -10,7 +10,7 @@
 vector<double> metBins(const std::string & pu);
 vector<double> mhtBins();
 vector<double> ettBins();
-vector<double> httBins();
+vector<double> httBins(const std::string & pu);
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 
 void testTL1Turnon()
@@ -34,19 +34,16 @@ void testTL1Turnon()
 
     std::vector<std::shared_ptr<TL1Turnon>> turnons;
 
-    int puMin=0;  //11, 19
-    int puMax=10; //18, 1000
-
     // caloMetBE
     turnons.emplace_back(new TL1Turnon());
     std::string outDir = outDirBase+"/"+turnons.front()->GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Turnons/";
-    turnons[0]->SetSeeds({0.,40.,50.,60.,70.,80.,90.,100.,120.});
+    turnons[0]->SetSeeds({0.,40.,60.,80.,100.,120.});
     turnons[0]->SetXBins(metBins("Low"));
     turnons[0]->SetX("caloMetBE","Calo E_{T}^{miss} no HF (GeV)");
     turnons[0]->SetSeed("l1MetSeed","L1 MET");
     turnons[0]->SetOutName(triggerName+"_caloMetBE_l1MetSeeds_lowPU");
     turnons[0]->SetFit(doFit);
-    turnons[0]->SetAddMark("0PU10");
+    turnons[0]->SetAddMark("0PU12");
 
     // mht
     turnons.emplace_back(new TL1Turnon());
@@ -56,7 +53,7 @@ void testTL1Turnon()
     turnons[1]->SetSeed("l1Mht","L1 MHT");
     turnons[1]->SetOutName(triggerName+"_recalcMht_l1MhtSeeds_lowPU");
     turnons[1]->SetFit(doFit);
-    turnons[1]->SetAddMark("0PU10");
+    turnons[1]->SetAddMark("0PU12");
 
     // caloEttBE
     turnons.emplace_back(new TL1Turnon());
@@ -66,27 +63,27 @@ void testTL1Turnon()
     turnons[2]->SetSeed("l1ett","L1 ETT");
     turnons[2]->SetOutName(triggerName+"_caloEttBE_l1EttSeeds_lowPU");
     turnons[2]->SetFit(doFit);
-    turnons[2]->SetAddMark("0PU10");
+    turnons[2]->SetAddMark("0PU12");
 
     // htt
     turnons.emplace_back(new TL1Turnon());
-    turnons[3]->SetSeeds({0.,120.,160.,200.,240.,270.,280.,300.,320.});
-    turnons[3]->SetXBins(httBins());
+    turnons[3]->SetSeeds({0.,120.,160.,200.,240.,280.});
+    turnons[3]->SetXBins(httBins("Low"));
     turnons[3]->SetX("htt","Total H_{T} (GeV)");
     turnons[3]->SetSeed("l1htt","L1 HTT");
     turnons[3]->SetOutName(triggerName+"_htt_l1HttSeeds_lowPU");
     turnons[3]->SetFit(doFit);
-    turnons[3]->SetAddMark("0PU10");
+    turnons[3]->SetAddMark("0PU12");
 
     // caloMetBE
     turnons.emplace_back(new TL1Turnon());
-    turnons[4]->SetSeeds({0.,40.,50.,60.,70.,80.,90.,100.,120.});
+    turnons[4]->SetSeeds({0.,40.,60.,80.,100.,120.});
     turnons[4]->SetXBins(metBins("Med"));
     turnons[4]->SetX("caloMetBE","Calo E_{T}^{miss} no HF (GeV)");
     turnons[4]->SetSeed("l1MetSeed","L1 MET");
     turnons[4]->SetOutName(triggerName+"_caloMetBE_l1MetSeeds_medPU");
     turnons[4]->SetFit(doFit);
-    turnons[4]->SetAddMark("11PU18");
+    turnons[4]->SetAddMark("13PU19");
 
     // mht
     turnons.emplace_back(new TL1Turnon());
@@ -96,7 +93,7 @@ void testTL1Turnon()
     turnons[5]->SetSeed("l1Mht","L1 MHT");
     turnons[5]->SetOutName(triggerName+"_recalcMht_l1MhtSeeds_medPU");
     turnons[5]->SetFit(doFit);
-    turnons[5]->SetAddMark("11PU18");
+    turnons[5]->SetAddMark("13PU19");
 
     // caloEttBE
     turnons.emplace_back(new TL1Turnon());
@@ -106,27 +103,27 @@ void testTL1Turnon()
     turnons[6]->SetSeed("l1ett","L1 ETT");
     turnons[6]->SetOutName(triggerName+"_caloEttBE_l1EttSeeds_medPU");
     turnons[6]->SetFit(doFit);
-    turnons[6]->SetAddMark("11PU18");
+    turnons[6]->SetAddMark("13PU19");
 
     // htt
     turnons.emplace_back(new TL1Turnon());
-    turnons[7]->SetSeeds({0.,120.,160.,200.,240.,270.,280.,300.,320.});
-    turnons[7]->SetXBins(httBins());
+    turnons[7]->SetSeeds({0.,120.,160.,200.,240.,280.});
+    turnons[7]->SetXBins(httBins("Med"));
     turnons[7]->SetX("htt","Total H_{T} (GeV)");
     turnons[7]->SetSeed("l1htt","L1 HTT");
     turnons[7]->SetOutName(triggerName+"_htt_l1HttSeeds_medPU");
     turnons[7]->SetFit(doFit);
-    turnons[7]->SetAddMark("11PU18");
+    turnons[7]->SetAddMark("13PU19");
 
     // caloMetBE
     turnons.emplace_back(new TL1Turnon());
-    turnons[8]->SetSeeds({0.,40.,50.,60.,70.,80.,90.,100.,120.});
+    turnons[8]->SetSeeds({0.,40.,60.,80.,100.,120.});
     turnons[8]->SetXBins(metBins("High"));
     turnons[8]->SetX("caloMetBE","Calo E_{T}^{miss} no HF (GeV)");
     turnons[8]->SetSeed("l1MetSeed","L1 MET");
     turnons[8]->SetOutName(triggerName+"_caloMetBE_l1MetSeeds_highPU");
     turnons[8]->SetFit(doFit);
-    turnons[8]->SetAddMark("19PU");
+    turnons[8]->SetAddMark("20PU");
 
     // mht
     turnons.emplace_back(new TL1Turnon());
@@ -136,7 +133,7 @@ void testTL1Turnon()
     turnons[9]->SetSeed("l1Mht","L1 MHT");
     turnons[9]->SetOutName(triggerName+"_recalcMht_l1MhtSeeds_highPU");
     turnons[9]->SetFit(doFit);
-    turnons[9]->SetAddMark("19PU");
+    turnons[9]->SetAddMark("20PU");
 
     // caloEttBE
     turnons.emplace_back(new TL1Turnon());
@@ -146,22 +143,22 @@ void testTL1Turnon()
     turnons[10]->SetSeed("l1ett","L1 ETT");
     turnons[10]->SetOutName(triggerName+"_caloEttBE_l1EttSeeds_highPU");
     turnons[10]->SetFit(doFit);
-    turnons[10]->SetAddMark("19PU");
+    turnons[10]->SetAddMark("20PU");
 
     // htt
     turnons.emplace_back(new TL1Turnon());
-    turnons[11]->SetSeeds({0.,120.,160.,200.,240.,270.,280.,300.,320.});
-    turnons[11]->SetXBins(httBins());
+    turnons[11]->SetSeeds({0.,120.,160.,200.,240.,280.});
+    turnons[11]->SetXBins(httBins("High"));
     turnons[11]->SetX("htt","Total H_{T} (GeV)");
     turnons[11]->SetSeed("l1htt","L1 HTT");
     turnons[11]->SetOutName(triggerName+"_htt_l1HttSeeds_highPU");
     turnons[11]->SetFit(doFit);
-    turnons[11]->SetAddMark("19PU");
+    turnons[11]->SetAddMark("20PU");
 
     // caloMetBE
     turnons.emplace_back(new TL1Turnon());
-    turnons[12]->SetSeeds({0.,40.,50.,60.,70.,80.,90.,100.,120.});
-    turnons[12]->SetXBins(metBins("High"));
+    turnons[12]->SetSeeds({0.,40.,60.,80.,100.,120.});
+    turnons[12]->SetXBins(metBins("Med"));
     turnons[12]->SetX("caloMetBE","Calo E_{T}^{miss} no HF (GeV)");
     turnons[12]->SetSeed("l1MetSeed","L1 MET");
     turnons[12]->SetOutName(triggerName+"_caloMetBE_l1MetSeeds_highPU");
@@ -187,8 +184,8 @@ void testTL1Turnon()
 
     // htt
     turnons.emplace_back(new TL1Turnon());
-    turnons[15]->SetSeeds({0.,120.,160.,200.,240.,270.,280.,300.,320.});
-    turnons[15]->SetXBins(httBins());
+    turnons[15]->SetSeeds({0.,120.,160.,200.,240.,280.});
+    turnons[15]->SetXBins(httBins("Med"));
     turnons[15]->SetX("htt","Total H_{T} (GeV)");
     turnons[15]->SetSeed("l1htt","L1 HTT");
     turnons[15]->SetOutName(triggerName+"_htt_l1HttSeeds_highPU");
@@ -211,8 +208,8 @@ void testTL1Turnon()
 
         int pu = event->GetPEvent()->fVertex->nVtx;
         int add = 0;
-        if( pu >= 11 && pu <= 18 ) add = 4;
-        else if( pu >= 19 ) add = 8;
+        if( pu >= 13 && pu <= 19 ) add = 4;
+        else if( pu >= 20 ) add = 8;
         //----- MHT -----//
         turnons[1+add]->Fill(event->fRecalcRecoMht, event->fRecalcL1Mht);
         turnons[13]->Fill(event->fRecalcRecoMht, event->fRecalcL1Mht);
@@ -246,19 +243,27 @@ void testTL1Turnon()
 vector<double> metBins(const std::string & pu)
 {
     vector<double> temp;
-    if( pu == "Low" || pu == "High" )
+    if( pu == "Low" )
     {
         for(double binLowerEdge=  0.0; binLowerEdge< 40.0; binLowerEdge+= 4.0) temp.push_back(binLowerEdge);
         for(double binLowerEdge= 40.0; binLowerEdge< 80.0; binLowerEdge+=10.0) temp.push_back(binLowerEdge);
-        for(double binLowerEdge= 80.0; binLowerEdge<200.1; binLowerEdge+=20.0) temp.push_back(binLowerEdge);
-        //for(double binLowerEdge=180.0; binLowerEdge<300.1; binLowerEdge+=40.0) temp.push_back(binLowerEdge);
+        for(double binLowerEdge= 80.0; binLowerEdge<160.0; binLowerEdge+=20.0) temp.push_back(binLowerEdge);
+        for(double binLowerEdge=160.0; binLowerEdge<200.1; binLowerEdge+=40.0) temp.push_back(binLowerEdge);
     }
     else if( pu == "Med" )
     {
         for(double binLowerEdge=  0.0; binLowerEdge< 40.0; binLowerEdge+= 2.0) temp.push_back(binLowerEdge);
         for(double binLowerEdge= 40.0; binLowerEdge< 70.0; binLowerEdge+= 5.0) temp.push_back(binLowerEdge);
-        for(double binLowerEdge= 70.0; binLowerEdge<200.1; binLowerEdge+=10.0) temp.push_back(binLowerEdge);
-        //for(double binLowerEdge=200.0; binLowerEdge<300.1; binLowerEdge+=20.0) temp.push_back(binLowerEdge);
+        for(double binLowerEdge= 70.0; binLowerEdge<100.0; binLowerEdge+=10.0) temp.push_back(binLowerEdge);
+        for(double binLowerEdge=100.0; binLowerEdge<160.0; binLowerEdge+=20.0) temp.push_back(binLowerEdge);
+        for(double binLowerEdge=160.0; binLowerEdge<200.1; binLowerEdge+=40.0) temp.push_back(binLowerEdge);
+    }
+    else if( pu == "High" )
+    {
+        for(double binLowerEdge=  0.0; binLowerEdge< 40.0; binLowerEdge+= 4.0) temp.push_back(binLowerEdge);
+        for(double binLowerEdge= 40.0; binLowerEdge< 80.0; binLowerEdge+=10.0) temp.push_back(binLowerEdge);
+        for(double binLowerEdge= 80.0; binLowerEdge<160.0; binLowerEdge+=20.0) temp.push_back(binLowerEdge);
+        for(double binLowerEdge=160.0; binLowerEdge<200.1; binLowerEdge+=40.0) temp.push_back(binLowerEdge);
     }
     return temp;
 }
@@ -289,13 +294,33 @@ vector<double> ettBins()
     return temp;
 }
 
-vector<double> httBins()
+vector<double> httBins(const std::string & pu)
 {
     vector<double> temp;
-    for(double binLowerEdge=  0.0; binLowerEdge<100.0; binLowerEdge+= 5.0) temp.push_back(binLowerEdge);
-    for(double binLowerEdge=100.0; binLowerEdge<250.0; binLowerEdge+=10.0) temp.push_back(binLowerEdge);
-    for(double binLowerEdge=250.0; binLowerEdge<600.0; binLowerEdge+=20.0) temp.push_back(binLowerEdge);
-    for(double binLowerEdge=600.0; binLowerEdge<800.1; binLowerEdge+=50.0) temp.push_back(binLowerEdge);
+    if( pu == "Low" )
+    {
+        for(double binLowerEdge=  0.0; binLowerEdge<100.0; binLowerEdge+=  5.0) temp.push_back(binLowerEdge);
+        for(double binLowerEdge=100.0; binLowerEdge<200.0; binLowerEdge+= 10.0) temp.push_back(binLowerEdge);
+        for(double binLowerEdge=200.0; binLowerEdge<400.0; binLowerEdge+= 20.0) temp.push_back(binLowerEdge);
+        for(double binLowerEdge=400.0; binLowerEdge<500.0; binLowerEdge+= 50.0) temp.push_back(binLowerEdge);
+        for(double binLowerEdge=500.0; binLowerEdge<600.1; binLowerEdge+=100.0) temp.push_back(binLowerEdge);
+    }
+    else if( pu == "Med" )
+    {
+        for(double binLowerEdge=  0.0; binLowerEdge<100.0; binLowerEdge+=  5.0) temp.push_back(binLowerEdge);
+        for(double binLowerEdge=100.0; binLowerEdge<200.0; binLowerEdge+= 10.0) temp.push_back(binLowerEdge);
+        for(double binLowerEdge=200.0; binLowerEdge<400.0; binLowerEdge+= 20.0) temp.push_back(binLowerEdge);
+        for(double binLowerEdge=400.0; binLowerEdge<500.0; binLowerEdge+= 50.0) temp.push_back(binLowerEdge);
+        for(double binLowerEdge=500.0; binLowerEdge<600.1; binLowerEdge+=100.0) temp.push_back(binLowerEdge);
+    }
+    else if( pu == "High" )
+    {
+        for(double binLowerEdge=  0.0; binLowerEdge<100.0; binLowerEdge+=  5.0) temp.push_back(binLowerEdge);
+        for(double binLowerEdge=100.0; binLowerEdge<200.0; binLowerEdge+= 10.0) temp.push_back(binLowerEdge);
+        for(double binLowerEdge=200.0; binLowerEdge<400.0; binLowerEdge+= 20.0) temp.push_back(binLowerEdge);
+        for(double binLowerEdge=400.0; binLowerEdge<500.0; binLowerEdge+= 50.0) temp.push_back(binLowerEdge);
+        for(double binLowerEdge=500.0; binLowerEdge<600.1; binLowerEdge+=100.0) temp.push_back(binLowerEdge);
+    }
     return temp;
 
 }
