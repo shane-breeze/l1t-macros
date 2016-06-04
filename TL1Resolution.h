@@ -25,7 +25,6 @@ class TL1Resolution : public TL1Plots
         void SetBins(const std::vector<double> & bins);
         void SetX(const std::string & xName, const std::string & xTitle);
         void SetY(const std::string & yName, const std::string & yTitle);
-        void SetAddMark(const std::string & addMark);
     private:
         std::shared_ptr<TH1F> fPlot;
         std::shared_ptr<TFile> fRootFile;
@@ -34,7 +33,6 @@ class TL1Resolution : public TL1Plots
         std::string fYName, fYTitle;
         std::vector<double> fBins;
 
-        std::string fAddMark;
 };
 
 TL1Resolution::~TL1Resolution()
@@ -86,7 +84,7 @@ void TL1Resolution::DrawPlots()
         latex->DrawLatex(0.92, 0.92, Form("%s, #sqrt{s} = 13 TeV",this->GetSampleTitle().c_str()));
     }
     latex->SetTextAlign(11);
-    latex->DrawLatex(0.18,0.92,fAddMark.c_str());
+    latex->DrawLatex(0.18,0.92,this->GetAddMark().c_str());
 
     std::string outName = Form("%s/res_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str());
     can->SaveAs(outName.c_str());
@@ -107,11 +105,6 @@ void TL1Resolution::SetY(const std::string & yName, const std::string & yTitle)
 {
     fYName = yName;
     fYTitle = yTitle;
-}
-
-void TL1Resolution::SetAddMark(const std::string & addMark)
-{
-    fAddMark = addMark;
 }
 
 #endif

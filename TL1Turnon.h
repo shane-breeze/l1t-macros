@@ -31,7 +31,6 @@ class TL1Turnon : public TL1Plots
         void SetX(const std::string & xName, const std::string & xTitle);
         void SetSeed(const std::string & seedName, const std::string & seedTitle);
         void SetFit(const bool & doFit);
-        void SetAddMark(const std::string & addMark);
     private:
         void SetColor(float fraction, int index);
 
@@ -46,8 +45,6 @@ class TL1Turnon : public TL1Plots
         std::string fXName, fSeedName;
         std::string fXTitle, fSeedTitle;
         bool fDoFit;
-
-        std::string fAddMark;
 };
 
 TL1Turnon::~TL1Turnon()
@@ -113,7 +110,7 @@ void TL1Turnon::DrawPlots()
         latex->DrawLatex(0.92, 0.92, Form("%s, #sqrt{s} = 13 TeV",this->GetSampleTitle().c_str()));
     }
     latex->SetTextAlign(11);
-    latex->DrawLatex(0.18,0.92,fAddMark.c_str());
+    latex->DrawLatex(0.18,0.92,this->GetAddMark().c_str());
 
     std::string outName = Form("%s/dists_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str());
     can->SaveAs(outName.c_str());
@@ -167,13 +164,16 @@ void TL1Turnon::DrawTurnons()
         latex->SetTextAlign(31); 
         latex->DrawLatex(0.92, 0.92, Form("%s, #sqrt{s} = 13 TeV",this->GetSampleTitle().c_str()));
     }
+    latex->SetTextAlign(11);
+    latex->DrawLatex(0.18,0.92,this->GetAddMark().c_str());
 
     can->SaveAs(Form("%s/effs_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str()));
 }
 
 TF1 TL1Turnon::fit(TGraphAsymmErrors * eff, int p50)
 {
-    TF1 fitFcn( "fit_fcn","[0]*0.5*(1+TMath::Erf((x-[1])/(sqrt([2]))))",fXBins.front(),fXBins.back());
+    std::string func = Form("[0]*0.5*(1+TMath::Erf((x-[1])/TMath::Sqrt([2])))");
+    TF1 fitFcn( "fit_fcn",func.c_str(),fXBins.front(),fXBins.back());
     if( fDoFit )
     {
         fitFcn.SetParameters( 1.0000,(double)p50,200.0);
@@ -212,11 +212,6 @@ void TL1Turnon::SetSeed(const std::string & seedName, const std::string & seedTi
 void TL1Turnon::SetFit(const bool & doFit)
 {
     fDoFit = doFit;
-}
-
-void TL1Turnon::SetAddMark(const std::string & addMark)
-{
-    fAddMark = addMark;
 }
 
 void TL1Turnon::SetColor(float fraction, int index)

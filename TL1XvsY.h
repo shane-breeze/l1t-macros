@@ -28,7 +28,6 @@ class TL1XvsY : public TL1Plots
         void SetX(const std::string & xName, const std::string & xTitle);
         void SetYBins(const std::vector<double> & yBins);
         void SetY(const std::string & yName, const std::string & yTitle);
-        void SetAddMark(const std::string & addMark);
     private:
         std::shared_ptr<TH2F> fPlot;
         std::shared_ptr<TFile> fRootFile;
@@ -37,7 +36,6 @@ class TL1XvsY : public TL1Plots
         std::string fYName, fYTitle;
         std::vector<double> fXBins, fYBins;
 
-        std::string fAddMark;
 };
 
 TL1XvsY::~TL1XvsY()
@@ -87,7 +85,7 @@ void TL1XvsY::DrawPlots()
         latex->DrawLatex(0.92, 0.92, Form("%s, #sqrt{s} = 13 TeV",this->GetSampleTitle().c_str()));
     }
     latex->SetTextAlign(11);
-    latex->DrawLatex(0.18,0.92,fAddMark.c_str());
+    latex->DrawLatex(0.18,0.92,this->GetAddMark().c_str());
 
     std::shared_ptr<TLine> line(new TLine());
     line->SetLineStyle(7);
@@ -118,11 +116,6 @@ void TL1XvsY::SetY(const std::string & yName, const std::string & yTitle)
 {
     fYName = yName;
     fYTitle = yTitle;
-}
-
-void TL1XvsY::SetAddMark(const std::string & addMark)
-{
-    fAddMark = addMark;
 }
 
 #endif
