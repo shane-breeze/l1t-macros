@@ -3,6 +3,7 @@
 
 #include <string>
 #include <memory>
+#include <stdlib.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -75,6 +76,7 @@ void TL1Plots::SetOutName(const std::string & outName)
 
 void TL1Plots::SetOutDir(const std::string & outDir)
 {
+    std::system(Form("mkdir -p %s",outDir.c_str()));
     fOutDir = outDir;
 }
 
