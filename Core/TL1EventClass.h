@@ -9,7 +9,6 @@
 #include <TVector2.h>
 
 #include "TL1PrimitiveEventClass.h"
-#include "TL1JetMatch.h"
 
 class TL1EventClass
 {
@@ -41,8 +40,10 @@ class TL1EventClass
         bool fMhtPassFlag;
         double fRecalcRecoEtt;
 
-        // L1 and Reco Jet Matching
-        bool GetMatchedJet(TL1JetMatch * jetMatch);
+        // Jets
+        bool fIsLeadingRecoJet, fIsMatchedL1Jet;
+        int fLeadingRecoJetIndex;
+        int fMatchedL1JetIndex;
 
     private:
         std::shared_ptr<TL1PrimitiveEventClass> fPrimitiveEvent;
@@ -64,12 +65,17 @@ class TL1EventClass
         void GetRecalcRecoHtSums();
         void GetRecalcRecoEtt();
 
+        // Jets
+        void GetLeadingRecoJet();
+        void GetMatchedL1Jet();
+
 };
 
 TL1EventClass::TL1EventClass(std::string inDir) :
     fPrimitiveEvent(new TL1PrimitiveEventClass(inDir)),
     fMuonFilterPassFlag(true), fMetFilterPassFlag(true),
-    fMhtPassFlag(true)
+    fMhtPassFlag(true),
+    fIsLeadingRecoJet(true), fIsMatchedL1Jet(true)
 {
 }
 
@@ -103,6 +109,10 @@ void TL1EventClass::GetDerivatives()
     
     this->GetRecalcRecoHtSums();
     this->GetRecalcRecoEtt();
+
+    // Jets
+    this->GetLeadingRecoJet();
+    this->GetMatchedL1Jet();
 }
 
 TL1PrimitiveEventClass const * TL1EventClass::GetPEvent() const
@@ -128,7 +138,7 @@ void TL1EventClass::GetL1Jets()
 
 void TL1EventClass::GetL1Sums()
 {
-    std::shared_ptr<L1Analysis::L1AnalysisL1UpgradeDataFormat> upgrades = fPrimitiveEvent->fUpgrade;
+    auto upgrades = fPrimitiveEvent->fUpgrade;
     for(int iter=0; iter<upgrades->nSums; ++iter)
     {
         double et = upgrades->sumEt[iter];
@@ -168,121 +178,55 @@ void TL1EventClass::MuonFilter()
 
 void TL1EventClass::JetFilter()
 {
+    fJetFilterPassFlags.clear();
     for(unsigned iJet=0; iJet<fPrimitiveEvent->fJets->nJets; ++iJet)
     {
-        std::shared_ptr<L1Analysis::L1AnalysisRecoJetDataFormat> recoJets = fPrimitiveEvent->fJets;
+        auto recoJets = fPrimitiveEvent->fJets;
 
-        double eta  = fPrimitiveEvent->fJets->eta[iJet];
-        double nhef = fPrimitiveEvent->fJets->nhef[iJet];
-        double pef  = fPrimitiveEvent->fJets->pef[iJet];
-        double mef  = fPrimitiveEvent->fJets->mef[iJet];
-        double chef = fPrimitiveEvent->fJets->chef[iJet];
-        double eef  = fPrimitiveEvent->fJets->eef[iJet];
-        int chMult  = fPrimitiveEvent->fJets->chMult[iJet];
-        int nhMult  = fPrimitiveEvent->fJets->nhMult[iJet];
-        int phMult  = fPrimitiveEvent->fJets->phMult[iJet];
-        int elMult  = fPrimitiveEvent->fJets->elMult[iJet];
-        int muMult  = fPrimitiveEvent->fJets->muMult[iJet];
-        bool jetPass;
-        if (abs(eta)<=3.00 && nhef<0.90 && pef<0.90 && (chMult+nhMult+phMult+elMult+muMult)>1 && mef<0.8 
-                && (abs(eta)>2.4||(abs(eta)<=2.4 && chef>0 && (chMult+elMult+muMult)>0 && eef<0.90))){
-            jetPass = true;}//this jet has passed
-        else{jetPass = false;}//this jet has failed, or is outside the central zone           
-        fJetFilterPassFlags.push_back(jetPass && muMult==0);
+        // Muon mult filter
+        int muMult  = recoJets->muMult[iJet];
+        if( muMult != 0 ){ fJetFilterPassFlags.push_back(false); continue; }
+
+        // No hf jets
+        double eta  = recoJets->eta[iJet];
+        if( TMath::Abs(eta) > 3. ){ fJetFilterPassFlags.push_back(false); continue; }
+
+        // nhef
+        double nhef = recoJets->nhef[iJet];
+        if( nhef >= 0.9 ){ fJetFilterPassFlags.push_back(false); continue; }
+
+        // pef
+        double pef  = recoJets->pef[iJet];
+        if( pef >= 0.9 ){ fJetFilterPassFlags.push_back(false); continue; }
+
+        // mef
+        double mef  = recoJets->mef[iJet];
+        if( mef >= 0.8 ){ fJetFilterPassFlags.push_back(false); continue; }
+
+        // sumMult
+        int sumMult = recoJets->chMult[iJet] + recoJets->chMult[iJet] + recoJets->elMult[iJet];
+        int nhMult  = recoJets->nhMult[iJet];
+        int phMult  = recoJets->phMult[iJet];
+        if( sumMult+nhMult+phMult <= 1 ){ fJetFilterPassFlags.push_back(false); continue; }
+
+        if( TMath::Abs(eta)>2.4 ){ fJetFilterPassFlags.push_back(true); continue; }
+
+        // sumMult
+        if( sumMult <= 0 ){ fJetFilterPassFlags.push_back(false); continue; }
+
+        // chef
+        double chef = recoJets->chef[iJet];
+        if( chef <= 0 ){ fJetFilterPassFlags.push_back(false); continue; }
+
+        // eef
+        double eef  = recoJets->eef[iJet];
+        if( eef >= 0.9 ){ fJetFilterPassFlags.push_back(false); continue; }
+
+        // pass
+        fJetFilterPassFlags.push_back(true);
     }
-
-
-//        // Muon mult filter
-        //int muMult  = recoJets->muMult[iJet];
-//        if( muMult != 0 )
-//        {
-//            fJetFilterPassFlags.push_back(false);
-//            continue;
-//        }
-//
-//        // No hf jets
-//        double eta  = recoJets->eta[iJet];
-//        if( TMath::Abs(eta) > 3. )
-//        {
-//            fJetFilterPassFlags.push_back(false);
-//            continue;
-//        }
-//
-//        // nhef
-//        double nhef = recoJets->nhef[iJet];
-//        if( nhef >= 0.9 )
-//        {
-//            fJetFilterPassFlags.push_back(false);
-//            continue;
-//        }
-//
-//        // pef
-//        double pef  = recoJets->pef[iJet];
-//        if( pef >= 0.9 )
-//        {
-//            fJetFilterPassFlags.push_back(false);
-//            continue;
-//        }
-//
-//        // mef
-//        double mef  = recoJets->mef[iJet];
-//        if( mef >= 0.8 )
-//        {
-//            fJetFilterPassFlags.push_back(false);
-//            continue;
-//        }
-//
-//        // sumMult
-//        //int sumMult = recoJets->chMult[iJet];
-//        int chMult = recoJets->chMult[iJet];
-//        int elMult = recoJets->elMult[iJet];
-//        int muMult = recoJets->muMult[iJet];
-//        int nhMult  = recoJets->nhMult[iJet];
-//        int phMult  = recoJets->phMult[iJet];
-//        if( sumMult+nhMult+phMult <= 1 )
-//        {
-//            fJetFilterPassFlags.push_back(false);
-//            continue;
-//        }
-//
-//        if( TMath::Abs(eta)>2.4 )
-//        {
-//            fJetFilterPassFlags.push_back(true);
-//            continue;
-//        }
-//
-//        // sumMult
-//        if( sumMult <= 0 )
-//        {
-//            fJetFilterPassFlags.push_back(false);
-//            continue;
-//        }
-//
-//        // chef
-//        double chef = recoJets->chef[iJet];
-//        if( chef <= 0 )
-//        {
-//            fJetFilterPassFlags.push_back(false);
-//            continue;
-//        }
-//
-//        // eef
-//        double eef  = recoJets->eef[iJet];
-//        if( eef >= 0.9 )
-//        {
-//            fJetFilterPassFlags.push_back(false);
-//            continue;
-//        }
-//
-//        // pass
-//        fJetFilterPassFlags.push_back(true);
-//
-//        if (abs(eta)<=3.00 && nhef<0.90 && pef<0.90 && (chMult+nhMult+phMult+elMult+muMult)>1 && mef<0.8 && (abs(eta)>2.4||(abs(eta)<=2.4 && chef>0 && (chMult+elMult+muMult)>0 && eef<0.90)))
-//        {
-//             if( muMult == 0 ) fJetFilterPassFlags.push_back(true);
-//             else fJetFilterPassFlags.push_back(false);
-//        }
-//    }
+    if( fJetFilterPassFlags.size() != fPrimitiveEvent->fJets->nJets )
+        std::cerr << "ERROR: Size of fJetFilterPassFlags does not match the number of reco Jets in fPrimitiveEvent" << std::endl;
 }
 
 void TL1EventClass::SumsFilter()
@@ -359,46 +303,83 @@ void TL1EventClass::GetRecalcRecoEtt()
     double jetEt(0.0);
     int jetCount = 0;
     for(int iJet=0; iJet<fPrimitiveEvent->fJets->nJets; ++iJet)
+    {
         if( fPrimitiveEvent->fJets->etCorr[iJet] >= 30.0 )
         {
             jetEt += fPrimitiveEvent->fJets->etCorr[iJet];
             ++jetCount;
         }
+    }
     fRecalcRecoEtt = jetEt;
     fNJetsRecoEtt = jetCount;
 }
 
-bool TL1EventClass::GetMatchedJet(TL1JetMatch * jetMatch)
+void TL1EventClass::GetLeadingRecoJet()
 {
-    unsigned iRecoJet = jetMatch->GetIReco();
-    double recoJetEta = fPrimitiveEvent->fJets->eta[iRecoJet];
-    double recoJetPhi = fPrimitiveEvent->fJets->phi[iRecoJet];
-    double minDeltaR = 0.3;
-    unsigned iMinL1Jet = 0;
-    for(unsigned iL1=0; iL1<fL1JetEt.size(); ++iL1)
+    int iLeadingReco = 0;
+    double leadingRecoEt = 10.0;
+    fIsLeadingRecoJet = false;
+    for(int iReco=0; iReco<fJetFilterPassFlags.size(); ++iReco)
     {
+        // If central jet, require tightLepVeto and muMult==0
+        auto recoJet = fPrimitiveEvent->fJets;
+        if( TMath::Abs(recoJet->eta[iReco])<=3.0 )
+            if( !fJetFilterPassFlags[iReco] ) continue;
+        if( recoJet->etCorr[iReco] < leadingRecoEt ) continue;
+        iLeadingReco = iReco;
+        leadingRecoEt = recoJet->etCorr[iReco];
+    }
+    if( leadingRecoEt > 10.0 )
+    {
+        fIsLeadingRecoJet = true;
+        fLeadingRecoJetIndex = iLeadingReco;
+    }
+}
+
+void TL1EventClass::GetMatchedL1Jet()
+{
+    // No leading jet, no match
+    fIsMatchedL1Jet = false;
+    if( !fIsLeadingRecoJet ) return;
+
+    // Keep track of the current matched l1 jet. Set minDeltaR to 0.3
+    int iMatchedL1 = 0;
+    double minDeltaR = 0.3;
+
+    // Get Leading jet parameters
+    auto recoJet = fPrimitiveEvent->fJets;
+    double leadingRecoJetEta = recoJet->eta[fLeadingRecoJetIndex]; 
+    double leadingRecoJetPhi = recoJet->phi[fLeadingRecoJetIndex];
+
+    for(int iL1=0; iL1<fL1JetEt.size(); ++iL1)
+    {
+        // Get l1 jet parameters
         double l1JetEta = fL1JetEta[iL1];
         double l1JetPhi = fL1JetPhi[iL1];
 
-        double deltaEta = l1JetEta-recoJetEta;
-        if( deltaEta > minDeltaR ) continue;
-        double deltaPhi = l1JetPhi-recoJetPhi;
-        if( deltaPhi > minDeltaR ) continue;
+        // Check dEta > dR
+        double dEta = leadingRecoJetEta - l1JetEta;
+        if( dEta > minDeltaR ) continue;
+        
+        // Check dPhi > dR
+        double dPhi = leadingRecoJetPhi - l1JetPhi;
+        if( dPhi > minDeltaR ) continue;
 
-        double deltaR = TMath::Sqrt(deltaEta*deltaEta + deltaPhi*deltaPhi);
-
-        if( deltaR < minDeltaR )
+        // Check dR < mindR
+        double dR = TMath::Sqrt(dEta*dEta + dPhi*dPhi);
+        if( dR < minDeltaR )
         {
-            minDeltaR = deltaR;
-            iMinL1Jet = iL1;
+            // Update new minDeltaR and matched L1 Jet
+            minDeltaR = dR;
+            iMatchedL1 = iL1;
         }
     }
+    // If minDeltaR has changed then we have a match
     if( minDeltaR < 0.3 )
     {
-        jetMatch->SetIL1(iMinL1Jet);
-        return true;
+        fIsMatchedL1Jet = true;
+        fMatchedL1JetIndex = iMatchedL1;
     }
-    return false;
 }
 
 #endif
