@@ -21,7 +21,7 @@ class TL1XvsY : public TL1Plots
         ~TL1XvsY();
 
         virtual void InitPlots();
-        virtual void Fill(const double & xVal, const double & yVal);
+        virtual void Fill(const double & xVal, const double & yVal, const int & pu);
         virtual void DrawPlots();
 
         void SetXBins(const std::vector<double> & xBins);

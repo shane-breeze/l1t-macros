@@ -87,33 +87,30 @@ void testTL1TurnonJets()
         unsigned position = event->GetPEvent()->GetPosition()+1;
         TL1Progress::PrintProgressBar(position, NEntries);
 
-        for(unsigned iRecoJet=0; iRecoJet<event->GetPEvent()->fJets->nJets; ++iRecoJet)
-        {
-            std::shared_ptr<TL1JetMatch> jetMatch(new TL1JetMatch(0, iRecoJet));
-            if( !event->GetMatchedJet(jetMatch.get()) ) continue;
+        if( !event->fIsLeadingRecoJet ) continue;
+        if( !event->fIsMatchedL1Jet ) continue;
 
-            unsigned iL1Jet = jetMatch->GetIL1();
-            double l1Et = event->fL1JetEt[iL1Jet];
-            double l1Eta = event->fL1JetEta[iL1Jet];
-            double l1Phi = event->fL1JetPhi[iL1Jet];
-            
-            double recoEt = event->GetPEvent()->fJets->etCorr[iRecoJet];
-            double recoEta = event->GetPEvent()->fJets->eta[iRecoJet];
+        auto recoJet = event->GetPEvent()->fJets;
+        double recoEt = recoJet->etCorr[event->fLeadingRecoJetIndex];
+        double recoEta = recoJet->eta[event->fLeadingRecoJetIndex];
+        double recoPhi = recoJet->phi[event->fLeadingRecoJetIndex];
 
-            if( abs(recoEta) >= 3.5 && abs(recoEta) <= 4.5 )
-                turnons[3]->Fill(recoEt, l1Et);
-
-            // Jet filter (tight lepton veto and zero muon multiplicity)
-            if( !event->fJetFilterPassFlags[iRecoJet] ) continue;
-            if( (abs(recoEta) >= 1.55 && abs(recoEta) <= 3.0) || (abs(recoEta)<=1.45) )
-                turnons[2]->Fill(recoEt, l1Et);
-
-            if( abs(recoEta) <= 1.45 )
-                turnons[0]->Fill(recoEt, l1Et);
-            else if( abs(recoEta) >= 1.55 && abs(recoEta) <= 3.0 )
-                turnons[1]->Fill(recoEt, l1Et);
-        }
+        double l1Et = event->fL1JetEt[event->fMatchedL1JetIndex];
+        double l1Eta = event->fL1JetEta[event->fMatchedL1JetIndex];
+        double l1Phi = event->fL1JetPhi[event->fMatchedL1JetIndex];
         
+        if( abs(recoEta) <= 1.45 )
+        {
+            turnons[0]->Fill(recoEt, l1Et);
+            turnons[2]->Fill(recoEt, l1Et);
+        }
+        else if( abs(recoEta) >= 1.55 && abs(recoEta) <= 3.0 )
+        {
+            turnons[1]->Fill(recoEt, l1Et);
+            turnons[2]->Fill(recoEt, l1Et);
+        }
+        if( abs(recoEta) >= 3.5 && abs(recoEta) <= 4.5 )
+            turnons[3]->Fill(recoEt, l1Et);
     }
 
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)

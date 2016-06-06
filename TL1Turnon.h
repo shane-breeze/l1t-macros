@@ -21,7 +21,7 @@ class TL1Turnon : public TL1Plots
         ~TL1Turnon();
 
         virtual void InitPlots();
-        virtual void Fill(const double & xVal, const double & seedVal);
+        virtual void Fill(const double & xVal, const double & seedVal, const int & pu);
         virtual void DrawPlots();
         void DrawTurnons();
         TF1 fit(TGraphAsymmErrors * eff, int p50);
@@ -134,7 +134,8 @@ void TL1Turnon::DrawTurnons()
         else fTurnons[i-1]->Draw("psame");
         fTurnonsRoot->WriteTObject(fTurnons[i-1].get());
         fFits.emplace_back(new TF1(fit(fTurnons[i-1].get(), fSeeds[i])));
-        if( fDoFit ) fFits[i-1]->Draw("lsame");
+        if( fDoFit ) fFits[i-1]->Draw("apsame");
+        fTurnonsRoot->WriteTObject(fFits[i-1].get());
         leg->AddEntry(fTurnons[i-1].get(), Form("%s > %g",fSeedTitle.c_str(),fSeeds[i]));
     }
     leg->Draw();
@@ -173,13 +174,14 @@ void TL1Turnon::DrawTurnons()
 TF1 TL1Turnon::fit(TGraphAsymmErrors * eff, int p50)
 {
     std::string func = Form("[0]*0.5*(1+TMath::Erf((x-[1])/TMath::Sqrt([2])))");
-    TF1 fitFcn( "fit_fcn",func.c_str(),fXBins.front(),fXBins.back());
+    TF1 fitFcn(Form("fit_%s",eff->GetName()),func.c_str(),fXBins.front(),fXBins.back());
     if( fDoFit )
     {
-        fitFcn.SetParameters( 1.0000,(double)p50,200.0);
-        //fitFcn.SetParameters( 0.937871,(double)p50,1378.23);
-        TFitResultPtr fitRes_p = (TFitResultPtr)eff->Fit(fitFcn.GetName(),"ES0"); 
-        //TFitResult* fitRes = (TFitResult*)fitRes_p.Get();
+        fitFcn.SetParameters( 1.0000,(double)p50,150.0);
+        eff->Fit(fitFcn.GetName(),"E0"); 
+
+        for(int i=0; i<10; ++i)
+            eff->Fit(fitFcn.GetName(),"E0M");
 
         fitFcn.SetLineColor(eff->GetLineColor());
     }
