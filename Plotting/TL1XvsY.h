@@ -12,8 +12,7 @@
 #include <TLatex.h>
 #include <TLine.h>
 
-#include "Core/tdrstyle.C"
-#include "Core/TL1Plots.h"
+#include "TL1Plots.h"
 
 class TL1XvsY : public TL1Plots
 {

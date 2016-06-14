@@ -2,9 +2,10 @@
 #include <vector>
 #include <algorithm>
 
-#include "Core/TL1EventClass.h"
-#include "Core/TL1Progress.C"
-#include "TL1XvsY.h"
+#include "Plotting/tdrstyle.C"
+#include "Event/TL1EventClass.h"
+#include "Utilities/TL1Progress.C"
+#include "Plotting/TL1XvsY.h"
 
 std::vector<double> bins(double max, double width, double min);
 std::vector<double> phiBins();
@@ -13,8 +14,8 @@ double FoldPhi(double phi);
 
 void testTL1XvsY()
 {
-    std::shared_ptr<TStyle> myStyle(new TStyle(TDRStyle()));
-    SetMyStyle(57, 0.14, myStyle.get());
+    TStyle * myStyle(new TStyle(TDRStyle()));
+    SetMyStyle(57, 0.14, myStyle);
 
     // Basic
     std::string sample = "Data";
@@ -29,9 +30,9 @@ void testTL1XvsY()
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
     //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
     std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
-    std::shared_ptr<TL1EventClass> event(new TL1EventClass(inDir));
+    TL1EventClass * event(new TL1EventClass(inDir));
 
-    std::vector<std::shared_ptr<TL1XvsY>> xvsy;
+    std::vector<TL1XvsY*> xvsy;
 
     // caloMetBE
     xvsy.emplace_back(new TL1XvsY());

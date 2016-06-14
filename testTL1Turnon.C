@@ -1,11 +1,10 @@
 #include <string>
-#include <memory>
 #include <vector>
 
-#include "Core/tdrstyle.C"
-#include "Core/TL1EventClass.h"
-#include "Core/TL1Progress.C"
-#include "TL1Turnon.h"
+#include "Plotting/tdrstyle.C"
+#include "Event/TL1EventClass.h"
+#include "Utilities/TL1Progress.C"
+#include "Plotting/TL1Turnon.h"
 
 vector<double> metBins();
 vector<double> mhtBins();
@@ -15,8 +14,8 @@ void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 
 void testTL1Turnon()
 {
-    std::shared_ptr<TStyle> myStyle(new TStyle(TDRStyle()));
-    SetMyStyle(55, 0.07, myStyle.get());
+    TStyle * myStyle(new TStyle(TDRStyle()));
+    SetMyStyle(55, 0.07, myStyle);
 
     // Basic
     std::string sample = "Data";
@@ -33,9 +32,9 @@ void testTL1Turnon()
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160602_r273450_SingleMu_l1t-int-v53p1";
     std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
-    std::shared_ptr<TL1EventClass> event(new TL1EventClass(inDir));
+    TL1EventClass * event(new TL1EventClass(inDir));
 
-    std::vector<std::shared_ptr<TL1Turnon>> turnons;
+    std::vector<TL1Turnon*> turnons;
 
     // caloMetBE
     turnons.emplace_back(new TL1Turnon());

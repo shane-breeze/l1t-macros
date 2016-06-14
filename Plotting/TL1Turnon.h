@@ -12,7 +12,7 @@
 #include <TLatex.h>
 #include <TLine.h>
 
-#include "Core/TL1Plots.h"
+#include "TL1Plots.h"
 
 class TL1Turnon : public TL1Plots
 {
