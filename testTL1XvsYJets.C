@@ -3,7 +3,6 @@
 #include <algorithm>
 
 #include "Core/TL1EventClass.h"
-#include "Core/TL1JetMatch.h"
 #include "Core/TL1Progress.C"
 #include "TL1XvsY.h"
 
@@ -22,11 +21,15 @@ void testTL1XvsYJets()
     std::string sample = "Data";
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
-    std::string run = "273301";
+    //std::string run = "273301";
+    std::string run = "273301-302-450";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
+    std::vector<std::string> puType = {"0PU12","13PU19","20PU"};
+    std::vector<int> puBins = {0,13,20,999};
 
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
-    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
+    //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
+    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
     std::shared_ptr<TL1EventClass> event(new TL1EventClass(inDir));
 
     std::vector<std::shared_ptr<TL1XvsY>> xvsy;
@@ -35,64 +38,82 @@ void testTL1XvsYJets()
     xvsy.emplace_back(new TL1XvsY());
     std::string outDir = outDirBase+"/"+xvsy.front()->GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/xyJets/";
     xvsy[0]->SetXBins(bins(300.0));
-    xvsy[0]->SetX("jetEt","Reco Jet E_{T} (GeV)");
+    xvsy[0]->SetX("jetEt","Offline Jet E_{T} (GeV)");
     xvsy[0]->SetYBins(bins(300.0));
     xvsy[0]->SetY("l1JetEt","L1 Jet E_{T} (GeV)");
     xvsy[0]->SetOutName(triggerName+"_jetEt_vs_l1JetEt_barrel");
-    xvsy[0]->SetAddMark("Barrel");
+    xvsy[0]->SetAddMark("|#eta| < 1.479");
 
     // Jet Et - end-cap
     xvsy.emplace_back(new TL1XvsY());
     xvsy[1]->SetXBins(bins(300.0));
-    xvsy[1]->SetX("jetEt","Reco Jet E_{T} (GeV)");
+    xvsy[1]->SetX("jetEt","Offline Jet E_{T} (GeV)");
     xvsy[1]->SetYBins(bins(300.0));
     xvsy[1]->SetY("l1JetEt","L1 Jet E_{T} (GeV)");
     xvsy[1]->SetOutName(triggerName+"_jetEt_vs_l1JetEt_endcap");
-    xvsy[1]->SetAddMark("Endcap");
+    xvsy[1]->SetAddMark("1.479 < |#eta| < 3.0");
+    
+    // Jet Et - barrel end-cap
+    xvsy.emplace_back(new TL1XvsY());
+    xvsy[2]->SetXBins(bins(300.0));
+    xvsy[2]->SetX("jetEt","Offline Jet E_{T} (GeV)");
+    xvsy[2]->SetYBins(bins(300.0));
+    xvsy[2]->SetY("l1JetEt","L1 Jet E_{T} (GeV)");
+    xvsy[2]->SetOutName(triggerName+"_jetEt_vs_l1JetEt_barrel-endcap");
+    xvsy[2]->SetAddMark("|#eta| < 3.0");
 
     // Jet Et - HF
     xvsy.emplace_back(new TL1XvsY());
-    xvsy[2]->SetXBins(bins(300.0));
-    xvsy[2]->SetX("jetEt","Reco Jet E_{T} (GeV)");
-    xvsy[2]->SetYBins(bins(300.0));
-    xvsy[2]->SetY("l1JetEt","L1 Jet E_{T} (GeV)");
-    xvsy[2]->SetOutName(triggerName+"_jetEt_vs_l1JetEt_hf");
-    xvsy[2]->SetAddMark("HF");
+    xvsy[3]->SetXBins(bins(300.0));
+    xvsy[3]->SetX("jetEt","Offline Jet E_{T} (GeV)");
+    xvsy[3]->SetYBins(bins(300.0));
+    xvsy[3]->SetY("l1JetEt","L1 Jet E_{T} (GeV)");
+    xvsy[3]->SetOutName(triggerName+"_jetEt_vs_l1JetEt_hf");
+    xvsy[3]->SetAddMark("|#eta| > 3.0");
 
     // Jet phi - barrel
     xvsy.emplace_back(new TL1XvsY());
-    xvsy[3]->SetXBins(phiBins());
-    xvsy[3]->SetX("jetPhi","Reco Jet Phi");
-    xvsy[3]->SetYBins(phiBins());
-    xvsy[3]->SetY("l1JetPhi","L1 Jet Phi");
-    xvsy[3]->SetOutName(triggerName+"_jetPhi_vs_l1JetPhi_barrel");
-    xvsy[3]->SetAddMark("Barrel");
+    xvsy[4]->SetXBins(phiBins());
+    xvsy[4]->SetX("jetPhi","Offline Jet Phi");
+    xvsy[4]->SetYBins(phiBins());
+    xvsy[4]->SetY("l1JetPhi","L1 Jet Phi");
+    xvsy[4]->SetOutName(triggerName+"_jetPhi_vs_l1JetPhi_barrel");
+    xvsy[4]->SetAddMark("|#eta| < 1.479");
 
     // Jet Phi - endcap
     xvsy.emplace_back(new TL1XvsY());
-    xvsy[4]->SetXBins(phiBins());
-    xvsy[4]->SetX("jetPhi","Reco Jet Phi");
-    xvsy[4]->SetYBins(phiBins());
-    xvsy[4]->SetY("l1JetPhi","L1 Jet Phi");
-    xvsy[4]->SetOutName(triggerName+"_jetPhi_vs_l1JetPhi_endcap");
-    xvsy[4]->SetAddMark("Endcap");
+    xvsy[5]->SetXBins(phiBins());
+    xvsy[5]->SetX("jetPhi","Offline Jet Phi");
+    xvsy[5]->SetYBins(phiBins());
+    xvsy[5]->SetY("l1JetPhi","L1 Jet Phi");
+    xvsy[5]->SetOutName(triggerName+"_jetPhi_vs_l1JetPhi_endcap");
+    xvsy[5]->SetAddMark("1.479 < |#eta| < 3.0");
+
+    // Jet Phi - barrel endcap
+    xvsy.emplace_back(new TL1XvsY());
+    xvsy[6]->SetXBins(phiBins());
+    xvsy[6]->SetX("jetPhi","Offline Jet Phi");
+    xvsy[6]->SetYBins(phiBins());
+    xvsy[6]->SetY("l1JetPhi","L1 Jet Phi");
+    xvsy[6]->SetOutName(triggerName+"_jetPhi_vs_l1JetPhi_barrel-endcap");
+    xvsy[6]->SetAddMark("|#eta| < 3.0");
 
     // Jet Phi - HF
     xvsy.emplace_back(new TL1XvsY());
-    xvsy[5]->SetXBins(phiBins());
-    xvsy[5]->SetX("jetPhi","Reco Jet Phi");
-    xvsy[5]->SetYBins(phiBins());
-    xvsy[5]->SetY("l1JetPhi","L1 Jet Phi");
-    xvsy[5]->SetOutName(triggerName+"_jetPhi_vs_l1JetPhi_hf");
-    xvsy[5]->SetAddMark("HF");
+    xvsy[7]->SetXBins(phiBins());
+    xvsy[7]->SetX("jetPhi","Offline Jet Phi");
+    xvsy[7]->SetYBins(phiBins());
+    xvsy[7]->SetY("l1JetPhi","L1 Jet Phi");
+    xvsy[7]->SetOutName(triggerName+"_jetPhi_vs_l1JetPhi_hf");
+    xvsy[7]->SetAddMark("|#eta| > 3.0");
 
     // Jet Eta
     xvsy.emplace_back(new TL1XvsY());
-    xvsy[6]->SetXBins(etaBins());
-    xvsy[6]->SetX("jetEta","Reco Jet Eta");
-    xvsy[6]->SetYBins(etaBins());
-    xvsy[6]->SetY("l1JetEta","L1 Jet Eta");
-    xvsy[6]->SetOutName(triggerName+"_jetEta_vs_l1JetEta_hf");
+    xvsy[8]->SetXBins(etaBins());
+    xvsy[8]->SetX("jetEta","Offline Jet Eta");
+    xvsy[8]->SetYBins(etaBins());
+    xvsy[8]->SetY("l1JetEta","L1 Jet Eta");
+    xvsy[8]->SetOutName(triggerName+"_jetEta_vs_l1JetEta_hf");
 
     for(auto it=xvsy.begin(); it!=xvsy.end(); ++it)
     {
@@ -100,6 +121,8 @@ void testTL1XvsYJets()
         (*it)->SetTrigger(triggerName,triggerTitle);
         (*it)->SetRun(run);
         (*it)->SetOutDir(outDir);
+        (*it)->SetPuType(puType);
+        (*it)->SetPuBins(puBins);
         (*it)->InitPlots();
     }
 
@@ -109,43 +132,48 @@ void testTL1XvsYJets()
         unsigned position = event->GetPEvent()->GetPosition()+1;
         TL1Progress::PrintProgressBar(position, NEntries);
 
+        int pu = event->GetPEvent()->fVertex->nVtx;
+
         for(unsigned iRecoJet=0; iRecoJet<event->GetPEvent()->fJets->nJets; ++iRecoJet)
         {
-            std::shared_ptr<TL1JetMatch> jetMatch(new TL1JetMatch(0, iRecoJet));
-            if( !event->GetMatchedJet(jetMatch.get()) ) continue;
+            if( !event->fIsLeadingRecoJet ) continue;
+            if( !event->fIsMatchedL1Jet ) continue;
 
-            unsigned iL1Jet = jetMatch->GetIL1();
-            double l1Et = event->fL1JetEt[iL1Jet];
-            double l1Eta = event->fL1JetEta[iL1Jet];
-            double l1Phi = event->fL1JetPhi[iL1Jet];
-            
-            double recoEt = event->GetPEvent()->fJets->etCorr[iRecoJet];
-            double recoEta = event->GetPEvent()->fJets->eta[iRecoJet];
-            double recoPhi = event->GetPEvent()->fJets->phi[iRecoJet];
+            int pu = event->GetPEvent()->fVertex->nVtx;
 
-            if( abs(recoEta) >= 3.0 )
+            auto recoJet = event->GetPEvent()->fJets;
+            double recoEt = recoJet->etCorr[event->fLeadingRecoJetIndex];
+            double recoEta = recoJet->eta[event->fLeadingRecoJetIndex];
+            double recoPhi = recoJet->phi[event->fLeadingRecoJetIndex];
+
+            double l1Et = event->fL1JetEt[event->fMatchedL1JetIndex];
+            double l1Eta = event->fL1JetEta[event->fMatchedL1JetIndex];
+            double l1Phi = event->fL1JetPhi[event->fMatchedL1JetIndex];
+            if( abs(recoEta) <= 1.479 )
             {
-                xvsy[2]->Fill(recoEt, l1Et);
-                xvsy[5]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi));
-                xvsy[6]->Fill(recoEta, l1Eta);
+                xvsy[0]->Fill(recoEt, l1Et, pu);
+                xvsy[2]->Fill(recoEt, l1Et, pu);
+
+                xvsy[4]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi), pu);
+                xvsy[6]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi), pu);
+
+                xvsy[8]->Fill(recoEta, l1Eta, pu);
             }
+            else if( abs(recoEta) <= 3.0 )
+            {
+                xvsy[1]->Fill(recoEt, l1Et, pu);
+                xvsy[2]->Fill(recoEt, l1Et, pu);
 
-            // Jet filter (tight lepton veto and zero muon multiplicity)
-            if( !event->fJetFilterPassFlags[iRecoJet] ) continue;
-            if( abs(recoEta) < 3.0 )
-            {
-                xvsy[6]->Fill(recoEta, l1Eta);
-            }
+                xvsy[5]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi), pu);
+                xvsy[6]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi), pu);
 
-            if( abs(recoEta) < 1.3 )
-            {
-                xvsy[0]->Fill(recoEt, l1Et);
-                xvsy[3]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi));
+                xvsy[8]->Fill(recoEta, l1Eta, pu);
             }
-            else if( abs(recoEta) < 3.0 )
+            else if( abs(recoEta) <= 5.0 )
             {
-                xvsy[1]->Fill(recoEt, l1Et);
-                xvsy[4]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi));
+                xvsy[3]->Fill(recoEt, l1Et, pu);
+                xvsy[7]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi), pu);
+                xvsy[8]->Fill(recoEta, l1Eta, pu);
             }
         }
     }
