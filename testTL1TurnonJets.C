@@ -19,14 +19,17 @@ void testTL1TurnonJets()
     std::string sample = "Data";
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
-    std::string run = "273301";
-    //std::string run = "273450";
+    //std::string run = "273301";
+    std::string run = "273301-302-450";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
-    bool doFit = true;
+    bool doFit = false;
+    std::vector<std::string> puType = {"0PU12","13PU19","20PU"};
+    std::vector<int> puBins = {0,13,20,999};
 
     //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
-    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
+    //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
     //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160602_r273450_SingleMu_l1t-int-v53p1";
+    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
     std::shared_ptr<TL1EventClass> event(new TL1EventClass(inDir));
 
     std::vector<std::shared_ptr<TL1Turnon>> turnons;
@@ -34,43 +37,43 @@ void testTL1TurnonJets()
     // Jet Et - barrel
     turnons.emplace_back(new TL1Turnon());
     std::string outDir = outDirBase+"/"+turnons.front()->GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/TurnonsJets/";
-    turnons[0]->SetSeeds({0., 36., 52., 68., 92., 128., 176., 200.});
+    turnons[0]->SetSeeds({0., 36., 68., 128., 200.});
     turnons[0]->SetXBins(bins());
-    turnons[0]->SetX("recoJetEt","Reco Jet E_{T}");
+    turnons[0]->SetX("recoJetEt","Offline Jet E_{T} (GeV)");
     turnons[0]->SetSeed("l1JetEt","L1 Jet E_{T}");
     turnons[0]->SetOutName(triggerName+"_recoJetEt_l1JetEtSeeds_barrel");
     turnons[0]->SetFit(doFit);
-    turnons[0]->SetAddMark("Barrel");
+    turnons[0]->SetAddMark("|#eta| < 1.479");
 
     // Jet Et - end cap
     turnons.emplace_back(new TL1Turnon());
-    turnons[1]->SetSeeds({0., 36., 52., 68., 92., 128., 176., 200.});
+    turnons[1]->SetSeeds({0., 36., 68., 128., 200.});
     turnons[1]->SetXBins(bins());
-    turnons[1]->SetX("recoJetEt","Reco Jet E_{T}");
+    turnons[1]->SetX("recoJetEt","Offline Jet E_{T} (GeV)");
     turnons[1]->SetSeed("l1JetEt","L1 Jet E_{T}");
     turnons[1]->SetOutName(triggerName+"_recoJetEt_l1JetEtSeeds_endcap");
     turnons[1]->SetFit(doFit);
-    turnons[1]->SetAddMark("Endcap");
+    turnons[1]->SetAddMark("1.479 < |#eta| < 3.0");
 
     // Jet Et - barrel + endcap
     turnons.emplace_back(new TL1Turnon());
-    turnons[2]->SetSeeds({0., 36., 52., 68., 92., 128., 176., 200.});
+    turnons[2]->SetSeeds({0., 36., 68., 128., 200.});
     turnons[2]->SetXBins(bins());
-    turnons[2]->SetX("recoJetEt","Reco Jet E_{T}");
+    turnons[2]->SetX("recoJetEt","Offline Jet E_{T} (GeV)");
     turnons[2]->SetSeed("l1JetEt","L1 Jet E_{T}");
     turnons[2]->SetOutName(triggerName+"_recoJetEt_l1JetEtSeeds_barrel-endcap");
     turnons[2]->SetFit(doFit);
-    turnons[2]->SetAddMark("Barrel+Endcap");
+    turnons[2]->SetAddMark("|#eta| < 3.0");
 
     // Jet Et - HF
     turnons.emplace_back(new TL1Turnon());
-    turnons[3]->SetSeeds({0., 36., 52., 68., 92., 128., 176.});
+    turnons[3]->SetSeeds({0., 36., 68., 128., 176.});
     turnons[3]->SetXBins(bins());
-    turnons[3]->SetX("recoJetEt","Reco Jet E_{T}");
+    turnons[3]->SetX("recoJetEt","Offline Jet E_{T} (GeV)");
     turnons[3]->SetSeed("l1JetEt","L1 Jet E_{T}");
     turnons[3]->SetOutName(triggerName+"_recoJetEt_l1JetEtSeeds_hf");
     turnons[3]->SetFit(doFit);
-    turnons[3]->SetAddMark("HF");
+    turnons[3]->SetAddMark("|#eta| > 3.0");
     
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)
     {
@@ -78,6 +81,8 @@ void testTL1TurnonJets()
         (*it)->SetTrigger(triggerName,triggerTitle);
         (*it)->SetRun(run);
         (*it)->SetOutDir(outDir);
+        (*it)->SetPuType(puType);
+        (*it)->SetPuBins(puBins);
         (*it)->InitPlots();
     }
 
@@ -87,33 +92,32 @@ void testTL1TurnonJets()
         unsigned position = event->GetPEvent()->GetPosition()+1;
         TL1Progress::PrintProgressBar(position, NEntries);
 
-        for(unsigned iRecoJet=0; iRecoJet<event->GetPEvent()->fJets->nJets; ++iRecoJet)
-        {
-            std::shared_ptr<TL1JetMatch> jetMatch(new TL1JetMatch(0, iRecoJet));
-            if( !event->GetMatchedJet(jetMatch.get()) ) continue;
+        if( !event->fIsLeadingRecoJet ) continue;
+        if( !event->fIsMatchedL1Jet ) continue;
 
-            unsigned iL1Jet = jetMatch->GetIL1();
-            double l1Et = event->fL1JetEt[iL1Jet];
-            double l1Eta = event->fL1JetEta[iL1Jet];
-            double l1Phi = event->fL1JetPhi[iL1Jet];
-            
-            double recoEt = event->GetPEvent()->fJets->etCorr[iRecoJet];
-            double recoEta = event->GetPEvent()->fJets->eta[iRecoJet];
+        int pu = event->GetPEvent()->fVertex->nVtx;
 
-            if( abs(recoEta) >= 3.5 && abs(recoEta) <= 4.5 )
-                turnons[3]->Fill(recoEt, l1Et);
+        auto recoJet = event->GetPEvent()->fJets;
+        double recoEt = recoJet->etCorr[event->fLeadingRecoJetIndex];
+        double recoEta = recoJet->eta[event->fLeadingRecoJetIndex];
+        double recoPhi = recoJet->phi[event->fLeadingRecoJetIndex];
 
-            // Jet filter (tight lepton veto and zero muon multiplicity)
-            if( !event->fJetFilterPassFlags[iRecoJet] ) continue;
-            if( (abs(recoEta) >= 1.55 && abs(recoEta) <= 3.0) || (abs(recoEta)<=1.45) )
-                turnons[2]->Fill(recoEt, l1Et);
-
-            if( abs(recoEta) <= 1.45 )
-                turnons[0]->Fill(recoEt, l1Et);
-            else if( abs(recoEta) >= 1.55 && abs(recoEta) <= 3.0 )
-                turnons[1]->Fill(recoEt, l1Et);
-        }
+        double l1Et = event->fL1JetEt[event->fMatchedL1JetIndex];
+        double l1Eta = event->fL1JetEta[event->fMatchedL1JetIndex];
+        double l1Phi = event->fL1JetPhi[event->fMatchedL1JetIndex];
         
+        if( abs(recoEta) <= 1.45 )
+        {
+            turnons[0]->Fill(recoEt, l1Et, pu);
+            turnons[2]->Fill(recoEt, l1Et, pu);
+        }
+        else if( abs(recoEta) >= 1.55 && abs(recoEta) <= 3.0 )
+        {
+            turnons[1]->Fill(recoEt, l1Et, pu);
+            turnons[2]->Fill(recoEt, l1Et, pu);
+        }
+        if( abs(recoEta) >= 3.5 && abs(recoEta) <= 4.5 )
+            turnons[3]->Fill(recoEt, l1Et, pu);
     }
 
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)
@@ -126,7 +130,10 @@ void testTL1TurnonJets()
 vector<double> bins()
 {
     vector<double> temp;
-    for(double binLowerEdge= 0.0; binLowerEdge< 300.0; binLowerEdge+=10.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge= 0.0; binLowerEdge< 120.0; binLowerEdge+=10.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge=120.0; binLowerEdge< 160.0; binLowerEdge+=20.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge=160.0; binLowerEdge< 200.1; binLowerEdge+=40.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge=200.0; binLowerEdge< 400.1; binLowerEdge+=100.0) temp.push_back(binLowerEdge);
 //    for(double binLowerEdge= 40.0; binLowerEdge< 70.0; binLowerEdge+= 2.5) temp.push_back(binLowerEdge);
 //    for(double binLowerEdge= 70.0; binLowerEdge<200.0; binLowerEdge+= 5.0) temp.push_back(binLowerEdge);
 //    for(double binLowerEdge=200.0; binLowerEdge<300.0; binLowerEdge+=10.0) temp.push_back(binLowerEdge);

@@ -16,7 +16,7 @@ namespace TL1Progress
                 else std::cout << " ";
             }
     
-            std::cout << "] " << (unsigned)(fraction*100) << "%" << std::endl;
+            std::cout << "] " << (unsigned)(fraction*100) << "% " << pos << "/" << max << std::endl;
             std::cout << "\033[A";
         }
     }

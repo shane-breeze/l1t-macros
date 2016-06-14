@@ -2,7 +2,6 @@
 #define TL1DATACLASS_H
 
 #include <string>
-#include <memory>
 
 #include <TROOT.h>
 #include <TChain.h>
@@ -19,7 +18,7 @@ class TL1DataClass
         void SetBranchAddress(std::string leaf, void * add);
         
     private:
-        std::shared_ptr<TChain> fChain;
+        TChain * fChain;
         int fNFiles;   
 
 };
