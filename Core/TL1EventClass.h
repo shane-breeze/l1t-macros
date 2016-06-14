@@ -2,7 +2,6 @@
 #define TL1EVENTCLASS_H
 
 #include <string>
-#include <memory>
 #include <vector>
 
 #include <TMath.h>
@@ -46,7 +45,7 @@ class TL1EventClass
         int fMatchedL1JetIndex;
 
     private:
-        std::shared_ptr<TL1PrimitiveEventClass> fPrimitiveEvent;
+        TL1PrimitiveEventClass * fPrimitiveEvent;
 
         // Get L1
         void GetL1Jets();
@@ -117,7 +116,7 @@ void TL1EventClass::GetDerivatives()
 
 TL1PrimitiveEventClass const * TL1EventClass::GetPEvent() const
 {
-    return fPrimitiveEvent.get();
+    return fPrimitiveEvent;
 }
 
 void TL1EventClass::GetL1Jets()
@@ -236,16 +235,16 @@ void TL1EventClass::SumsFilter()
 
 void TL1EventClass::GetRecalcL1Mht()
 {
-    std::shared_ptr<TVector2> mht(new TVector2(0.0,0.0));
+    TVector2 * mht(new TVector2(0.0,0.0));
     int jetCount=0;
     for(unsigned iJet=0; iJet<fL1JetEt.size(); ++iJet)
     {
         if( TMath::Abs(fL1JetEta[iJet]) > 3.0 ) continue;
         if( fL1JetEt[iJet] < 30.0 ) continue;
-        std::shared_ptr<TVector2> jet(new TVector2(0.0,0.0));
+        TVector2 * jet(new TVector2(0.0,0.0));
         jet->SetMagPhi(fL1JetEt[iJet], fL1JetPhi[iJet]);
         ++jetCount;
-        *(mht.get()) -= *(jet.get());
+        *(mht) -= *(jet);
     }
     fRecalcL1Mht = mht->Mod();
     fRecalcL1MhtPhi = mht->Phi();
@@ -273,7 +272,7 @@ void TL1EventClass::GetRecalcL1Ett()
 
 void TL1EventClass::GetRecalcRecoHtSums()
 {
-    std::shared_ptr<TVector2> mht(new TVector2(0.,0.));
+    TVector2 * mht(new TVector2(0.,0.));
     double jetEt(0.0);
     unsigned jetCount(0);
     fMhtPassFlag = true;
@@ -286,11 +285,11 @@ void TL1EventClass::GetRecalcRecoHtSums()
             fMhtPassFlag = false;
             break;
         }
-        std::shared_ptr<TVector2> jet(new TVector2(0.,0.));
+        TVector2 * jet(new TVector2(0.,0.));
         jet->SetMagPhi(fPrimitiveEvent->fJets->etCorr[iJet], fPrimitiveEvent->fJets->phi[iJet]);
         jetEt += fPrimitiveEvent->fJets->etCorr[iJet];
         ++jetCount;
-        *(mht.get()) -= *(jet.get());
+        *(mht) -= *(jet);
     }
     fRecalcRecoMht = mht->Mod();
     fRecalcRecoMhtPhi = mht->Phi();

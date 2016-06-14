@@ -2,7 +2,6 @@
 #define TL1PLOTS_H
 
 #include <string>
-#include <memory>
 #include <stdlib.h>
 
 #include <sys/types.h>
@@ -43,7 +42,7 @@ class TL1Plots
         std::vector<int> GetPuBins() const;
 
     private:
-        std::shared_ptr<TDatime> fDate;
+        TDatime * fDate;
         std::string fSampleName, fTriggerName, fRun;
         std::string fSampleTitle, fTriggerTitle;
         std::string fOutName, fOutDir;
