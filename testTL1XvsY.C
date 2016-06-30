@@ -5,6 +5,7 @@
 #include "Plotting/tdrstyle.C"
 #include "Event/TL1EventClass.h"
 #include "Utilities/TL1Progress.C"
+#include "Utilities/TL1DateTime.C"
 #include "Plotting/TL1XvsY.h"
 
 std::vector<double> bins(double max, double width, double min);
@@ -36,7 +37,7 @@ void testTL1XvsY()
 
     // caloMetBE
     xvsy.emplace_back(new TL1XvsY());
-    std::string outDir = outDirBase+"/"+xvsy.front()->GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/xy/";
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/xy/";
     xvsy[0]->SetXBins(bins(200.0,1.0,0.0));
     xvsy[0]->SetX("caloMetBE","Offline E_{T}^{miss} (GeV)");
     xvsy[0]->SetYBins(bins(200.0,1.0,0.0));

@@ -93,7 +93,7 @@ void TL1Turnon::DrawPlots()
 {
     for(unsigned i=0; i<fPlots.size(); ++i)
     {
-        fPlotsRoot->WriteTObject(fPlots[i][0]);
+        fPlotsRoot->WriteTObject(fPlots[i]);
 
         for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
             fPlotsRoot->WriteTObject(fPuPlots[i][ipu]);
@@ -105,7 +105,7 @@ void TL1Turnon::DrawTurnons()
     for(int i=1; i<fSeeds.size(); ++i)
     {
         TGraphAsymmErrors * turnon(new TGraphAsymmErrors(fPlots[i], fPlots[0]));
-        turnon->GetXaxis()->SetTitle(fPlots[i][0]->GetXaxis()->GetTitle());
+        turnon->GetXaxis()->SetTitle(fPlots[i]->GetXaxis()->GetTitle());
         turnon->GetXaxis()->SetLimits(fXBins.front(), fXBins.back());
         turnon->GetYaxis()->SetTitle("Efficiency");
         turnon->SetMinimum(0.0);

@@ -5,6 +5,7 @@
 #include "Plotting/tdrstyle.C"
 #include "Event/TL1EventClass.h"
 #include "Utilities/TL1Progress.C"
+#include "Utilities/TL1DateTime.C"
 #include "Plotting/TL1XvsY.h"
 
 vector<double> bins(double max);
@@ -37,7 +38,7 @@ void testTL1XvsYJets()
 
     // Jet Et - barrel
     xvsy.emplace_back(new TL1XvsY());
-    std::string outDir = outDirBase+"/"+xvsy.front()->GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/xyJets/";
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/xyJets/";
     xvsy[0]->SetXBins(bins(300.0));
     xvsy[0]->SetX("jetEt","Offline Jet E_{T} (GeV)");
     xvsy[0]->SetYBins(bins(300.0));

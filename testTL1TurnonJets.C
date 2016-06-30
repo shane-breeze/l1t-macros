@@ -4,6 +4,7 @@
 #include "Plotting/tdrstyle.C"
 #include "Event/TL1EventClass.h"
 #include "Utilities/TL1Progress.C"
+#include "Utilities/TL1DateTime.C"
 #include "Plotting/TL1Turnon.h"
 
 vector<double> bins();
@@ -35,7 +36,7 @@ void testTL1TurnonJets()
 
     // Jet Et - barrel
     turnons.emplace_back(new TL1Turnon());
-    std::string outDir = outDirBase+"/"+turnons.front()->GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/TurnonsJets/";
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/TurnonsJets/";
     turnons[0]->SetSeeds({0., 36., 68., 128., 200.});
     turnons[0]->SetXBins(bins());
     turnons[0]->SetX("recoJetEt","Offline Jet E_{T} (GeV)");

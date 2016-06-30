@@ -4,6 +4,7 @@
 #include "Plotting/tdrstyle.C"
 #include "Event/TL1EventClass.h"
 #include "Utilities/TL1Progress.C"
+#include "Utilities/TL1DateTime.C"
 #include "Plotting/TL1Resolution.h"
 
 std::vector<double> bins();
@@ -34,7 +35,7 @@ void testTL1ResolutionJets()
 
     // Jet Et - barrel
     resolution.emplace_back(new TL1Resolution());
-    std::string outDir = outDirBase+"/"+resolution.front()->GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/resJets/";
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/resJets/";
     resolution[0]->SetBins(bins());
     resolution[0]->SetX("jetEt","Offline Jet E_{T}");
     resolution[0]->SetY("l1JetEt","L1 Jet E_{T})");

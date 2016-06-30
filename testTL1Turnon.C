@@ -4,6 +4,7 @@
 #include "Plotting/tdrstyle.C"
 #include "Event/TL1EventClass.h"
 #include "Utilities/TL1Progress.C"
+#include "Utilities/TL1DateTime.C"
 #include "Plotting/TL1Turnon.h"
 
 vector<double> metBins();
@@ -38,7 +39,7 @@ void testTL1Turnon()
 
     // caloMetBE
     turnons.emplace_back(new TL1Turnon());
-    std::string outDir = outDirBase+"/"+turnons.front()->GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Turnons/";
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Turnons/";
     turnons[0]->SetSeeds({0.,40.,60.,80.,100.,120.});
     turnons[0]->SetXBins(metBins());
     turnons[0]->SetX("caloMetBE","Offline E_{T}^{miss} (GeV)");
@@ -75,9 +76,6 @@ void testTL1Turnon()
 
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)
     {
-        (*it)->SetSample(sample,"");
-        (*it)->SetTrigger(triggerName,triggerTitle);
-        (*it)->SetRun(run);
         (*it)->SetOutDir(outDir);
         (*it)->SetPuType(puType);
         (*it)->SetPuBins(puBins);
@@ -113,6 +111,8 @@ void testTL1Turnon()
         (*it)->DrawPlots();
         (*it)->DrawTurnons();
     }
+
+    cout << "Output saved in:\n" << outDir << endl;
 }
 
 vector<double> metBins()
