@@ -20,6 +20,9 @@ class TL1EventClass
 
         TL1PrimitiveEventClass const * GetPEvent() const;
 
+        double fL1HttHf;
+        double fRecoHttHf;
+
         // Get L1
         double fL1Met, fL1Mht, fL1Ett, fL1Htt, fL1MetPhi, fL1MhtPhi;
         std::vector<double> fL1JetEt, fL1JetPhi, fL1JetEta;
@@ -68,6 +71,9 @@ class TL1EventClass
         void GetLeadingRecoJet();
         void GetMatchedL1Jet();
 
+        void GetL1HttHf();
+        void GetRecoHttHf();
+
 };
 
 TL1EventClass::TL1EventClass(std::string inDir) :
@@ -112,6 +118,9 @@ void TL1EventClass::GetDerivatives()
     // Jets
     this->GetLeadingRecoJet();
     this->GetMatchedL1Jet();
+    
+    this->GetL1HttHf();
+    this->GetRecoHttHf();
 }
 
 TL1PrimitiveEventClass const * TL1EventClass::GetPEvent() const
@@ -379,6 +388,29 @@ void TL1EventClass::GetMatchedL1Jet()
         fIsMatchedL1Jet = true;
         fMatchedL1JetIndex = iMatchedL1;
     }
+}
+
+void TL1EventClass::GetL1HttHf()
+{
+    double l1HttHf(0.0);
+    for(auto it=fL1JetEt.begin(); it!=fL1JetEt.end(); ++it)
+    {
+        if(*it < 30.0) continue;
+        l1HttHf += *it; 
+    }
+    fL1HttHf = l1HttHf;
+}
+
+void TL1EventClass::GetRecoHttHf()
+{
+    double recoHttHf(0.0);
+    auto recoJets = fPrimitiveEvent->fJets;
+    for(int iRecoJet=0; iRecoJet<recoJets->nJets; ++iRecoJet)
+    {
+        if(recoJets->etCorr[i] < 30.0) continue;
+        recoHttHf += recoJets->etCorr[i];
+    }
+    fRecoHttHf = recoHttHf;
 }
 
 #endif
