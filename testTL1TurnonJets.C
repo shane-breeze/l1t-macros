@@ -19,8 +19,8 @@ void testTL1TurnonJets()
     std::string sample = "Data";
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
-    //std::string run = "273301";
-    std::string run = "273301-302-450";
+
+    std::string run = ""; // <-----------
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
     bool doFit = false;
     std::vector<std::string> puType = {"0PU12","13PU19","20PU"};
@@ -29,7 +29,8 @@ void testTL1TurnonJets()
     //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
     //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
     //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160602_r273450_SingleMu_l1t-int-v53p1";
-    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
+    //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
+    std::string inDir = "" // <------------
     std::shared_ptr<TL1EventClass> event(new TL1EventClass(inDir));
 
     std::vector<std::shared_ptr<TL1Turnon>> turnons;
