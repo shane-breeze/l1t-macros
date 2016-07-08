@@ -20,11 +20,9 @@ class TL1EventClass
 
         TL1PrimitiveEventClass const * GetPEvent() const;
 
-        double fL1HttHf;
-        double fRecoHttHf;
-
         // Get L1
         double fL1Met, fL1Mht, fL1Ett, fL1Htt, fL1MetPhi, fL1MhtPhi;
+        double fL1MetHF, fL1MhtHF, fL1EttHF, fL1HttHF, fL1MetPhiHF, fL1MhtPhiHF;
         std::vector<double> fL1JetEt, fL1JetPhi, fL1JetEta;
 
         // Filter flags
@@ -71,9 +69,6 @@ class TL1EventClass
         void GetLeadingRecoJet();
         void GetMatchedL1Jet();
 
-        void GetL1HttHf();
-        void GetRecoHttHf();
-
 };
 
 TL1EventClass::TL1EventClass(std::string inDir) :
@@ -118,9 +113,6 @@ void TL1EventClass::GetDerivatives()
     // Jets
     this->GetLeadingRecoJet();
     this->GetMatchedL1Jet();
-    
-    this->GetL1HttHf();
-    this->GetRecoHttHf();
 }
 
 TL1PrimitiveEventClass const * TL1EventClass::GetPEvent() const
@@ -154,17 +146,29 @@ void TL1EventClass::GetL1Sums()
         if( upgrades->sumBx[iter] == 0 )
         {
             short int sumType = upgrades->sumType[iter];
-            if(sumType == L1Analysis::kTotalEt)   fL1Ett = et;
-            if(sumType == L1Analysis::kTotalHt)   fL1Htt = et;
-            if(sumType == L1Analysis::kMissingEt)
+            if(sumType == l1t::EtSum::EtSumType::kTotalEt)   fL1Ett = et;
+            if(sumType == l1t::EtSum::EtSumType::kTotalHt)   fL1Htt = et;
+            if(sumType == l1t::EtSum::EtSumType::kMissingEt)
             {
                 fL1Met = et;
                 fL1MetPhi = phi;
             }
-            if(sumType == L1Analysis::kMissingHt)
+            if(sumType == l1t::EtSum::EtSumType::kMissingHt)
             {
                 fL1Mht = et;
                 fL1MhtPhi = phi;
+            }
+            if(sumType == l1t::EtSum::EtSumType::kTotalEtHF) fL1EttHF = et;
+            if(sumType == l1t::EtSum::EtSumType::kTotalHtHF) fL1HttHF = et;
+            if(sumType == l1t::EtSum::EtSumType::kMissingEt)
+            {
+                fL1MetHF = et;
+                fL1MetPhiHF = phi;
+            }
+            if(sumType == l1t::EtSum::EtSumType::kMissingHt)
+            {
+                fL1MhtHF = et;
+                fL1MhtPhiHF = phi;
             }
         }
     }
@@ -388,29 +392,6 @@ void TL1EventClass::GetMatchedL1Jet()
         fIsMatchedL1Jet = true;
         fMatchedL1JetIndex = iMatchedL1;
     }
-}
-
-void TL1EventClass::GetL1HttHf()
-{
-    double l1HttHf(0.0);
-    for(auto it=fL1JetEt.begin(); it!=fL1JetEt.end(); ++it)
-    {
-        if(*it < 30.0) continue;
-        l1HttHf += *it; 
-    }
-    fL1HttHf = l1HttHf;
-}
-
-void TL1EventClass::GetRecoHttHf()
-{
-    double recoHttHf(0.0);
-    auto recoJets = fPrimitiveEvent->fJets;
-    for(int iRecoJet=0; iRecoJet<recoJets->nJets; ++iRecoJet)
-    {
-        if(recoJets->etCorr[i] < 30.0) continue;
-        recoHttHf += recoJets->etCorr[i];
-    }
-    fRecoHttHf = recoHttHf;
 }
 
 #endif

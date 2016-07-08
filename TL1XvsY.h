@@ -83,7 +83,7 @@ void TL1XvsY::DrawPlots()
     nomlatex->SetNDC();
     nomlatex->SetTextFont(42);
     nomlatex->SetTextAlign(31);
-    nomlatex->DrawLatex(0.82,0.15,"<PU>=14");
+    //nomlatex->DrawLatex(0.82,0.15,"<PU>=14");
 
     std::string outName = Form("%s/xy_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str());
     can->SaveAs(outName.c_str());
@@ -125,7 +125,7 @@ void TL1XvsY::DrawCmsStamp()
         latex->SetTextAlign(31);
         std::string runNo = "run " + this->GetRun() + ", ";
         //latex->DrawLatex(0.92, 0.92, Form("%s%s, #sqrt{s} = 13 TeV",runNo.c_str(),this->GetTriggerTitle().c_str()));
-        latex->DrawLatex(0.92,0.92,"75.3 pb^{-1} (13 TeV)");
+        latex->DrawLatex(0.92,0.92,Form("%s (13 TeV)",this->GetRun().c_str()));
     }
     else
     {
