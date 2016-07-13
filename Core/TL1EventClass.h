@@ -158,18 +158,18 @@ void TL1EventClass::GetL1Sums()
                 fL1Mht = et;
                 fL1MhtPhi = phi;
             }
-            if(sumType == l1t::EtSum::EtSumType::kTotalEtHF) fL1EttHF = et;
-            if(sumType == l1t::EtSum::EtSumType::kTotalHtHF) fL1HttHF = et;
-            if(sumType == l1t::EtSum::EtSumType::kMissingEt)
-            {
-                fL1MetHF = et;
-                fL1MetPhiHF = phi;
-            }
-            if(sumType == l1t::EtSum::EtSumType::kMissingHt)
-            {
-                fL1MhtHF = et;
-                fL1MhtPhiHF = phi;
-            }
+            //if(sumType == l1t::EtSum::EtSumType::kTotalEtHF) fL1EttHF = et;
+            //if(sumType == l1t::EtSum::EtSumType::kTotalHtHF) fL1HttHF = et;
+            //if(sumType == l1t::EtSum::EtSumType::kMissingEtHF)
+            //{
+            //    fL1MetHF = et;
+            //    fL1MetPhiHF = phi;
+            //}
+            //if(sumType == l1t::EtSum::EtSumType::kMissingHtHF)
+            //{
+            //    fL1MhtHF = et;
+            //    fL1MhtPhiHF = phi;
+            //}
         }
     }
 }
@@ -280,7 +280,7 @@ void TL1EventClass::GetRecalcL1Ett()
         }
     }
     fRecalcL1Ett = sumEt;
-    fNJetsL1Ett = jetCount;
+    //fNJetsL1Ett = jetCount;
 }
 
 void TL1EventClass::GetRecalcRecoHtSums()
@@ -323,7 +323,7 @@ void TL1EventClass::GetRecalcRecoEtt()
         }
     }
     fRecalcRecoEtt = jetEt;
-    fNJetsRecoEtt = jetCount;
+    //fNJetsRecoEtt = jetCount;
 }
 
 void TL1EventClass::GetLeadingRecoJet()
