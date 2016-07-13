@@ -41,8 +41,8 @@ void testTL1XvsY()
     xvsy[0]->SetXBins(bins(200.0,1.0,0.0));
     xvsy[0]->SetX("caloMetBE","Offline E_{T}^{miss} (GeV)");
     xvsy[0]->SetYBins(bins(200.0,1.0,0.0));
-    xvsy[0]->SetY("l1EmuMet","L1 E_{T}^{miss} (GeV)");
-    xvsy[0]->SetOutName(triggerName+"_caloMetBE_vs_l1MetEmu");
+    xvsy[0]->SetY("l1Met","L1 E_{T}^{miss} (GeV)");
+    xvsy[0]->SetOutName(triggerName+"_caloMetBE_vs_l1Met");
     xvsy[0]->SetAddMark("no HF");
 
     // caloMetHF
@@ -50,8 +50,8 @@ void testTL1XvsY()
     xvsy[1]->SetXBins(bins(200.0,1.0,0.0));
     xvsy[1]->SetX("caloMetHF","Offline E_{T}^{miss} (GeV)");
     xvsy[1]->SetYBins(bins(200.0,1.0,0.0));
-    xvsy[1]->SetY("l1EmuMetHF","L1 E_{T}^{miss} (GeV)");
-    xvsy[1]->SetOutName(triggerName+"_caloMetHF_vs_l1MetEmuHF");
+    xvsy[1]->SetY("recalcL1MetHF","Recalc L1 E_{T}^{miss} (GeV)");
+    xvsy[1]->SetOutName(triggerName+"_caloMetHF_vs_recalcL1MetHF");
     xvsy[1]->SetAddMark("HF");
 
 
@@ -60,8 +60,8 @@ void testTL1XvsY()
     xvsy[2]->SetXBins(phiBins());
     xvsy[2]->SetX("caloMetPhiBE","Offline E_{T}^{miss} Phi");
     xvsy[2]->SetYBins(phiBins());
-    xvsy[2]->SetY("l1EmuMetPhi","L1 E_{T}^{miss} Phi");
-    xvsy[2]->SetOutName(triggerName+"_caloMetPhiBE_vs_l1EmuMetPhi");
+    xvsy[2]->SetY("l1MetPhi","L1 E_{T}^{miss} Phi");
+    xvsy[2]->SetOutName(triggerName+"_caloMetPhiBE_vs_l1MetPhi");
     xvsy[2]->SetAddMark("no HF");
 
     // caloMetPhiHF
@@ -69,8 +69,8 @@ void testTL1XvsY()
     xvsy[3]->SetXBins(phiBins());
     xvsy[3]->SetX("caloMetPhiHF","Offline E_{T}^{miss} Phi");
     xvsy[3]->SetYBins(phiBins());
-    xvsy[3]->SetY("l1EmuMetPhiHF","L1 E_{T}^{miss} Phi");
-    xvsy[3]->SetOutName(triggerName+"_caloMetPhiHF_vs_l1EmuMetPhiHF");
+    xvsy[3]->SetY("recalcL1MetPhiHF","Recalc L1 E_{T}^{miss} Phi");
+    xvsy[3]->SetOutName(triggerName+"_caloMetPhiHF_vs_recalcL1MetPhiHF");
     xvsy[3]->SetAddMark("HF");
 
     // htt - no HF
@@ -126,19 +126,19 @@ void testTL1XvsY()
         if( event->fMetFilterPassFlag )
         {
             double recoMet = sums->caloMetBE;
-            double l1Met = event->fL1EmuMet;
+            double l1Met = event->fL1Met;
             if( recoMet > 0.0 && l1Met > 0.0 ) xvsy[0]->Fill(recoMet, l1Met, pu);
 
             double recoMetHF = sums->caloMet;
-            double l1MetHF = event->fL1EmuMetHF;
+            double l1MetHF = event->fRecalcL1MetHF;
             if( recoMetHF > 0.0 && l1MetHF > 0.0 ) xvsy[1]->Fill(recoMetHF, l1MetHF, pu);
 
             double recoMetPhi = FoldPhi(sums->caloMetPhiBE);
-            double l1MetPhi = FoldPhi(event->fL1EmuMetPhi);
+            double l1MetPhi = FoldPhi(event->fL1MetPhi);
             xvsy[2]->Fill(recoMetPhi, l1MetPhi, pu);
 
             double recoMetPhiHF = FoldPhi(sums->caloMetPhi);
-            double l1MetPhiHF = FoldPhi(event->fL1EmuMetPhiHF);
+            double l1MetPhiHF = FoldPhi(event->fRecalcL1MetPhiHF);
             xvsy[3]->Fill(recoMetPhiHF, l1MetPhiHF, pu);
         }
     }

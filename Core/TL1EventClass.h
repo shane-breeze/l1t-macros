@@ -30,6 +30,10 @@ class TL1EventClass
         // Filter flags
         bool fMuonFilterPassFlag, fMetFilterPassFlag;
         std::vector<bool> fJetFilterPassFlags;
+        
+        // Recalc L1 MET sums
+        double fRecalcL1Met, fRecalcL1MetPhi;
+        double fRecalcL1MetHF, fRecalcL1MetPhiHF;
 
         // Recalc L1 Ht/Et Sums
         double fRecalcL1Mht, fRecalcL1MhtPhi;
@@ -59,6 +63,9 @@ class TL1EventClass
         void MuonFilter();
         void JetFilter();
         void SumsFilter();
+
+        // Recalc L1 MET sum
+        void GetRecalcL1Met();
 
         // Recalc L1 Ht/Et Sums
         void GetRecalcL1Mht();
@@ -108,11 +115,12 @@ void TL1EventClass::GetDerivatives()
     this->SumsFilter();
 
     // Recalc
-    this->GetRecalcL1Mht();
-    this->GetRecalcL1Ett();
+    this->GetRecalcL1Met();
+    //this->GetRecalcL1Mht();
+    //this->GetRecalcL1Ett();
     
-    this->GetRecalcRecoHtSums();
-    this->GetRecalcRecoEtt();
+    //this->GetRecalcRecoHtSums();
+    //this->GetRecalcRecoEtt();
 
     // Jets
     this->GetLeadingRecoJet();
@@ -325,6 +333,31 @@ void TL1EventClass::GetRecalcL1Ett()
     fNJetsL1Ett = jetCount;
 }
 
+void TL1EventClass::GetRecalcL1Met()
+{
+    int iEtaMax(16384);
+    TVector2 met(0.0,0.0), metHF(0.0,0.0);
+    auto caloTowers = fPrimitiveEvent->fCaloTowers;
+    int ieta(0);
+    double phi(0.0), et(0.0);
+    for(int jTower=0; jTower<caloTowers->nTower; ++jTower)
+    {
+        ieta = caloTowers->ieta[jTower];
+        phi = (TMath::Pi()/36.0) * (double)caloTowers->iphi[jTower];
+        et = 0.5 * (double)caloTowers->iet[jTower];
+        TVector2 temp(0.0,0.0);
+        temp.SetMagPhi(et,phi);
+
+        if( abs(ieta) >= 28 )
+            met -= temp;
+        metHF -= temp;
+    }
+    fRecalcL1Met = met.Mod();
+    fRecalcL1MetPhi = met.Phi();
+    fRecalcL1MetHF = metHF.Mod();
+    fRecalcL1MetPhiHF = metHF.Phi();
+}
+
 void TL1EventClass::GetRecalcRecoHtSums()
 {
     TVector2 * mht(new TVector2(0.,0.));
@@ -365,7 +398,7 @@ void TL1EventClass::GetRecalcRecoEtt()
         }
     }
     fRecalcRecoEtt = jetEt;
-    fNJetsRecoEtt = jetCount;
+    //fNJetsRecoEtt = jetCount;
 }
 
 void TL1EventClass::GetLeadingRecoJet()
