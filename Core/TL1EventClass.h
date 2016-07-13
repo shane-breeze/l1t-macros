@@ -157,7 +157,7 @@ void TL1EventClass::GetL1Sums()
         double phi = upgrades->sumPhi[iter];
         if( upgrades->sumBx[iter] == 0 )
         {
-            short int sumType = upgrades->sumType[iter];
+            int sumType = upgrades->sumType[iter];
             if(sumType == l1t::EtSum::EtSumType::kTotalEt)   fL1Ett = et;
             if(sumType == l1t::EtSum::EtSumType::kTotalHt)   fL1Htt = et;
             if(sumType == l1t::EtSum::EtSumType::kMissingEt)
@@ -193,33 +193,31 @@ void TL1EventClass::GetL1EmuSums()
     {
         double et = emuUpgrades->sumEt[iter];
         double phi = emuUpgrades->sumPhi[iter];
-        if( emuUpgrades->sumBx[iter] == 0 )
+
+        int sumType = emuUpgrades->sumType[iter];
+        if(sumType == l1t::EtSum::EtSumType::kTotalEt)   fL1EmuEtt = et;
+        if(sumType == l1t::EtSum::EtSumType::kTotalHt)   fL1EmuHtt = et;
+        if(sumType == l1t::EtSum::EtSumType::kMissingEt)
         {
-            short int sumType = emuUpgrades->sumType[iter];
-            if(sumType == l1t::EtSum::EtSumType::kTotalEt)   fL1Ett = et;
-            if(sumType == l1t::EtSum::EtSumType::kTotalHt)   fL1Htt = et;
-            if(sumType == l1t::EtSum::EtSumType::kMissingEt)
-            {
-                fL1Met = et;
-                fL1MetPhi = phi;
-            }
-            if(sumType == l1t::EtSum::EtSumType::kMissingHt)
-            {
-                fL1Mht = et;
-                fL1MhtPhi = phi;
-            }
-            if(sumType == l1t::EtSum::EtSumType::kTotalEtHF) fL1EttHF = et;
-            if(sumType == l1t::EtSum::EtSumType::kTotalHtHF) fL1HttHF = et;
-            if(sumType == l1t::EtSum::EtSumType::kMissingEt)
-            {
-                fL1MetHF = et;
-                fL1MetPhiHF = phi;
-            }
-            if(sumType == l1t::EtSum::EtSumType::kMissingHt)
-            {
-                fL1MhtHF = et;
-                fL1MhtPhiHF = phi;
-            }
+            fL1EmuMet = et;
+            fL1EmuMetPhi = phi;
+        }
+        if(sumType == l1t::EtSum::EtSumType::kMissingHt)
+        {
+            fL1EmuMht = et;
+            fL1EmuMhtPhi = phi;
+        }
+        if(sumType == l1t::EtSum::EtSumType::kTotalEtHF) fL1EmuEttHF = et;
+        if(sumType == l1t::EtSum::EtSumType::kTotalHtHF) fL1EmuHttHF = et;
+        if(sumType == l1t::EtSum::EtSumType::kMissingEt)
+        {
+            fL1EmuMetHF = et;
+            fL1EmuMetPhiHF = phi;
+        }
+        if(sumType == l1t::EtSum::EtSumType::kMissingHt)
+        {
+            fL1EmuMhtHF = et;
+            fL1EmuMhtPhiHF = phi;
         }
     }
 }
@@ -335,7 +333,6 @@ void TL1EventClass::GetRecalcL1Ett()
 
 void TL1EventClass::GetRecalcL1Met()
 {
-    int iEtaMax(16384);
     TVector2 met(0.0,0.0), metHF(0.0,0.0);
     auto caloTowers = fPrimitiveEvent->fCaloTowers;
     int ieta(0);
@@ -348,8 +345,7 @@ void TL1EventClass::GetRecalcL1Met()
         TVector2 temp(0.0,0.0);
         temp.SetMagPhi(et,phi);
 
-        if( abs(ieta) >= 28 )
-            met -= temp;
+        if( abs(ieta) <= 28 ) met -= temp;
         metHF -= temp;
     }
     fRecalcL1Met = met.Mod();
