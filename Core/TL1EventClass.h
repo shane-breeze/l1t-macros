@@ -53,7 +53,7 @@ class TL1EventClass
         // Get L1
         void GetL1Jets();
         void GetL1Sums();
-        void GetL1EmuSums()
+        void GetL1EmuSums();
 
         // Filters
         void MuonFilter();
