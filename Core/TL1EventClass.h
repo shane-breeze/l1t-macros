@@ -22,7 +22,9 @@ class TL1EventClass
 
         // Get L1
         double fL1Met, fL1Mht, fL1Ett, fL1Htt, fL1MetPhi, fL1MhtPhi;
+        double fL1EmuMet, fL1EmuMht, fL1EmuEtt, fL1EmuHtt, fL1EmuMetPhi, fL1EmuMhtPhi;
         double fL1MetHF, fL1MhtHF, fL1EttHF, fL1HttHF, fL1MetPhiHF, fL1MhtPhiHF;
+        double fL1EmuMetHF, fL1EmuMhtHF, fL1EmuEttHF, fL1EmuHttHF, fL1EmuMetPhiHF, fL1EmuMhtPhiHF;
         std::vector<double> fL1JetEt, fL1JetPhi, fL1JetEta;
 
         // Filter flags
@@ -51,6 +53,7 @@ class TL1EventClass
         // Get L1
         void GetL1Jets();
         void GetL1Sums();
+        void GetL1EmuSums()
 
         // Filters
         void MuonFilter();
@@ -97,6 +100,7 @@ void TL1EventClass::GetDerivatives()
     // L1
     this->GetL1Jets();
     this->GetL1Sums();
+    this->GetL1EmuSums();
 
     // Filter
     this->MuonFilter();
@@ -146,6 +150,44 @@ void TL1EventClass::GetL1Sums()
         if( upgrades->sumBx[iter] == 0 )
         {
             short int sumType = upgrades->sumType[iter];
+            if(sumType == l1t::EtSum::EtSumType::kTotalEt)   fL1Ett = et;
+            if(sumType == l1t::EtSum::EtSumType::kTotalHt)   fL1Htt = et;
+            if(sumType == l1t::EtSum::EtSumType::kMissingEt)
+            {
+                fL1Met = et;
+                fL1MetPhi = phi;
+            }
+            if(sumType == l1t::EtSum::EtSumType::kMissingHt)
+            {
+                fL1Mht = et;
+                fL1MhtPhi = phi;
+            }
+            if(sumType == l1t::EtSum::EtSumType::kTotalEtHF) fL1EttHF = et;
+            if(sumType == l1t::EtSum::EtSumType::kTotalHtHF) fL1HttHF = et;
+            if(sumType == l1t::EtSum::EtSumType::kMissingEt)
+            {
+                fL1MetHF = et;
+                fL1MetPhiHF = phi;
+            }
+            if(sumType == l1t::EtSum::EtSumType::kMissingHt)
+            {
+                fL1MhtHF = et;
+                fL1MhtPhiHF = phi;
+            }
+        }
+    }
+}
+
+void TL1EventClass::GetL1EmuSums()
+{
+    auto emuUpgrades = fPrimitiveEvent->fEmuUpgrade;
+    for(int iter=0; iter<emuUpgrades->nSums; ++iter)
+    {
+        double et = emuUpgrades->sumEt[iter];
+        double phi = emuUpgrades->sumPhi[iter];
+        if( emuUpgrades->sumBx[iter] == 0 )
+        {
+            short int sumType = emuUpgrades->sumType[iter];
             if(sumType == l1t::EtSum::EtSumType::kTotalEt)   fL1Ett = et;
             if(sumType == l1t::EtSum::EtSumType::kTotalHt)   fL1Htt = et;
             if(sumType == l1t::EtSum::EtSumType::kMissingEt)
