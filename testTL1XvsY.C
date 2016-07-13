@@ -37,57 +37,66 @@ void testTL1XvsY()
     xvsy.emplace_back(new TL1XvsY());
     std::string outDir = outDirBase+"/"+xvsy.front()->GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/xy/";
 
-    // caloMetBE
+    // l1HwMetBE vs l1ReMetBE
     xvsy[0]->SetXBins(bins(200.0,1.0,0.0));
-    xvsy[0]->SetX("caloMetBE","Offline E_{T}^{miss} (GeV)");
+    xvsy[0]->SetX("l1HwMetBE","L1 HW E_{T}^{miss} BE (GeV)");
     xvsy[0]->SetYBins(bins(200.0,1.0,0.0));
-    xvsy[0]->SetY("l1Met","L1 E_{T}^{miss} (GeV)");
-    xvsy[0]->SetOutName(triggerName+"_caloMetBE_vs_l1Met");
+    xvsy[0]->SetY("l1ReMetBE","L1 Re E_{T}^{miss} BE (GeV)");
+    xvsy[0]->SetOutName(triggerName+"_l1HwMetBE_vs_l1ReMetBE");
     xvsy[0]->SetAddMark("no HF");
 
-    // caloMetHF
+    // l1HwMetBE vs l1EmMetBE
     xvsy.emplace_back(new TL1XvsY());
     xvsy[1]->SetXBins(bins(200.0,1.0,0.0));
-    xvsy[1]->SetX("caloMetHF","Offline E_{T}^{miss} (GeV)");
+    xvsy[1]->SetX("l1HwMetBE","L1 HW E_{T}^{miss} BE (GeV)");
     xvsy[1]->SetYBins(bins(200.0,1.0,0.0));
-    xvsy[1]->SetY("l1EmuMetHF","L1 Emu E_{T}^{miss} (GeV)");
-    xvsy[1]->SetOutName(triggerName+"_caloMetHF_vs_l1EmuMetHF");
-    xvsy[1]->SetAddMark("HF");
-
-
-    // caloMetPhiBE
+    xvsy[1]->SetY("l1EmMetBE","L1 EM E_{T}^{miss} BE (GeV)");
+    xvsy[1]->SetOutName(triggerName+"_l1HwMetBE_vs_l1EmMetBE");
+    xvsy[1]->SetAddMark("no HF");
+    
+    // l1ReMetBE vs l1EmMetBE
     xvsy.emplace_back(new TL1XvsY());
-    xvsy[2]->SetXBins(phiBins());
-    xvsy[2]->SetX("caloMetPhiBE","Offline E_{T}^{miss} Phi");
-    xvsy[2]->SetYBins(phiBins());
-    xvsy[2]->SetY("l1MetPhi","L1 E_{T}^{miss} Phi");
-    xvsy[2]->SetOutName(triggerName+"_caloMetPhiBE_vs_l1MetPhi");
+    xvsy[2]->SetXBins(bins(200.0,1.0,0.0));
+    xvsy[2]->SetX("l1ReMetBE","L1 Re E_{T}^{miss} BE (GeV)");
+    xvsy[2]->SetYBins(bins(200.0,1.0,0.0));
+    xvsy[2]->SetY("l1EmMetBE","L1 EM E_{T}^{miss} BE (GeV)");
+    xvsy[2]->SetOutName(triggerName+"_l1ReMetBE_vs_l1EmMetBE");
     xvsy[2]->SetAddMark("no HF");
-
-    // caloMetPhiHF
+    
+    // l1ReMetHF vs l1EmMetHF
     xvsy.emplace_back(new TL1XvsY());
-    xvsy[3]->SetXBins(phiBins());
-    xvsy[3]->SetX("caloMetPhiHF","Offline E_{T}^{miss} Phi");
-    xvsy[3]->SetYBins(phiBins());
-    xvsy[3]->SetY("l1EmuMetPhiHF","L1 Emu E_{T}^{miss} Phi");
-    xvsy[3]->SetOutName(triggerName+"_caloMetPhiHF_vs_l1EmuMetPhiHF");
+    xvsy[3]->SetXBins(bins(200.0,1.0,0.0));
+    xvsy[3]->SetX("l1EmMetHF","L1 Re E_{T}^{miss} HF (GeV)");
+    xvsy[3]->SetYBins(bins(200.0,1.0,0.0));
+    xvsy[3]->SetY("l1EmMetHF","L1 Em E_{T}^{miss} HF (GeV)");
+    xvsy[3]->SetOutName(triggerName+"_l1ReMetHF_vs_l1EmMetHF");
     xvsy[3]->SetAddMark("HF");
 
-    // l1Met vs recalcL1Met
+    // l1EmMetBE vs caloMetBE
     xvsy.emplace_back(new TL1XvsY());
     xvsy[4]->SetXBins(bins(200.0,1.0,0.0));
-    xvsy[4]->SetX("l1Met","L1 E_{T}^{miss}");
+    xvsy[4]->SetX("l1EmMetBE","L1 EM E_{T}^{miss} BE (GeV)");
     xvsy[4]->SetYBins(bins(200.0,1.0,0.0));
-    xvsy[4]->SetY("recalcL1Met","Recalc L1 E_{T}^{miss}");
-    xvsy[4]->SetOutName(triggerName+"_l1Met_vs_recalcL1Met");
+    xvsy[4]->SetY("caloMetBE","Offline E_{T}^{miss} BE (GeV)");
+    xvsy[4]->SetOutName(triggerName+"_l1EmMetBE_vs_caloMetBE");
+    xvsy[4]->SetAddMark("no HF");
 
-    // l1MetHF vs recalcL1MetHF
+    // l1EmMetBE vs caloMetHF
     xvsy.emplace_back(new TL1XvsY());
     xvsy[5]->SetXBins(bins(200.0,1.0,0.0));
-    xvsy[5]->SetX("l1MetHF","L1 E_{T}^{miss} HF");
+    xvsy[5]->SetX("l1EmMetBE","L1 EM E_{T}^{miss} BE (GeV)");
     xvsy[5]->SetYBins(bins(200.0,1.0,0.0));
-    xvsy[5]->SetY("l1EmuMetHF","L1 Emu E_{T}^{miss} HF");
-    xvsy[5]->SetOutName(triggerName+"_l1MetHF_vs_l1EmuMetHF");
+    xvsy[5]->SetY("caloMetHF","Offline E_{T}^{miss} HF (GeV)");
+    xvsy[5]->SetOutName(triggerName+"_l1EmMetBE_vs_caloMetHF");
+   
+    // l1EmMetHF vs caloMetHF
+    xvsy.emplace_back(new TL1XvsY());
+    xvsy[6]->SetXBins(bins(200.0,1.0,0.0));
+    xvsy[6]->SetX("l1EmMetHF","L1 EM E_{T}^{miss} HF (GeV)");
+    xvsy[6]->SetYBins(bins(200.0,1.0,0.0));
+    xvsy[6]->SetY("caloMetHF","Offline E_{T}^{miss} HF (GeV)");
+    xvsy[6]->SetOutName(triggerName+"_l1EmMetHF_vs_caloMetHF");
+    xvsy[6]->SetAddMark("HF");
 
     for(auto it=xvsy.begin(); it!=xvsy.end(); ++it)
     {
@@ -113,28 +122,30 @@ void testTL1XvsY()
         if( !event->fMuonFilterPassFlag ) continue;
         if( event->fMetFilterPassFlag )
         {
-            double recoMet = sums->caloMetBE;
-            double l1Met = event->fL1Met;
-            if( recoMet > 0.0 && l1Met > 0.0 ) xvsy[0]->Fill(recoMet, l1Met, pu);
-
+            double recoMetBE = sums->caloMetBE;
             double recoMetHF = sums->caloMet;
-            double l1EmuMetHF = event->fL1EmuMetHF;
-            if( recoMetHF > 0.0 && l1EmuMetHF > 0.0 ) xvsy[1]->Fill(recoMetHF, l1EmuMetHF, pu);
 
-            double recoMetPhi = FoldPhi(sums->caloMetPhiBE);
-            double l1MetPhi = FoldPhi(event->fL1MetPhi);
-            xvsy[2]->Fill(recoMetPhi, l1MetPhi, pu);
+            double l1HwMetBE = event->fL1Met;
+            //double l1HwMetHF = event->fL1MetHF;
+            double l1ReMetBE = event->fRecalcL1Met;
+            double l1ReMetHF = event->fRecalcL1MetHF;
+            double l1EmMetBE = event->fL1EmuMet;
+            double l1EmMetHF = event->fL1EmuMetHF;
 
-            double recoMetPhiHF = FoldPhi(sums->caloMetPhi);
-            double l1EmuMetPhiHF = FoldPhi(event->fL1EmuMetPhiHF);
-            xvsy[3]->Fill(recoMetPhiHF, l1EmuMetPhiHF, pu);
+            if( l1EmMetBE > 0.0 && recoMetBE > 0.0 )
+                xvsy[4]->Fill(l1EmMetBE, recoMetBE, pu);
+            if( l1EmMetHF > 0.0 && recoMetBE > 0.0 )
+                xvsy[5]->Fill(l1EmMetBE, recoMetHF, pu);
+            if( l1EmMetHF > 0.0 && recoMetHF > 0.0 )
+                xvsy[6]->Fill(l1EmMetHF, recoMetHF, pu);
 
-            if( event->GetPEvent()->fCaloTowers->nTower == 0 ) continue;
-
-            double l1MetHF = event->fL1MetHF;
-            double l1EmuMet = event->fL1EmuMet;
-            xvsy[4]->Fill(l1Met, l1EmuMet, pu);
-            xvsy[5]->Fill(l1MetHF, l1EmuMetHF, pu);
+            if( l1ReMetBE > 0.0 )
+                xvsy[0]->Fill(l1HwMetBE, l1ReMetBE, pu);
+            xvsy[1]->Fill(l1HwMetBE, l1EmMetBE, pu);
+            if( l1ReMetBE > 0.0 )
+                xvsy[2]->Fill(l1ReMetBE, l1EmMetBE, pu);
+            if( l1ReMetHF > 0.0 )
+                xvsy[3]->Fill(l1ReMetHF, l1EmMetHF, pu);
         }
     }
 

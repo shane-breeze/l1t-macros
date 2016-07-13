@@ -172,12 +172,12 @@ void TL1EventClass::GetL1Sums()
             }
             if(sumType == l1t::EtSum::EtSumType::kTotalEtHF) fL1EttHF = et;
             if(sumType == l1t::EtSum::EtSumType::kTotalHtHF) fL1HttHF = et;
-            if(sumType == l1t::EtSum::EtSumType::kMissingEt)
+            if(sumType == l1t::EtSum::EtSumType::kMissingEtHF)
             {
                 fL1MetHF = et;
                 fL1MetPhiHF = phi;
             }
-            if(sumType == l1t::EtSum::EtSumType::kMissingHt)
+            if(sumType == l1t::EtSum::EtSumType::kMissingHtHF)
             {
                 fL1MhtHF = et;
                 fL1MhtPhiHF = phi;
@@ -209,12 +209,12 @@ void TL1EventClass::GetL1EmuSums()
         }
         if(sumType == l1t::EtSum::EtSumType::kTotalEtHF) fL1EmuEttHF = et;
         if(sumType == l1t::EtSum::EtSumType::kTotalHtHF) fL1EmuHttHF = et;
-        if(sumType == l1t::EtSum::EtSumType::kMissingEt)
+        if(sumType == l1t::EtSum::EtSumType::kMissingEtHF)
         {
             fL1EmuMetHF = et;
             fL1EmuMetPhiHF = phi;
         }
-        if(sumType == l1t::EtSum::EtSumType::kMissingHt)
+        if(sumType == l1t::EtSum::EtSumType::kMissingHtHF)
         {
             fL1EmuMhtHF = et;
             fL1EmuMhtPhiHF = phi;
