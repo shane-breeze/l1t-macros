@@ -36,7 +36,9 @@ The object xvsy is a vector of TL1XvsY objects. Each one represents a different 
 4. `SetY(name,title)` to set the y-name and y-title
 5. `SetOutName(name)` to set the output name for this plot, e.g. `triggerName+"_"+xName+"_vs_"+yName+"_"+requirements` where `requirements` is a string describing any requirements for this plot (e.g. barrel only)
 6. `SetAddMark(mark)` adds a `mark` (some test) on the plot that can describe any requirements if desired (e.g. eta range selected)
+
 Now repeat this for all plots desired. Further down in the code inside the event loop (`while( event->Next() )`) is the logic of filling the plots. After getting the pile-up start filling using `Fill(xval, yval, pu)` applying some requirements:
+
 1. For XvsY I typically include a requirement of `xval>0.0` and `yval>0.0` to prevent the z-scale from screwing up
 2. For the `xval` and `yval` these are obtained from `event->GetPEvent()` if they are found in the ntuples originally. If they are created in `TL1EventClass.h` (such as level-1 values) then they are acquired via `event`, e.g.
     ```C++
