@@ -9,10 +9,10 @@ void tdrGrid(TStyle tdrStyle, bool gridOn) {
 
 // fixOverlay: Redraws the axis
 
-TStyle TDRStyle(const int & palette) {
+TStyle TDRStyle() {
   TStyle tdrStyle("tdrStyle","Style for P-TDR");
 
-  tdrStyle.SetPalette(palette);
+  //tdrStyle.SetPalette(palette);
 
 // For the canvas:
   tdrStyle.SetCanvasBorderMode(0);

@@ -15,7 +15,7 @@ void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 
 void makeTurnons(std::string run)
 {
-    TStyle * myStyle(new TStyle(TDRStyle(57)));
+    TStyle * myStyle(new TStyle(TDRStyle()));
     SetMyStyle(55, 0.07, myStyle);
 
     // Basic
