@@ -9,6 +9,7 @@ There are three different types of macros to produce different plots:
 These are further split into energy sums (looping over events) and jets (looping over events and then jets)
 
 ### General things to change
+
 1. Change the sample (only Data is really implemented thus far)
 2. Choose the trigger name and title (name is placed in file names and title is placed on plot titles - this is the naming convention used throughout)
 3. Choose the run number, or make it a range, or something like "2016B\_v1"
@@ -28,6 +29,7 @@ These are further split into energy sums (looping over events) and jets (looping
 
 ### makeXvsY.cxx
 The object xvsy is a vector of TL1XvsY objects. Each one represents a different type of xvsy plot. `xvsy.emplace_back(new TL1XvsY());` to create a new element in the vector, then set:
+
 1. `SetXBins(bins)` where `bins` is a vector with the edges of the bins desired (I typically have functions that generate this vector)
 2. `SetX(name,title)` where `name` and `title` are the respective x-name and x-title as strings
 3. `SetYBins(bins)` to set the y binning (typically the same as the x binning)
