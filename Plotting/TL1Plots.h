@@ -4,11 +4,6 @@
 #include <string>
 #include <stdlib.h>
 
-#include <sys/types.h>
-#include <sys/stat.h>
-
-#include <TDatime.h>
-
 class TL1Plots
 {
     public:
@@ -27,8 +22,6 @@ class TL1Plots
         virtual void SetPuType(const std::vector<std::string> & puType);
         virtual void SetPuBins(const std::vector<int> & puBins);
 
-        std::string GetDate() const;
-
     protected:
         std::string GetSampleName() const;
         std::string GetTriggerName() const;
@@ -42,7 +35,6 @@ class TL1Plots
         std::vector<int> GetPuBins() const;
 
     private:
-        TDatime * fDate;
         std::string fSampleName, fTriggerName, fRun;
         std::string fSampleTitle, fTriggerTitle;
         std::string fOutName, fOutDir;
@@ -52,8 +44,7 @@ class TL1Plots
 
 };
 
-TL1Plots::TL1Plots() :
-    fDate(new TDatime())
+TL1Plots::TL1Plots()
 {
 }
 
@@ -138,11 +129,6 @@ std::string TL1Plots::GetOutDir() const
 std::string TL1Plots::GetAddMark() const
 {
     return fAddMark;
-}
-
-std::string TL1Plots::GetDate() const
-{
-    return std::to_string(fDate->GetDate());
 }
 
 std::vector<std::string> TL1Plots::GetPuType() const

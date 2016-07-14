@@ -1,11 +1,11 @@
 #include <string>
-#include <memory>
 #include <vector>
 
-#include "Core/tdrstyle.C"
-#include "Core/TL1EventClass.h"
-#include "Core/TL1Progress.C"
-#include "TL1Turnon.h"
+#include "Plotting/tdrstyle.C"
+#include "Event/TL1EventClass.h"
+#include "Utilities/TL1Progress.C"
+#include "Utilities/TL1DateTime.C"
+#include "Plotting/TL1Turnon.h"
 
 vector<double> metBins();
 vector<double> mhtBins();
@@ -13,10 +13,10 @@ vector<double> ettBins();
 vector<double> httBins();
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 
-void testTL1Turnon()
+void makeTurnons()
 {
-    std::shared_ptr<TStyle> myStyle(new TStyle(TDRStyle()));
-    SetMyStyle(55, 0.07, myStyle.get());
+    TStyle * myStyle(new TStyle(TDRStyle()));
+    SetMyStyle(55, 0.07, myStyle);
 
     // Basic
     std::string sample = "Data";
@@ -34,13 +34,13 @@ void testTL1Turnon()
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160602_r273450_SingleMu_l1t-int-v53p1";
     //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
     std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0";
-    std::shared_ptr<TL1EventClass> event(new TL1EventClass(inDir));
+    TL1EventClass * event(new TL1EventClass(inDir));
 
-    std::vector<std::shared_ptr<TL1Turnon>> turnons;
+    std::vector<TL1Turnon*> turnons;
 
     // caloMetBE
     turnons.emplace_back(new TL1Turnon());
-    std::string outDir = outDirBase+"/"+turnons.front()->GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Turnons/";
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Turnons/";
     turnons[0]->SetSeeds({0.,40.,60.,80.,100.,120.});
     turnons[0]->SetXBins(metBins());
     turnons[0]->SetX("caloMetBE","Offline E_{T}^{miss} (GeV)");
@@ -49,7 +49,7 @@ void testTL1Turnon()
     turnons[0]->SetFit(doFit);
     turnons[0]->SetAddMark("no HF");
 
-    // caloMetBE
+    // caloMetHF
     turnons.emplace_back(new TL1Turnon());
     turnons[1]->SetSeeds({0.,40.,60.,80.,100.,120.});
     turnons[1]->SetXBins(metBins());
@@ -99,9 +99,6 @@ void testTL1Turnon()
 
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)
     {
-        (*it)->SetSample(sample,"");
-        (*it)->SetTrigger(triggerName,triggerTitle);
-        (*it)->SetRun(run);
         (*it)->SetOutDir(outDir);
         (*it)->SetPuType(puType);
         (*it)->SetPuBins(puBins);
@@ -142,6 +139,8 @@ void testTL1Turnon()
         (*it)->DrawPlots();
         (*it)->DrawTurnons();
     }
+
+    cout << "Output saved in:\n" << outDir << endl;
 }
 
 vector<double> metBins()

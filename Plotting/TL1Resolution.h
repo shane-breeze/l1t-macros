@@ -11,7 +11,7 @@
 #include <TLegend.h>
 #include <TLatex.h>
 
-#include "Core/TL1Plots.h"
+#include "TL1Plots.h"
 
 class TL1Resolution : public TL1Plots
 {

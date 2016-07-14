@@ -8,12 +8,10 @@
 #include <TFile.h>
 #include <TH2F.h>
 #include <TCanvas.h>
-#include <TLegend.h>
 #include <TLatex.h>
 #include <TLine.h>
 
-#include "Core/tdrstyle.C"
-#include "Core/TL1Plots.h"
+#include "TL1Plots.h"
 
 class TL1XvsY : public TL1Plots
 {
