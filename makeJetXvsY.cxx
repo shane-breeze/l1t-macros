@@ -23,15 +23,16 @@ void makeJetXvsY()
     std::string sample = "Data";
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
-    //std::string run = "273301";
-    std::string run = "273301-302-450";
+
+    std::string run = "2016B";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
     std::vector<std::string> puType = {"0PU12","13PU19","20PU"};
     std::vector<int> puBins = {0,13,20,999};
 
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
-    //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
-    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
+    // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
+    // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
+    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0";
     TL1EventClass * event(new TL1EventClass(inDir));
 
     std::vector<TL1XvsY*> xvsy;
@@ -135,18 +136,18 @@ void makeJetXvsY()
         TL1Progress::PrintProgressBar(position, NEntries);
 
         int pu = event->GetPEvent()->fVertex->nVtx;
+        auto jets = event->GetPEvent()->fJets;
 
-        for(unsigned iRecoJet=0; iRecoJet<event->GetPEvent()->fJets->nJets; ++iRecoJet)
+        for(unsigned iRecoJet=0; iRecoJet<jets->nJets; ++iRecoJet)
         {
             if( !event->fIsLeadingRecoJet ) continue;
             if( !event->fIsMatchedL1Jet ) continue;
 
             int pu = event->GetPEvent()->fVertex->nVtx;
 
-            auto recoJet = event->GetPEvent()->fJets;
-            double recoEt = recoJet->etCorr[event->fLeadingRecoJetIndex];
-            double recoEta = recoJet->eta[event->fLeadingRecoJetIndex];
-            double recoPhi = recoJet->phi[event->fLeadingRecoJetIndex];
+            double recoEt = jets->etCorr[event->fLeadingRecoJetIndex];
+            double recoEta = jets->eta[event->fLeadingRecoJetIndex];
+            double recoPhi = jets->phi[event->fLeadingRecoJetIndex];
 
             double l1Et = event->fL1JetEt[event->fMatchedL1JetIndex];
             double l1Eta = event->fL1JetEta[event->fMatchedL1JetIndex];
@@ -171,7 +172,7 @@ void makeJetXvsY()
 
                 xvsy[8]->Fill(recoEta, l1Eta, pu);
             }
-            else if( abs(recoEta) <= 5.0 )
+            else
             {
                 xvsy[3]->Fill(recoEt, l1Et, pu);
                 xvsy[7]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi), pu);
