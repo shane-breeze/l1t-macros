@@ -19,11 +19,17 @@ These are further split into energy sums (looping over events) and jets (looping
 7. Change outDir to conform to how you want the output directory to look like. I like:
     ```bash
     ${OUTDIRBASE}/${DATE}_${SAMPLE}_${RUN}_${TRIGGER}/
+
         XvsY/
+
         XvsYJets/
+
         Resolutions/
+
         ResolutionsJets/
+
         Turnons/
+
         TurnonsJets/
     ```
 
