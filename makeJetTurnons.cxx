@@ -1,19 +1,19 @@
 #include <string>
-#include <memory>
 #include <vector>
 
-#include "Core/tdrstyle.C"
-#include "Core/TL1EventClass.h"
-#include "Core/TL1Progress.C"
-#include "TL1Turnon.h"
+#include "Plotting/tdrstyle.C"
+#include "Event/TL1EventClass.h"
+#include "Utilities/TL1Progress.C"
+#include "Utilities/TL1DateTime.C"
+#include "Plotting/TL1Turnon.h"
 
 vector<double> bins();
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 
-void testTL1TurnonJets(std::string run)
+void makeJetTurnons(std::string run)
 {
-    std::shared_ptr<TStyle> myStyle(new TStyle(TDRStyle()));
-    SetMyStyle(55, 0.07, myStyle.get());
+    TStyle * myStyle(new TStyle(TDRStyle()));
+    SetMyStyle(55, 0.07, myStyle);
 
     // Basic
     std::string sample = "Data";
@@ -31,13 +31,13 @@ void testTL1TurnonJets(std::string run)
     //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160602_r273450_SingleMu_l1t-int-v53p1";
     //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
     std::string inDir = Form("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160706_RunValidation/run%s_SingleMu_l1t-int-67p0",run.c_str());
-    std::shared_ptr<TL1EventClass> event(new TL1EventClass(inDir));
+    TL1EventClass * event(new TL1EventClass(inDir));
 
-    std::vector<std::shared_ptr<TL1Turnon>> turnons;
+    std::vector<TL1Turnon*> turnons;
 
     // Jet Et - barrel
     turnons.emplace_back(new TL1Turnon());
-    std::string outDir = outDirBase+"/"+turnons.front()->GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/TurnonsJets/";
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/TurnonsJets/";
     turnons[0]->SetSeeds({0., 36., 68., 128., 200.});
     turnons[0]->SetXBins(bins());
     turnons[0]->SetX("recoJetEt","Offline Jet E_{T} (GeV)");
