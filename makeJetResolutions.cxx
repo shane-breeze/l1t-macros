@@ -132,8 +132,8 @@ void makeJetResolutions()
             if( !event->fIsMatchedL1Jet ) continue;
 
             int pu = event->GetPEvent()->fVertex->nVtx;
-
             auto recoJet = event->GetPEvent()->fJets;
+
             double recoEt = recoJet->etCorr[event->fLeadingRecoJetIndex];
             double recoEta = recoJet->eta[event->fLeadingRecoJetIndex];
             double recoPhi = FoldPhi(recoJet->phi[event->fLeadingRecoJetIndex]);
@@ -144,27 +144,27 @@ void makeJetResolutions()
 
             if( abs(recoEta) <= 1.479 )
             {
-                if(recoEt!=0.0 && l1Et!=0.0 && recoEt>=30.0001) resolution[0]->Fill(recoEt, l1Et, pu);
-                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0001) resolution[4]->Fill(recoPhi, l1Phi, pu);
+                if(recoEt!=0.0 && l1Et!=0.0 && recoEt>=30.0) resolution[0]->Fill(recoEt, l1Et, pu);
+                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0) resolution[4]->Fill(recoPhi, l1Phi, pu);
 
-                if(recoEta!=0.0 && l1Eta!=0.0 && recoEt>=30.0001) resolution[8]->Fill(abs(recoEta), abs(l1Eta), pu);
-                if(recoEt>=30.0001 && l1Et!=0.0 ) resolution[2]->Fill(recoEt, l1Et, pu);
-                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0001) resolution[6]->Fill(recoPhi, l1Phi, pu);
+                if(recoEta!=0.0 && l1Eta!=0.0 && recoEt>=30.0) resolution[8]->Fill(abs(recoEta), abs(l1Eta), pu);
+                if(recoEt>=30.0 && l1Et!=0.0 ) resolution[2]->Fill(recoEt, l1Et, pu);
+                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0) resolution[6]->Fill(recoPhi, l1Phi, pu);
             }
             else if( abs(recoEta) <= 3.0 )
             {
-                if(recoEt!=0.0 && l1Et!=0.0 && recoEt>=30.0001) resolution[1]->Fill(recoEt, l1Et, pu);
-                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0001) resolution[5]->Fill(recoPhi, l1Phi, pu);
+                if(recoEt!=0.0 && l1Et!=0.0 && recoEt>=30.0) resolution[1]->Fill(recoEt, l1Et, pu);
+                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0) resolution[5]->Fill(recoPhi, l1Phi, pu);
 
-                if(recoEta!=0.0 && l1Eta!=0.0 && recoEt>=30.0001) resolution[8]->Fill(abs(recoEta), abs(l1Eta), pu);
-                if(recoEt>=30.0001 && l1Et!=0.0 ) resolution[2]->Fill(recoEt, l1Et, pu);
-                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0001) resolution[6]->Fill(recoPhi, l1Phi, pu);
+                if(recoEta!=0.0 && l1Eta!=0.0 && recoEt>=30.0) resolution[8]->Fill(abs(recoEta), abs(l1Eta), pu);
+                if(recoEt>=30.0 && l1Et!=0.0 ) resolution[2]->Fill(recoEt, l1Et, pu);
+                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0) resolution[6]->Fill(recoPhi, l1Phi, pu);
             }
-            else if( abs(recoEta) <= 5.0 )
+            else
             {
-                if(recoEt>=30.0001 && l1Et!=0.0) resolution[3]->Fill(recoEt, l1Et, pu);
-                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0001) resolution[7]->Fill(recoPhi, l1Phi, pu);
-                if(recoEta!=0.0 && l1Eta!=0.0 && recoEt>=30.0001) resolution[8]->Fill(abs(recoEta), abs(l1Eta), pu);
+                if(recoEt>=30.0 && l1Et!=0.0) resolution[3]->Fill(recoEt, l1Et, pu);
+                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0) resolution[7]->Fill(recoPhi, l1Phi, pu);
+                if(recoEta!=0.0 && l1Eta!=0.0 && recoEt>=30.0) resolution[8]->Fill(abs(recoEta), abs(l1Eta), pu);
             }
         }
 
