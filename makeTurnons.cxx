@@ -34,8 +34,7 @@ void makeTurnons(std::string run)
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160602_r273450_SingleMu_l1t-int-v53p1";
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0";
-    // std::string inDir = Form("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160706_RunValidation/run%s_SingleMu_l1t-int-67p0",run.c_str());
-    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0";
+    std::string inDir = Form("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160706_RunValidation/run%s_SingleMu_l1t-int-67p0",run.c_str());
     TL1EventClass * event(new TL1EventClass(inDir));
 
     std::vector<TL1Turnon*> turnons;
