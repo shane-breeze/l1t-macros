@@ -12,7 +12,7 @@
 #include <TLatex.h>
 #include <TLine.h>
 
-#include "Core/TL1Plots.h"
+#include "TL1Plots.h"
 
 class TL1Turnon : public TL1Plots
 {
@@ -225,7 +225,7 @@ void TL1Turnon::DrawTurnons()
     nomlatex->SetNDC();
     nomlatex->SetTextFont(42);
     nomlatex->SetTextAlign(31);
-    nomlatex->DrawLatex(0.8,0.15+0.2*(2+fSeeds.size())/5.0+0.02,"<PU>=14");
+    //nomlatex->DrawLatex(0.8,0.15+0.2*(2+fSeeds.size())/5.0+0.02,"<PU>=14");
 
     std::string nomOutName = Form("%s/effs_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str());
     nomCan->SaveAs(nomOutName.c_str());
@@ -247,7 +247,7 @@ void TL1Turnon::DrawCmsStampTurnon()
         latex->SetTextAlign(31);
         std::string runNo = "run " + this->GetRun() + ", ";
         //latex->DrawLatex(0.92, 0.92, Form("%s%s, #sqrt{s} = 13 TeV",runNo.c_str(),this->GetTriggerTitle().c_str()));
-        latex->DrawLatex(0.92, 0.92, "75.3 pb^{-1} (13 TeV)");
+        latex->DrawLatex(0.92, 0.92, Form("%s (13 TeV)",this->GetRun().c_str()));
     }
     else
     {

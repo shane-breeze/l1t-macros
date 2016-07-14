@@ -11,7 +11,7 @@
 #include <TLegend.h>
 #include <TLatex.h>
 
-#include "Core/TL1Plots.h"
+#include "TL1Plots.h"
 
 class TL1Resolution : public TL1Plots
 {
@@ -60,7 +60,7 @@ void TL1Resolution::InitPlots()
 
     fPlot.emplace_back(new TH1F(Form("res_%s_over_%s",fXName.c_str(),fYName.c_str()),"", fBins.size()-1,&(fBins)[0]));
     fPlot.back()->SetDirectory(0);
-    fPlot.back()->GetXaxis()->SetTitle(Form("%s - %s",fYTitle.c_str(),fXTitle.c_str()));//,fXTitle.c_str()));
+    fPlot.back()->GetXaxis()->SetTitle(Form("(%s - %s)/%s",fYTitle.c_str(),fXTitle.c_str(),fXTitle.c_str()));
     fPlot.back()->GetYaxis()->SetTitle("a.u.");
     for(int i=0; i<this->GetPuType().size(); ++i)
     {
@@ -92,14 +92,13 @@ void TL1Resolution::InitPlots()
 
 void TL1Resolution::Fill(const double & xVal, const double & yVal, const int & pu)
 {
-    //double div = 0.0;
-    //if( xVal != 0.0 ) div = yVal/xVal;
-    //fPlot[0]->Fill(div);
-    fPlot[0]->Fill((yVal-xVal));
+    double div = 0.0;
+    if( xVal != 0.0 ) div = (yVal-xVal)/xVal;
+    fPlot[0]->Fill(div);
     for(int i=0; i<this->GetPuType().size(); ++i)
     {
         if( pu >= this->GetPuBins()[i] && pu < this->GetPuBins()[i+1] )
-            fPlot[i+1]->Fill((yVal-xVal));
+            fPlot[i+1]->Fill(div);
     }
 }
 
@@ -153,7 +152,8 @@ void TL1Resolution::DrawPlots()
     latex->SetNDC();
     latex->SetTextFont(42);
     latex->SetTextAlign(31);
-    latex->DrawLatex(0.9,0.7,Form("#splitline{%s}{<PU>=14}",this->GetAddMark().c_str()));
+    //latex->DrawLatex(0.9,0.7,Form("#splitline{%s}{<PU>=14}",this->GetAddMark().c_str()));
+    latex->DrawLatex(0.9,0.7,Form("%s",this->GetAddMark().c_str()));
 
     std::string outName = Form("%s/res_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str());
     can->SaveAs(outName.c_str());
@@ -357,7 +357,7 @@ void TL1Resolution::DrawCmsStamp(std::string stampPos="Left")
         latex->SetTextAlign(31);
         std::string runNo = "run " + this->GetRun() + ", ";
         //latex->DrawLatex(0.92, 0.92, Form("%s%s, #sqrt{s} = 13 TeV",runNo.c_str(),this->GetTriggerTitle().c_str()));
-        latex->DrawLatex(0.92,0.92,"75.3 pb^{-1} (13 TeV)");
+        latex->DrawLatex(0.92,0.92,Form("%s (13 TeV)",this->GetRun().c_str()));
     }
     else
     {

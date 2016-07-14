@@ -1,26 +1,26 @@
 #include <string>
-#include <memory>
 #include <vector>
 
-#include "Core/tdrstyle.C"
-#include "Core/TL1EventClass.h"
-#include "Core/TL1Progress.C"
-#include "TL1Turnon.h"
+#include "Plotting/tdrstyle.C"
+#include "Event/TL1EventClass.h"
+#include "Utilities/TL1Progress.C"
+#include "Utilities/TL1DateTime.C"
+#include "Plotting/TL1Turnon.h"
 
 vector<double> bins();
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 
-void testTL1TurnonJets()
+void makeJetTurnons()
 {
-    std::shared_ptr<TStyle> myStyle(new TStyle(TDRStyle()));
-    SetMyStyle(55, 0.07, myStyle.get());
+    TStyle * myStyle(new TStyle(TDRStyle()));
+    SetMyStyle(55, 0.07, myStyle);
 
     // Basic
     std::string sample = "Data";
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
-    //std::string run = "273301";
-    std::string run = "273301-302-450";
+
+    std::string run = "2016B";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
     bool doFit = false;
     std::vector<std::string> puType = {"0PU12","13PU19","20PU"};
@@ -29,10 +29,11 @@ void testTL1TurnonJets()
     //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
     //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
     //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160602_r273450_SingleMu_l1t-int-v53p1";
-    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
-    std::shared_ptr<TL1EventClass> event(new TL1EventClass(inDir));
+    //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
+    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0";
+    TL1EventClass * event(new TL1EventClass(inDir));
 
-    std::vector<std::shared_ptr<TL1Turnon>> turnons;
+    std::vector<TL1Turnon*> turnons;
 
     // Jet Et - barrel
     turnons.emplace_back(new TL1Turnon());
@@ -74,7 +75,7 @@ void testTL1TurnonJets()
     turnons[3]->SetOutName(triggerName+"_recoJetEt_l1JetEtSeeds_hf");
     turnons[3]->SetFit(doFit);
     turnons[3]->SetAddMark("|#eta| > 3.0");
-    
+
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)
     {
         (*it)->SetSample(sample,"");
@@ -105,18 +106,18 @@ void testTL1TurnonJets()
         double l1Et = event->fL1JetEt[event->fMatchedL1JetIndex];
         double l1Eta = event->fL1JetEta[event->fMatchedL1JetIndex];
         double l1Phi = event->fL1JetPhi[event->fMatchedL1JetIndex];
-        
-        if( abs(recoEta) <= 1.45 )
+
+        if( abs(recoEta) <= 1.479 )
         {
             turnons[0]->Fill(recoEt, l1Et, pu);
             turnons[2]->Fill(recoEt, l1Et, pu);
         }
-        else if( abs(recoEta) >= 1.55 && abs(recoEta) <= 3.0 )
+        else if( abs(recoEta) <= 3.0 )
         {
             turnons[1]->Fill(recoEt, l1Et, pu);
             turnons[2]->Fill(recoEt, l1Et, pu);
         }
-        if( abs(recoEta) >= 3.5 && abs(recoEta) <= 4.5 )
+        else
             turnons[3]->Fill(recoEt, l1Et, pu);
     }
 
@@ -131,9 +132,9 @@ vector<double> bins()
 {
     vector<double> temp;
     for(double binLowerEdge= 0.0; binLowerEdge< 120.0; binLowerEdge+=10.0) temp.push_back(binLowerEdge);
-    for(double binLowerEdge=120.0; binLowerEdge< 160.0; binLowerEdge+=20.0) temp.push_back(binLowerEdge);
-    for(double binLowerEdge=160.0; binLowerEdge< 200.1; binLowerEdge+=40.0) temp.push_back(binLowerEdge);
-    for(double binLowerEdge=200.0; binLowerEdge< 400.1; binLowerEdge+=100.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge=120.0; binLowerEdge< 180.0; binLowerEdge+=20.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge=180.0; binLowerEdge< 300.0; binLowerEdge+=40.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge=300.0; binLowerEdge< 400.1; binLowerEdge+=100.0) temp.push_back(binLowerEdge);
 //    for(double binLowerEdge= 40.0; binLowerEdge< 70.0; binLowerEdge+= 2.5) temp.push_back(binLowerEdge);
 //    for(double binLowerEdge= 70.0; binLowerEdge<200.0; binLowerEdge+= 5.0) temp.push_back(binLowerEdge);
 //    for(double binLowerEdge=200.0; binLowerEdge<300.0; binLowerEdge+=10.0) temp.push_back(binLowerEdge);

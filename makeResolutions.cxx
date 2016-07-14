@@ -1,25 +1,26 @@
 #include <string>
 #include <vector>
 
-#include "Core/tdrstyle.C"
-#include "Core/TL1EventClass.h"
-#include "Core/TL1Progress.C"
-#include "TL1Resolution.h"
+#include "Plotting/tdrstyle.C"
+#include "Event/TL1EventClass.h"
+#include "Utilities/TL1Progress.C"
+#include "Utilities/TL1DateTime.C"
+#include "Plotting/TL1Resolution.h"
 
 std::vector<double> bins();
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 double FoldPhi(double phi);
 
-void testTL1Resolution()
+void makeResolutions()
 {
-    std::shared_ptr<TStyle> myStyle(new TStyle(TDRStyle()));
-    SetMyStyle(55, 0.07, myStyle.get());
+    TStyle * myStyle(new TStyle(TDRStyle()));
+    SetMyStyle(55, 0.07, myStyle);
 
     // Basic
     std::string sample = "Data";
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
-    std::string run = "273301-302-450";
+
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
     std::vector<std::string> puType = {"0PU12","13PU19","20PU"};
     std::vector<int> puBins = {0,13,20,999};
@@ -27,14 +28,18 @@ void testTL1Resolution()
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160602_r273450_SingleMu_l1t-int-v53p1";
-    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
-    std::shared_ptr<TL1EventClass> event(new TL1EventClass(inDir));
+    // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
+    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0";
+    TL1EventClass * event(new TL1EventClass(inDir));
 
-    std::vector<std::shared_ptr<TL1Resolution>> resolution;
+    std::vector<TL1Resolution*> resolution;
+    
+    // NOTE: Ignore the AddRelTitle and AddRelBins for now. I was trying to add
+    // some functionality and failed terribly
 
     // caloMetBE
     resolution.emplace_back(new TL1Resolution());
-    std::string outDir = outDirBase+"/"+resolution.front()->GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Resolutions/";
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Resolutions/";
     resolution[0]->SetBins(bins());
     resolution[0]->SetX("caloMetBE","Offline E_{T}^{miss}");
     resolution[0]->SetY("l1met","L1 E_{T}^{miss}");
@@ -72,6 +77,9 @@ void testTL1Resolution()
     resolution[3]->AddRelTitle("recoHtt","Offline Total H_{T} (GeV)");
     resolution[3]->AddRelBins({0.,10.,20.,30.,40.,50.,60.,70.,80.,100.});
     resolution[3]->SetAddMark("Offline HTT > 100 GeV");
+
+    // My code is crap so far. So for Phi and Eta we want (l1-offline) whereas it is hard-coded to do (l1-offline)/offline. 
+    // I have just been switching the hard-coding but really need an enum to switch between: l1/offline, (l1-offline) and (l1-offline)/offline
 
     // caloMetBE Phi
     double p = TMath::Pi();
@@ -112,13 +120,14 @@ void testTL1Resolution()
         TL1Progress::PrintProgressBar(position, NEntries);
 
         int pu = event->GetPEvent()->fVertex->nVtx;
+        auto sums = event->GetPEvent()->fSums;
 
         // HTT
-        double recoHtt = event->GetPEvent()->fSums->Ht;
+        double recoHtt = sums->Ht;
         double l1Htt = event->fL1Htt;
         if( recoHtt > 100.0 && l1Htt > 0.02 )
             resolution[3]->Fill(recoHtt, l1Htt, pu);
-        resolution[3]->RelFill(recoHtt, l1Htt, pu, {recoHtt});
+        resolution[3]->RelFill(recoHtt, l1Htt, pu, {recoHtt}); // The {} is for the AddRel stuff :(
 
         // MHT
         double recalcRecoMht = event->fRecalcRecoMht;
@@ -128,14 +137,14 @@ void testTL1Resolution()
         resolution[1]->RelFill(recalcRecoMht, l1Mht, pu, {recalcRecoMht});
 
         // MHT Phi
-        double recoMhtPhi = event->GetPEvent()->fSums->mHtPhi;
+        double recoMhtPhi = event->sums->mHtPhi;
         double l1MhtPhi = event->fL1MhtPhi;
-        if( event->GetPEvent()->fSums->mHt != 0.0 && l1Mht != 0.0 )
+        if( sums->mHt != 0.0 && l1Mht != 0.0 )
             resolution[5]->Fill(FoldPhi(recoMhtPhi), FoldPhi(l1MhtPhi), pu);
         resolution[5]->RelFill(FoldPhi(recoMhtPhi), FoldPhi(l1MhtPhi), pu, {FoldPhi(recoMhtPhi)});
 
         // ETT
-        double recoEtt = event->GetPEvent()->fSums->caloSumEtBE;
+        double recoEtt = sums->caloSumEtBE;
         double l1Ett = event->fL1Ett;
         if( recoEtt != 0.0 && l1Ett != 0.0 )
             resolution[2]->Fill(recoEtt, l1Ett, pu);
@@ -144,7 +153,7 @@ void testTL1Resolution()
         if( !event->fMuonFilterPassFlag ) continue;
 
         // MET
-        double recoMet = event->GetPEvent()->fSums->caloMetBE;
+        double recoMet = sums->caloMetBE;
         double l1Met = event->fL1Met;
         if( event->fMetFilterPassFlag )
         {
@@ -154,7 +163,7 @@ void testTL1Resolution()
         }
 
         // MET Phi
-        double recoMetPhi = event->GetPEvent()->fSums->caloMetPhiBE;
+        double recoMetPhi = sums->caloMetPhiBE;
         double l1MetPhi = event->fL1MetPhi;
         if( recoMet != 0.0 && l1Met != 0.0 )
             resolution[4]->Fill(FoldPhi(recoMetPhi), FoldPhi(l1MetPhi), pu);
@@ -162,10 +171,8 @@ void testTL1Resolution()
 
     }
 
-    resolution[0]->DrawPlots();
-//    resolution[3]->DrawPlots();
-//    for(auto it=resolution.begin(); it!=resolution.end(); ++it)
-//        (*it)->DrawPlots();
+    for(auto it=resolution.begin(); it!=resolution.end(); ++it)
+        (*it)->DrawPlots();
         
 }
 

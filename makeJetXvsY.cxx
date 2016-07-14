@@ -2,9 +2,11 @@
 #include <vector>
 #include <algorithm>
 
-#include "Core/TL1EventClass.h"
-#include "Core/TL1Progress.C"
-#include "TL1XvsY.h"
+#include "Plotting/tdrstyle.C"
+#include "Event/TL1EventClass.h"
+#include "Utilities/TL1Progress.C"
+#include "Utilities/TL1DateTime.C"
+#include "Plotting/TL1XvsY.h"
 
 vector<double> bins(double max);
 vector<double> phiBins();
@@ -12,31 +14,32 @@ vector<double> etaBins();
 double FoldPhi(double phi);
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 
-void testTL1XvsYJets()
+void makeJetXvsY()
 {
-    std::shared_ptr<TStyle> myStyle(new TStyle(TDRStyle()));
-    SetMyStyle(57, 0.14, myStyle.get());
+    TStyle * myStyle(new TStyle(TDRStyle()));
+    SetMyStyle(57, 0.14, myStyle);
 
     // Basic
     std::string sample = "Data";
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
-    //std::string run = "273301";
-    std::string run = "273301-302-450";
+
+    std::string run = "2016B";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
     std::vector<std::string> puType = {"0PU12","13PU19","20PU"};
     std::vector<int> puBins = {0,13,20,999};
 
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
-    //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
-    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
-    std::shared_ptr<TL1EventClass> event(new TL1EventClass(inDir));
+    // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
+    // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
+    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0";
+    TL1EventClass * event(new TL1EventClass(inDir));
 
-    std::vector<std::shared_ptr<TL1XvsY>> xvsy;
+    std::vector<TL1XvsY*> xvsy;
 
     // Jet Et - barrel
     xvsy.emplace_back(new TL1XvsY());
-    std::string outDir = outDirBase+"/"+xvsy.front()->GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/xyJets/";
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/xyJets/";
     xvsy[0]->SetXBins(bins(300.0));
     xvsy[0]->SetX("jetEt","Offline Jet E_{T} (GeV)");
     xvsy[0]->SetYBins(bins(300.0));
@@ -133,18 +136,18 @@ void testTL1XvsYJets()
         TL1Progress::PrintProgressBar(position, NEntries);
 
         int pu = event->GetPEvent()->fVertex->nVtx;
+        auto jets = event->GetPEvent()->fJets;
 
-        for(unsigned iRecoJet=0; iRecoJet<event->GetPEvent()->fJets->nJets; ++iRecoJet)
+        for(unsigned iRecoJet=0; iRecoJet<jets->nJets; ++iRecoJet)
         {
             if( !event->fIsLeadingRecoJet ) continue;
             if( !event->fIsMatchedL1Jet ) continue;
 
             int pu = event->GetPEvent()->fVertex->nVtx;
 
-            auto recoJet = event->GetPEvent()->fJets;
-            double recoEt = recoJet->etCorr[event->fLeadingRecoJetIndex];
-            double recoEta = recoJet->eta[event->fLeadingRecoJetIndex];
-            double recoPhi = recoJet->phi[event->fLeadingRecoJetIndex];
+            double recoEt = jets->etCorr[event->fLeadingRecoJetIndex];
+            double recoEta = jets->eta[event->fLeadingRecoJetIndex];
+            double recoPhi = jets->phi[event->fLeadingRecoJetIndex];
 
             double l1Et = event->fL1JetEt[event->fMatchedL1JetIndex];
             double l1Eta = event->fL1JetEta[event->fMatchedL1JetIndex];
@@ -169,7 +172,7 @@ void testTL1XvsYJets()
 
                 xvsy[8]->Fill(recoEta, l1Eta, pu);
             }
-            else if( abs(recoEta) <= 5.0 )
+            else
             {
                 xvsy[3]->Fill(recoEt, l1Et, pu);
                 xvsy[7]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi), pu);

@@ -12,11 +12,13 @@ void tdrGrid(TStyle tdrStyle, bool gridOn) {
 TStyle TDRStyle() {
   TStyle tdrStyle("tdrStyle","Style for P-TDR");
 
+  //tdrStyle.SetPalette(palette);
+
 // For the canvas:
   tdrStyle.SetCanvasBorderMode(0);
   tdrStyle.SetCanvasColor(kWhite);
   tdrStyle.SetCanvasDefH(600); //Height of canvas
-  tdrStyle.SetCanvasDefW(600); //Width of canvas
+  tdrStyle.SetCanvasDefW(800); //Width of canvas
   tdrStyle.SetCanvasDefX(0);   //POsition on screen
   tdrStyle.SetCanvasDefY(0);
 
