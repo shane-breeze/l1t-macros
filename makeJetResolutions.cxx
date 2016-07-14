@@ -1,19 +1,20 @@
 #include <string>
 #include <vector>
 
-#include "Core/tdrstyle.C"
-#include "Core/TL1EventClass.h"
-#include "Core/TL1Progress.C"
-#include "TL1Resolution.h"
+#include "Plotting/tdrstyle.C"
+#include "Event/TL1EventClass.h"
+#include "Utilities/TL1Progress.C"
+#include "Utilities/TL1DateTime.C"
+#include "Plotting/TL1Resolution.h"
 
 std::vector<double> bins();
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 double FoldPhi(double phi);
 
-void testTL1ResolutionJets()
+void makeJetResolutions()
 {
-    std::shared_ptr<TStyle> myStyle(new TStyle(TDRStyle()));
-    SetMyStyle(55, 0.07, myStyle.get());
+    TStyle * myStyle(new TStyle(TDRStyle()));
+    SetMyStyle(55, 0.07, myStyle);
 
     // Basic
     std::string sample = "Data";
@@ -28,13 +29,13 @@ void testTL1ResolutionJets()
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
     //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
     std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
-    std::shared_ptr<TL1EventClass> event(new TL1EventClass(inDir));
+    TL1EventClass * event(new TL1EventClass(inDir));
 
-    std::vector<std::shared_ptr<TL1Resolution>> resolution;
+    std::vector<TL1Resolution*> resolution;
 
     // Jet Et - barrel
     resolution.emplace_back(new TL1Resolution());
-    std::string outDir = outDirBase+"/"+resolution.front()->GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/resJets/";
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/resJets/";
     resolution[0]->SetBins(bins());
     resolution[0]->SetX("jetEt","Offline Jet E_{T}");
     resolution[0]->SetY("l1JetEt","L1 Jet E_{T})");
