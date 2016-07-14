@@ -20,15 +20,16 @@ void makeJetResolutions()
     std::string sample = "Data";
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
-    //std::string run = "273301";
-    std::string run = "273301-302-450";
+
+    std::string run = "2016B";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
     std::vector<std::string> puType = {"0PU12","13PU19","20PU"};
     std::vector<int> puBins = {0,13,20,999};
 
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
-    //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
-    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
+    // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
+    // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
+    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0";
     TL1EventClass * event(new TL1EventClass(inDir));
 
     std::vector<TL1Resolution*> resolution;

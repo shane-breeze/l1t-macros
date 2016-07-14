@@ -20,7 +20,7 @@ void makeJetTurnons()
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
 
-    std::string run = "2016B_v1";
+    std::string run = "2016B";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
     bool doFit = false;
     std::vector<std::string> puType = {"0PU12","13PU19","20PU"};

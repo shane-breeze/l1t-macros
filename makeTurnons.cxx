@@ -23,7 +23,7 @@ void makeTurnons()
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
 
-    std::string run = "2016B_v1";
+    std::string run = "2016B";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
     bool doFit = false;
     std::vector<std::string> puType = {"0PU12","13PU19","20PU"}; // Check the pu distribution to decide the relevant binning (for 2016 data these should be good)
