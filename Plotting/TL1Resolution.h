@@ -58,15 +58,17 @@ void TL1Resolution::InitPlots()
 {
     fRootFile = new TFile(Form("%s/res_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
 
-    fPlot.emplace_back(new TH1F(Form("res_%s_over_%s",fXName.c_str(),fYName.c_str()),"", fBins.size()-1,&(fBins)[0]));
+    fPlot.emplace_back(new TH1F(Form("res_diffdiv_%s_%s",fXName.c_str(),fYName.c_str()),"", fBins.size()-1,&(fBins)[0]));
     fPlot.back()->SetDirectory(0);
     fPlot.back()->GetXaxis()->SetTitle(Form("(%s - %s)/%s",fYTitle.c_str(),fXTitle.c_str(),fXTitle.c_str()));
+    //fPlot.back()->GetXaxis()->SetTitle(Form("%s - %s",fYTitle.c_str(),fXTitle.c_str()));
     fPlot.back()->GetYaxis()->SetTitle("a.u.");
     for(int i=0; i<this->GetPuType().size(); ++i)
     {
-        fPlot.emplace_back(new TH1F(Form("res_%s_over_%s_%s",fXName.c_str(),fYName.c_str(),this->GetPuType()[i].c_str()),"", fBins.size()-1,&(fBins)[0]));
+        fPlot.emplace_back(new TH1F(Form("res_diffdiv_%s_%s_%s",fXName.c_str(),fYName.c_str(),this->GetPuType()[i].c_str()),"", fBins.size()-1,&(fBins)[0]));
         fPlot.back()->SetDirectory(0);
         fPlot.back()->GetXaxis()->SetTitle(Form("(%s - %s)/%s",fYTitle.c_str(),fXTitle.c_str(),fXTitle.c_str()));
+        //fPlot.back()->GetXaxis()->SetTitle(Form("%s - %s",fYTitle.c_str(),fXTitle.c_str()));
         fPlot.back()->GetYaxis()->SetTitle("a.u.");
     }
 
@@ -94,6 +96,7 @@ void TL1Resolution::Fill(const double & xVal, const double & yVal, const int & p
 {
     double div = 0.0;
     if( xVal != 0.0 ) div = (yVal-xVal)/xVal;
+    //div = yVal-xVal;
     fPlot[0]->Fill(div);
     for(int i=0; i<this->GetPuType().size(); ++i)
     {

@@ -20,6 +20,7 @@ void makeResolutions()
     std::string sample = "Data";
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
+
     std::string run = "2016B_v1";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
     std::vector<std::string> puType = {"0PU12","13PU19","20PU"};
@@ -33,68 +34,55 @@ void makeResolutions()
     TL1EventClass * event(new TL1EventClass(inDir));
 
     std::vector<TL1Resolution*> resolution;
-
-    // caloMetBE
-    resolution.emplace_back(new TL1Resolution());
     std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Resolutions/";
+
+    // caloMetBE vs l1EmuMetBE
+    resolution.emplace_back(new TL1Resolution());
     resolution[0]->SetBins(bins());
-    resolution[0]->SetX("caloMetBE","Offline E_{T}^{miss}");
-    resolution[0]->SetY("l1met","L1 E_{T}^{miss}");
-    resolution[0]->SetOutName(triggerName+"_caloMetBE_over_l1Met");
-    resolution[0]->AddRelTitle("recoCaloMetBE","Offline E_{T}^{miss} (GeV)");
-    resolution[0]->AddRelBins({20.,40.,60.,80.,100.,120.,140.});
+    resolution[0]->SetX("caloMetBE","Offline E_{T}^{miss} BE (GeV)");
+    resolution[0]->SetY("l1EmuMetBE","L1 E_{T}^{miss} BE (GeV)");
+    resolution[0]->SetOutName(triggerName+"_caloMetBE_over_l1EmuMetBE");
     resolution[0]->SetAddMark("Offline E_{T}^{miss} > 40 GeV");
 
-    // mht
+    // caloMetHF vs l1EmuMetBE
     resolution.emplace_back(new TL1Resolution());
     resolution[1]->SetBins(bins());
-    resolution[1]->SetX("mht","Offline H_{T}^{miss}");
-    resolution[1]->SetY("l1mht","L1 H_{T}^{miss}");
-    resolution[1]->SetOutName(triggerName+"_recalcMht_over_l1Mht");
-    resolution[1]->AddRelTitle("recoMht","Offline H_{T}^{miss} (GeV)");
-    resolution[1]->AddRelBins({0.,10.,20.,30.,40.,50.,60.,70.,80.,100.});
-    //resolution[1]->SetAddMark("L1 ETM > 40 GeV");
+    resolution[1]->SetX("caloMetHF","Offline E_{T}^{miss} HF (GeV)");
+    resolution[1]->SetY("l1EmuMetBE","L1 E_{T}^{miss} BE (GeV)");
+    resolution[1]->SetOutName(triggerName+"_caloMetHF_over_l1EmuMetBE");
+    resolution[1]->SetAddMark("Offline E_{T}^{miss} > 40 GeV");
 
-    // caloEttBE
+    // caloMetHF vs l1EmuMetHF
     resolution.emplace_back(new TL1Resolution());
     resolution[2]->SetBins(bins());
-    resolution[2]->SetX("caloEttBE","Offline Total E_{T}");
-    resolution[2]->SetY("l1ett","L1 Total E_{T}");
-    resolution[2]->SetOutName(triggerName+"_caloEttBE_over_l1Ett");
-    resolution[2]->AddRelTitle("recoEtt","Offline Total E_{T} (GeV)");
-    resolution[2]->AddRelBins({0.,10.,20.,30.,40.,50.,60.,70.,80.,100.});
-    //resolution[2]->SetAddMark("L1 ETM > 40 GeV");
+    resolution[2]->SetX("caloMetHF","Offline E_{T}^{miss} HF (GeV)");
+    resolution[2]->SetY("l1EmuMetHF","L1 E_{T}^{miss} HF (GeV)");
+    resolution[2]->SetOutName(triggerName+"_caloMetHF_over_l1EmuMetHF");
+    resolution[2]->SetAddMark("Offline E_{T}^{miss} > 40 GeV");
 
-    // htt
+    // caloMetPhiBE vs l1EmuMetPhiBE
     resolution.emplace_back(new TL1Resolution());
     resolution[3]->SetBins(bins());
-    resolution[3]->SetX("htt","Offline Total H_{T}");
-    resolution[3]->SetY("l1htt","L1 Total H_{T}");
-    resolution[3]->SetOutName(triggerName+"_htt_over_l1Htt");
-    resolution[3]->AddRelTitle("recoHtt","Offline Total H_{T} (GeV)");
-    resolution[3]->AddRelBins({0.,10.,20.,30.,40.,50.,60.,70.,80.,100.});
-    resolution[3]->SetAddMark("Offline HTT > 100 GeV");
+    resolution[3]->SetX("caloMetPhiBE","Offline E_{T}^{miss} Phi BE");
+    resolution[3]->SetY("l1EmuMetPhiBE","L1 E_{T}^{miss} Phi BE");
+    resolution[3]->SetOutName(triggerName+"_caloMetPhiBE_over_l1EmuMetPhiBE");
+    resolution[3]->SetAddMark("Offline E_{T}^{miss} > 40 GeV");
 
-    // caloMetBE Phi
-    double p = TMath::Pi();
+    // caloMetPhiHF vs l1EmuMetPhiBE
     resolution.emplace_back(new TL1Resolution());
     resolution[4]->SetBins(bins());
-    resolution[4]->SetX("caloMetBEPhi","Offline E_{T}^{miss} Phi");
-    resolution[4]->SetY("l1metphi","L1 E_{T}^{miss} Phi");
-    resolution[4]->SetOutName(triggerName+"_caloMetBEPhi_over_l1MetPhi");
-    resolution[4]->AddRelTitle("recoCaloMetPhiBE","Offline E_{T}^{miss} Phi");
-    resolution[4]->AddRelBins({-p,-0.75*p,-0.5*p,-0.25*p,0.,0.25*p,0.5*p,0.75*p,p});
-    //resolution[0]->SetAddMark("L1 ETM > 40 GeV");
+    resolution[4]->SetX("caloMetPhiHF","Offline E_{T}^{miss} Phi HF");
+    resolution[4]->SetY("l1EmuMetPhiBE","L1 E_{T}^{miss} Phi BE");
+    resolution[4]->SetOutName(triggerName+"_caloMetPhiHF_over_l1EmuMetPhiBE");
+    resolution[4]->SetAddMark("Offline E_{T}^{miss} > 40 GeV");
 
-    // mht Phi
+    // caloMetPhiHF vs l1EmuMetPhiHF
     resolution.emplace_back(new TL1Resolution());
     resolution[5]->SetBins(bins());
-    resolution[5]->SetX("mhtPhi","Offline H_{T}^{miss} Phi");
-    resolution[5]->SetY("l1httphi","L1 Total H_{T} Phi");
-    resolution[5]->SetOutName(triggerName+"_recalcMhtPhi_over_l1MhtPhi");
-    resolution[5]->AddRelTitle("recoMhtPhi","Offline H_{T}^{miss} Phi");
-    resolution[5]->AddRelBins({-p,-0.75*p,-0.5*p,-0.25*p,0.,0.25*p,0.5*p,0.75*p,p});
-    //resolution[0]->SetAddMark("L1 ETM > 40 GeV");
+    resolution[5]->SetX("caloMetPhiHF","Offline E_{T}^{miss} Phi HF");
+    resolution[5]->SetY("l1EmuMetPhiHF","L1 E_{T}^{miss} Phi HF");
+    resolution[5]->SetOutName(triggerName+"_caloMetPhiHF_over_l1EmuMetPhiHF");
+    resolution[5]->SetAddMark("Offline E_{T}^{miss} > 40 GeV");
 
     for(auto it=resolution.begin(); it!=resolution.end(); ++it)
     {
@@ -114,54 +102,39 @@ void makeResolutions()
         TL1Progress::PrintProgressBar(position, NEntries);
 
         int pu = event->GetPEvent()->fVertex->nVtx;
-
-        // HTT
-        double recoHtt = event->GetPEvent()->fSums->Ht;
-        double l1Htt = event->fL1Htt;
-        if( recoHtt > 100.0 && l1Htt > 0.02 )
-            resolution[3]->Fill(recoHtt, l1Htt, pu);
-        resolution[3]->RelFill(recoHtt, l1Htt, pu, {recoHtt});
-
-        // MHT
-        double recalcRecoMht = event->fRecalcRecoMht;
-        double l1Mht = event->fL1Mht;
-        if( recalcRecoMht > 0.2 && l1Mht > 0.2 )
-            resolution[1]->Fill(recalcRecoMht, l1Mht, pu);
-        resolution[1]->RelFill(recalcRecoMht, l1Mht, pu, {recalcRecoMht});
-
-        // MHT Phi
-        double recoMhtPhi = event->GetPEvent()->fSums->mHtPhi;
-        double l1MhtPhi = event->fL1MhtPhi;
-        if( event->GetPEvent()->fSums->mHt != 0.0 && l1Mht != 0.0 )
-            resolution[5]->Fill(FoldPhi(recoMhtPhi), FoldPhi(l1MhtPhi), pu);
-        resolution[5]->RelFill(FoldPhi(recoMhtPhi), FoldPhi(l1MhtPhi), pu, {FoldPhi(recoMhtPhi)});
-
-        // ETT
-        double recoEtt = event->GetPEvent()->fSums->caloSumEtBE;
-        double l1Ett = event->fL1Ett;
-        if( recoEtt != 0.0 && l1Ett != 0.0 )
-            resolution[2]->Fill(recoEtt, l1Ett, pu);
-        resolution[2]->RelFill(recoEtt, l1Ett, pu, {recoEtt});
+        auto sums = event->GetPEvent()->fSums;
 
         if( !event->fMuonFilterPassFlag ) continue;
 
         // MET
-        double recoMet = event->GetPEvent()->fSums->caloMetBE;
-        double l1Met = event->fL1Met;
+        double l1EmuMetBE = event->fL1EmuMet;
+        double l1EmuMetHF = event->fL1EmuMetHF;
+        double recoMetBE = sums->caloMetBE;
+        double recoMetHF = sums->caloMet;
+
+        double l1EmuMetPhiBE = event->fL1EmuMetPhi;
+        double l1EmuMetPhiHF = event->fL1EmuMetPhiHF;
+        double recoMetPhiBE = sums->caloMetPhiBE;
+        double recoMetPhiHF = sums->caloMetPhi;
+        
         if( event->fMetFilterPassFlag )
         {
-            if( recoMet > 40.0 && l1Met != 0.0 )
-                resolution[0]->Fill(recoMet, l1Met, pu);
-            resolution[0]->RelFill(recoMet, l1Met, pu, {recoMet});
+            if( recoMetBE > 40.0 && l1EmuMetBE > 0.0 )
+            {
+                resolution[0]->Fill(recoMetBE, l1EmuMetBE, pu);
+                resolution[3]->Fill(FoldPhi(recoMetPhiBE), FoldPhi(l1EmuMetPhiBE), pu);
+            }
+            if( recoMetHF > 40.0 && l1EmuMetBE > 0.0 )
+            {
+                resolution[1]->Fill(recoMetHF, l1EmuMetBE, pu);
+                resolution[4]->Fill(FoldPhi(recoMetPhiHF), FoldPhi(l1EmuMetPhiBE), pu);
+            }
+            if( recoMetHF > 40.0 && l1EmuMetHF > 0.0 )
+            {
+                resolution[2]->Fill(recoMetHF, l1EmuMetHF, pu);
+                resolution[5]->Fill(recoMetPhiHF, l1EmuMetPhiHF, pu);
+            }
         }
-
-        // MET Phi
-        double recoMetPhi = event->GetPEvent()->fSums->caloMetPhiBE;
-        double l1MetPhi = event->fL1MetPhi;
-        if( recoMet != 0.0 && l1Met != 0.0 )
-            resolution[4]->Fill(FoldPhi(recoMetPhi), FoldPhi(l1MetPhi), pu);
-        resolution[4]->RelFill(FoldPhi(recoMetPhi), FoldPhi(l1MetPhi), pu, {FoldPhi(recoMetPhi)});
-
     }
 
     for(auto it=resolution.begin(); it!=resolution.end(); ++it)
