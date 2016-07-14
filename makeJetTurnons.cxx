@@ -10,7 +10,7 @@
 vector<double> bins();
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 
-void testTL1TurnonJets()
+void makeJetTurnons()
 {
     TStyle * myStyle(new TStyle(TDRStyle()));
     SetMyStyle(55, 0.07, myStyle);

@@ -11,13 +11,13 @@ std::vector<double> bins();
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 double FoldPhi(double phi);
 
-void testTL1Resolution()
+void makeResolutions()
 {
     TStyle * myStyle(new TStyle(TDRStyle()));
     SetMyStyle(55, 0.07, myStyle);
 
     // Basic
-    std::string sample = ;
+    std::string sample = "Data";
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
     std::string run = "273301-302-450";

@@ -13,7 +13,7 @@ vector<double> ettBins();
 vector<double> httBins();
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 
-void testTL1Turnon()
+void makeTurnons()
 {
     TStyle * myStyle(new TStyle(TDRStyle()));
     SetMyStyle(55, 0.07, myStyle);

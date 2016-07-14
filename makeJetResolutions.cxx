@@ -11,7 +11,7 @@ std::vector<double> bins();
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 double FoldPhi(double phi);
 
-void testTL1ResolutionJets()
+void makeJetResolutions()
 {
     TStyle * myStyle(new TStyle(TDRStyle()));
     SetMyStyle(55, 0.07, myStyle);

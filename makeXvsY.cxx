@@ -13,7 +13,7 @@ std::vector<double> phiBins();
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 double FoldPhi(double phi);
 
-void testTL1XvsY()
+void makeXvsY()
 {
     TStyle * myStyle(new TStyle(TDRStyle()));
     SetMyStyle(57, 0.14, myStyle);

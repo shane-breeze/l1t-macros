@@ -14,7 +14,7 @@ vector<double> etaBins();
 double FoldPhi(double phi);
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 
-void testTL1XvsYJets()
+void makeJetXvsY()
 {
     TStyle * myStyle(new TStyle(TDRStyle()));
     SetMyStyle(57, 0.14, myStyle);
