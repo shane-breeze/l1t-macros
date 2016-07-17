@@ -22,12 +22,11 @@ void makeResolutions()
     std::string triggerTitle = "Single Muon";
 
     std::string run = "6.3fb^{-1}"; // an additional label for the plots
-    std::string outDirBase = "/afs/cern.ch/user/t/taylor/L1TriggerStudiesOutput";
+    std::string outDirBase = "/users/jt15104/l1t-macros/l1t-macros-Output/";
     std::vector<std::string> puType = {"0PU12","13PU19","20PU"};
     std::vector<int> puBins = {0,13,20,999};
 
-    // CURRENTLY JUST TESTING ALL THE SCRIPTS
-    std::string inDir = "/afs/cern.ch/work/t/taylor/public/L1TriggerNtuples/run275282to275783singleMu";
+    std::string inDir = "/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v71p1/";
     TL1EventClass * event(new TL1EventClass(inDir));
 
     std::vector<TL1Resolution*> resolution;
