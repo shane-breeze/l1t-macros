@@ -27,8 +27,8 @@ void makeJetResolutions()
     std::vector<int> puBins = {0,13,20,999};
 
     std::vector<std::string> inDir;
-    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v71p1/");
-    // inDir.push_back("");
+    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v71p1/run276242/");
+    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v71p1/run276243/");
     // inDir.push_back("");
     // inDir.push_back("");        
     TL1EventClass * event(new TL1EventClass(inDir));
