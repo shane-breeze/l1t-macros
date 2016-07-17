@@ -24,6 +24,8 @@ class TL1PrimitiveEventClass
         L1Analysis::L1AnalysisRecoMetFilterDataFormat * fMetFilters;
         L1Analysis::L1AnalysisRecoMuon2DataFormat     * fMuons;     
 
+        bool fIsCaloTower, fIsJetReco, fIsMetFilterReco, fIsMuonReco, fIsRecoTree, fIsUpgrade, fIsEmuUpgrade;
+
     private:
         TL1DataClass * caloTower, * jetReco, * metFilterReco, * muonReco, * recoTree, * upgrade, * emuUpgrade;
         Long64_t fPos;
@@ -46,36 +48,38 @@ TL1PrimitiveEventClass::TL1PrimitiveEventClass(std::string inDir) :
     fVertex    (new L1Analysis::L1AnalysisRecoVertexDataFormat()),
     fMetFilters(new L1Analysis::L1AnalysisRecoMetFilterDataFormat()),
     fMuons     (new L1Analysis::L1AnalysisRecoMuon2DataFormat()),
+    fIsCaloTower(true), fIsJetRe(true), fIsMetFilterReco(true), fIsMuonReco(true), 
+    fIsRecoTree(true), fIsUpgrade(true), fIsEmuUpgrade(true),
     fPos(0)
 {
-    caloTower->SetBranchAddress("L1CaloTower", &fCaloTowers);
-    jetReco->SetBranchAddress("Jet", &fJets);
-    jetReco->SetBranchAddress("Sums", &fSums);
-    metFilterReco->SetBranchAddress("MetFilters", &fMetFilters);
-    muonReco->SetBranchAddress("Muon", &fMuons);
-    recoTree->SetBranchAddress("Vertex", &fVertex);
-    upgrade->SetBranchAddress("L1Upgrade", &fUpgrade);
-    emuUpgrade->SetBranchAddress("L1Upgrade", &fEmuUpgrade);
+    if( caloTower->SetBranchAddress("L1CaloTower", &fCaloTowers) < 0 ) fIsCaloTower = false;
+    if( jetReco->SetBranchAddress("Jet", &fJets) < 0 ) fIsJetReco = false;
+    if( jetReco->SetBranchAddress("Sums", &fSums) < 0 ) fIsJetReco = false;
+    if( metFilterReco->SetBranchAddress("MetFilters", &fMetFilters) < 0 ) fIsMetFilterReco = false;
+    if( muonReco->SetBranchAddress("Muon", &fMuons) < 0 ) fIsMuonReco = false;
+    if( recoTree->SetBranchAddress("Vertex", &fVertex) < 0 ) fIsRecoTree = false;
+    if( upgrade->SetBranchAddress("L1Upgrade", &fUpgrade) < 0 ) fIsUpgrade = false;
+    if( emuUpgrade->SetBranchAddress("L1Upgrade", &fEmuUpgrade) < 0 ) fIsEmuUpgrade = false;
 }
 
 bool TL1PrimitiveEventClass::Next()
 {
     if( fPos >= caloTower->GetEntries()-1 ) return false;
-    caloTower->LoadTree(fPos);
-    jetReco->LoadTree(fPos);
-    metFilterReco->LoadTree(fPos);
-    muonReco->LoadTree(fPos);
-    recoTree->LoadTree(fPos);
-    upgrade->LoadTree(fPos);
-    emuUpgrade->LoadTree(fPos);
+    if( fIsCaloTower ) caloTower->LoadTree(fPos);
+    if( fIsJetReco ) jetReco->LoadTree(fPos);
+    if( fIsMetFilterReco ) metFilterReco->LoadTree(fPos);
+    if( fIsMuonReco ) muonReco->LoadTree(fPos);
+    if( fIsRecoTree ) recoTree->LoadTree(fPos);
+    if( fIsUpgrade ) upgrade->LoadTree(fPos);
+    if( fIsEmuUpgrade ) emuUpgrade->LoadTree(fPos);
 
-    caloTower->GetEntry(fPos);
-    jetReco->GetEntry(fPos);
-    metFilterReco->GetEntry(fPos);
-    muonReco->GetEntry(fPos);
-    recoTree->GetEntry(fPos);
-    upgrade->GetEntry(fPos);
-    emuUpgrade->GetEntry(fPos);
+    if( fIsCaloTower ) caloTower->GetEntry(fPos);
+    if( fIsJetReco ) jetReco->GetEntry(fPos);
+    if( fIsMetFilterReco ) metFilterReco->GetEntry(fPos);
+    if( fIsMuonReco ) muonReco->GetEntry(fPos);
+    if( fIsRecoTree ) recoTree->GetEntry(fPos);
+    if( fIsUpgrade ) upgrade->GetEntry(fPos);
+    if( fIsEmuUpgrade ) emuUpgrade->GetEntry(fPos);
     
     ++fPos;
 
@@ -84,26 +88,33 @@ bool TL1PrimitiveEventClass::Next()
 
 void TL1PrimitiveEventClass::GetEntry(int i)
 {
-    caloTower->LoadTree(i);
-    jetReco->LoadTree(i);
-    metFilterReco->LoadTree(i);
-    muonReco->LoadTree(i);
-    recoTree->LoadTree(i);
-    upgrade->LoadTree(i);
-    emuUpgrade->LoadTree(i);
+    if( fIsCaloTower ) caloTower->LoadTree(i);
+    if( fIsJetReco ) jetReco->LoadTree(i);
+    if( fIsMetFilterReco ) metFilterReco->LoadTree(i);
+    if( fIsMuonReco ) muonReco->LoadTree(i);
+    if( fIsRecoTree ) recoTree->LoadTree(i);
+    if( fIsUpgrade ) upgrade->LoadTree(i);
+    if( fIsEmuUpgrade ) emuUpgrade->LoadTree(i);
 
-    caloTower->GetEntry(i);
-    jetReco->GetEntry(i);
-    metFilterReco->GetEntry(i);
-    muonReco->GetEntry(i);
-    recoTree->GetEntry(i);
-    upgrade->GetEntry(i);
-    emuUpgrade->GetEntry(i);
+    if( fIsCaloTower ) caloTower->GetEntry(i);
+    if( fIsJetReco ) jetReco->GetEntry(i);
+    if( fIsMetFilterReco ) metFilterReco->GetEntry(i);
+    if( fIsMuonReco ) muonReco->GetEntry(i);
+    if( fIsRecoTree ) recoTree->GetEntry(i);
+    if( fIsUpgrade ) upgrade->GetEntry(i);
+    if( fIsEmuUpgrade ) emuUpgrade->GetEntry(i);
 }
 
 unsigned TL1PrimitiveEventClass::GetNEntries() const
 {
-    return caloTower->GetEntries();
+    if( fIsCaloTower ) return caloTower->GetEntries();
+    if( fIsJetReco ) return jetReco->GetEntries();
+    if( fIsMetFilterReco ) return metFilterReco->GetEntries();
+    if( fIsMuonReco ) return muonReco->GetEntries();
+    if( fIsRecoTree ) return recoTree->GetEntries();
+    if( fIsUpgrade ) return upgrade->GetEntries();
+    if( fIsEmuUpgrade ) return emuUpgrade->GetEntries();
+    return 0;
 }
 
 unsigned TL1PrimitiveEventClass::GetPosition() const
