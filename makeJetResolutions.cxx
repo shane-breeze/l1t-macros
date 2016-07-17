@@ -20,15 +20,16 @@ void makeJetResolutions()
     std::string sample = "Data";
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
-    //std::string run = "273301";
-    std::string run = "273301-302-450";
+
+    std::string run = "2016B";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
     std::vector<std::string> puType = {"0PU12","13PU19","20PU"};
     std::vector<int> puBins = {0,13,20,999};
 
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
-    //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
-    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
+    // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
+    // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
+    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0";
     TL1EventClass * event(new TL1EventClass(inDir));
 
     std::vector<TL1Resolution*> resolution;
@@ -131,8 +132,8 @@ void makeJetResolutions()
             if( !event->fIsMatchedL1Jet ) continue;
 
             int pu = event->GetPEvent()->fVertex->nVtx;
-
             auto recoJet = event->GetPEvent()->fJets;
+
             double recoEt = recoJet->etCorr[event->fLeadingRecoJetIndex];
             double recoEta = recoJet->eta[event->fLeadingRecoJetIndex];
             double recoPhi = FoldPhi(recoJet->phi[event->fLeadingRecoJetIndex]);
@@ -143,27 +144,27 @@ void makeJetResolutions()
 
             if( abs(recoEta) <= 1.479 )
             {
-                if(recoEt!=0.0 && l1Et!=0.0 && recoEt>=30.0001) resolution[0]->Fill(recoEt, l1Et, pu);
-                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0001) resolution[4]->Fill(recoPhi, l1Phi, pu);
+                if(recoEt!=0.0 && l1Et!=0.0 && recoEt>=30.0) resolution[0]->Fill(recoEt, l1Et, pu);
+                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0) resolution[4]->Fill(recoPhi, l1Phi, pu);
 
-                if(recoEta!=0.0 && l1Eta!=0.0 && recoEt>=30.0001) resolution[8]->Fill(abs(recoEta), abs(l1Eta), pu);
-                if(recoEt>=30.0001 && l1Et!=0.0 ) resolution[2]->Fill(recoEt, l1Et, pu);
-                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0001) resolution[6]->Fill(recoPhi, l1Phi, pu);
+                if(recoEta!=0.0 && l1Eta!=0.0 && recoEt>=30.0) resolution[8]->Fill(abs(recoEta), abs(l1Eta), pu);
+                if(recoEt>=30.0 && l1Et!=0.0 ) resolution[2]->Fill(recoEt, l1Et, pu);
+                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0) resolution[6]->Fill(recoPhi, l1Phi, pu);
             }
             else if( abs(recoEta) <= 3.0 )
             {
-                if(recoEt!=0.0 && l1Et!=0.0 && recoEt>=30.0001) resolution[1]->Fill(recoEt, l1Et, pu);
-                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0001) resolution[5]->Fill(recoPhi, l1Phi, pu);
+                if(recoEt!=0.0 && l1Et!=0.0 && recoEt>=30.0) resolution[1]->Fill(recoEt, l1Et, pu);
+                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0) resolution[5]->Fill(recoPhi, l1Phi, pu);
 
-                if(recoEta!=0.0 && l1Eta!=0.0 && recoEt>=30.0001) resolution[8]->Fill(abs(recoEta), abs(l1Eta), pu);
-                if(recoEt>=30.0001 && l1Et!=0.0 ) resolution[2]->Fill(recoEt, l1Et, pu);
-                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0001) resolution[6]->Fill(recoPhi, l1Phi, pu);
+                if(recoEta!=0.0 && l1Eta!=0.0 && recoEt>=30.0) resolution[8]->Fill(abs(recoEta), abs(l1Eta), pu);
+                if(recoEt>=30.0 && l1Et!=0.0 ) resolution[2]->Fill(recoEt, l1Et, pu);
+                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0) resolution[6]->Fill(recoPhi, l1Phi, pu);
             }
-            else if( abs(recoEta) <= 5.0 )
+            else
             {
-                if(recoEt>=30.0001 && l1Et!=0.0) resolution[3]->Fill(recoEt, l1Et, pu);
-                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0001) resolution[7]->Fill(recoPhi, l1Phi, pu);
-                if(recoEta!=0.0 && l1Eta!=0.0 && recoEt>=30.0001) resolution[8]->Fill(abs(recoEta), abs(l1Eta), pu);
+                if(recoEt>=30.0 && l1Et!=0.0) resolution[3]->Fill(recoEt, l1Et, pu);
+                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0) resolution[7]->Fill(recoPhi, l1Phi, pu);
+                if(recoEta!=0.0 && l1Eta!=0.0 && recoEt>=30.0) resolution[8]->Fill(abs(recoEta), abs(l1Eta), pu);
             }
         }
 

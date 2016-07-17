@@ -21,7 +21,6 @@ void makeResolutions()
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
 
-    std::string run = "2016B_v1";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
     std::vector<std::string> puType = {"0PU12","13PU19","20PU"};
     std::vector<int> puBins = {0,13,20,999};
@@ -31,10 +30,13 @@ void makeResolutions()
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160602_r273450_SingleMu_l1t-int-v53p1";
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
     std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0";
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Resolutions/";
     TL1EventClass * event(new TL1EventClass(inDir));
 
     std::vector<TL1Resolution*> resolution;
-    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Resolutions/";
+    
+    // NOTE: Ignore the AddRelTitle and AddRelBins for now. I was trying to add
+    // some functionality and failed terribly
 
     // caloMetBE vs l1EmuMetBE
     resolution.emplace_back(new TL1Resolution());
@@ -103,6 +105,34 @@ void makeResolutions()
 
         int pu = event->GetPEvent()->fVertex->nVtx;
         auto sums = event->GetPEvent()->fSums;
+
+        // HTT
+        double recoHtt = sums->Ht;
+        double l1Htt = event->fL1Htt;
+        if( recoHtt > 100.0 && l1Htt > 0.02 )
+            resolution[3]->Fill(recoHtt, l1Htt, pu);
+        resolution[3]->RelFill(recoHtt, l1Htt, pu, {recoHtt}); // The {} is for the AddRel stuff :(
+
+        // MHT
+        double recalcRecoMht = event->fRecalcRecoMht;
+        double l1Mht = event->fL1Mht;
+        if( recalcRecoMht > 0.2 && l1Mht > 0.2 )
+            resolution[1]->Fill(recalcRecoMht, l1Mht, pu);
+        resolution[1]->RelFill(recalcRecoMht, l1Mht, pu, {recalcRecoMht});
+
+        // MHT Phi
+        double recoMhtPhi = event->sums->mHtPhi;
+        double l1MhtPhi = event->fL1MhtPhi;
+        if( sums->mHt != 0.0 && l1Mht != 0.0 )
+            resolution[5]->Fill(FoldPhi(recoMhtPhi), FoldPhi(l1MhtPhi), pu);
+        resolution[5]->RelFill(FoldPhi(recoMhtPhi), FoldPhi(l1MhtPhi), pu, {FoldPhi(recoMhtPhi)});
+
+        // ETT
+        double recoEtt = sums->caloSumEtBE;
+        double l1Ett = event->fL1Ett;
+        if( recoEtt != 0.0 && l1Ett != 0.0 )
+            resolution[2]->Fill(recoEtt, l1Ett, pu);
+        resolution[2]->RelFill(recoEtt, l1Ett, pu, {recoEtt});
 
         if( !event->fMuonFilterPassFlag ) continue;
 

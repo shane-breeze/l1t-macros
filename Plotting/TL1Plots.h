@@ -7,8 +7,6 @@
 class TL1Plots
 {
     public:
-        TL1Plots();
-
         virtual void InitPlots() = 0;
         virtual void Fill(const double & xVal, const double & yVal, const int & pu) = 0;
         virtual void DrawPlots() = 0;
@@ -43,10 +41,6 @@ class TL1Plots
         std::vector<int> fPuBins;
 
 };
-
-TL1Plots::TL1Plots()
-{
-}
 
 void TL1Plots::SetSample(const std::string & sampleName, const std::string & sampleTitle)
 {

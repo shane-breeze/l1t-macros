@@ -328,7 +328,7 @@ void TL1EventClass::GetRecalcL1Ett()
         }
     }
     fRecalcL1Ett = sumEt;
-    fNJetsL1Ett = jetCount;
+    //fNJetsL1Ett = jetCount;
 }
 
 void TL1EventClass::GetRecalcL1Met()
