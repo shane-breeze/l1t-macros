@@ -48,7 +48,7 @@ TL1PrimitiveEventClass::TL1PrimitiveEventClass(std::string inDir) :
     fVertex    (new L1Analysis::L1AnalysisRecoVertexDataFormat()),
     fMetFilters(new L1Analysis::L1AnalysisRecoMetFilterDataFormat()),
     fMuons     (new L1Analysis::L1AnalysisRecoMuon2DataFormat()),
-    fIsCaloTower(true), fIsJetRe(true), fIsMetFilterReco(true), fIsMuonReco(true), 
+    fIsCaloTower(true), fIsJetReco(true), fIsMetFilterReco(true), fIsMuonReco(true), 
     fIsRecoTree(true), fIsUpgrade(true), fIsEmuUpgrade(true),
     fPos(0)
 {
