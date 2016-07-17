@@ -20,7 +20,7 @@ class TL1Turnon : public TL1Plots
         ~TL1Turnon();
 
         virtual void InitPlots();
-        virtual void Fill(const double & xVal, const double & seedVal, const int & pu);
+        virtual void Fill(const double & xVal, const double & seedVal, const int & pu=0);
         virtual void DrawPlots();
         void DrawCmsStamp(std::string stampPos="Left");
         void DrawTurnons();
@@ -80,7 +80,7 @@ void TL1Turnon::InitPlots()
     }
 }
 
-void TL1Turnon::Fill(const double & xVal, const double & seedVal, const int & pu)
+void TL1Turnon::Fill(const double & xVal, const double & seedVal, const int & pu=0)
 {
     for(unsigned i=0; i<fSeeds.size(); ++i)
     {

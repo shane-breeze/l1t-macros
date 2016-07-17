@@ -19,7 +19,7 @@ class TL1Resolution : public TL1Plots
         ~TL1Resolution();
 
         virtual void InitPlots();
-        virtual void Fill(const double & xVal, const double & yVal, const int & pu);
+        virtual void Fill(const double & xVal, const double & yVal, const int & pu=0);
         virtual void DrawPlots();
 
         void RelFill(const double & xVal, const double & yVal, const int & pu, const std::vector<double> & relVals);
@@ -92,7 +92,7 @@ void TL1Resolution::InitPlots()
 
 }
 
-void TL1Resolution::Fill(const double & xVal, const double & yVal, const int & pu)
+void TL1Resolution::Fill(const double & xVal, const double & yVal, const int & pu=0)
 {
     double div = 0.0;
     if( xVal != 0.0 ) div = (yVal-xVal)/xVal;

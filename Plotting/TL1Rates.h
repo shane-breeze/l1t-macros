@@ -20,7 +20,7 @@ class TL1Rates : public TL1Plots
         ~TL1Rates();
         
         virtual void InitPlots();
-        virtual void Fill(const double & xVal, const double & yVal, const int & pu);
+        virtual void Fill(const double & xVal, const double & yVal, const int & pu=0);
         virtual void DrawPlots();
         void DrawCmsStamp();
 
@@ -60,13 +60,13 @@ void TL1Rates::InitPlots()
     }
 }
 
-void TL1Rates::Fill(const double & xVal, const double & yVal, const int & pu)
+void TL1Rates::Fill(const double & xVal, const double & yVal, const int & pu=0)
 {
-    fPlot[0]->Fill(xVal,pu);
+    fPlot[0]->Fill(xVal);
     for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
     {
         if( pu >= this->GetPuBins()[ipu] && pu < this->GetPuBins()[ipu+1] )
-            fPlot[ipu+1]->Fill(xVal,pu);
+            fPlot[ipu+1]->Fill(xVal);
     }
 }
 

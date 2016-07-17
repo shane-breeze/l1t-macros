@@ -8,7 +8,7 @@ class TL1Plots
 {
     public:
         virtual void InitPlots() = 0;
-        virtual void Fill(const double & xVal, const double & yVal, const int & pu) = 0;
+        virtual void Fill(const double & xVal, const double & yVal, const int & pu=0) = 0;
         virtual void DrawPlots() = 0;
 
         virtual void SetSample(const std::string & sampleName, const std::string & sampleTitle);

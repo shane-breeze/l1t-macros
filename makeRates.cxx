@@ -25,8 +25,8 @@ void makeRates()
 
     std::string run = "276653";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
-    std::vector<std::string> puType = {"0PU12","13PU19","20PU"};
-    std::vector<int> puBins = {0,13,20,999};
+    //std::vector<std::string> puType = {"0PU12","13PU19","20PU"};
+    //std::vector<int> puBins = {0,13,20,999};
 
     //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0";
     std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160717_r276653_ZeroBias_l1t-int-71p1";
@@ -53,8 +53,8 @@ void makeRates()
         (*it)->SetTrigger(triggerName,triggerTitle);
         (*it)->SetRun(run);
         (*it)->SetOutDir(outDir);
-        (*it)->SetPuType(puType);
-        (*it)->SetPuBins(puBins);
+        //(*it)->SetPuType(puType);
+        //(*it)->SetPuBins(puBins);
         (*it)->InitPlots();
     }
 
@@ -64,13 +64,13 @@ void makeRates()
         unsigned position = event->GetPEvent()->GetPosition()+1;
         TL1Progress::PrintProgressBar(position, NEntries);
 
-        int pu = event->GetPEvent()->fVertex->nVtx;
+        //int pu = event->GetPEvent()->fVertex->nVtx;
 
         double l1EmuMetBE = event->fL1EmuMet;
         double l1EmuMetHF = event->fL1EmuMetHF;
 
-        rates[0]->Fill(l1EmuMetBE, 0.0, pu);
-        rates[1]->Fill(l1EmuMetHF, 0.0, pu);
+        rates[0]->Fill(l1EmuMetBE, 0.0);
+        rates[1]->Fill(l1EmuMetHF, 0.0);
     }
 
     for(auto it=rates.begin(); it!=rates.end(); ++it)
