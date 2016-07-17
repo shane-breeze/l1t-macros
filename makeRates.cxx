@@ -13,7 +13,7 @@ void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 void makeRates()
 {
     TStyle * myStyle(new TStyle(TDRStyle()));
-    SetMyStyle(55, 0.14, myStyle);
+    SetMyStyle(55, 0.08, myStyle);
 
     // Basic
     std::string sampleName = "Data";

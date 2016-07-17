@@ -120,6 +120,7 @@ void TL1Plots::SetColor(TGraph * graph, int pos, int max)
     }
     graph->SetLineColor(colour);
     graph->SetMarkerColor(colour);
+    graph->SetFillColor(colour);
 }
 
 std::string TL1Plots::GetSampleName() const

@@ -22,6 +22,8 @@ class TL1Rates : public TL1Plots
         virtual void InitPlots();
         virtual void Fill(const double & xVal, const double & yVal, const int & pu=0);
         virtual void DrawPlots();
+        TH1F * GetCumulative(TH1F * plot);
+        void PlotE2(TH1F * plot);
         void DrawCmsStamp();
 
         void SetX(const std::string & xName, const std::string & xTitle);
@@ -72,7 +74,7 @@ void TL1Rates::Fill(const double & xVal, const double & yVal, const int & pu=0)
 void TL1Rates::DrawPlots()
 {
     TCanvas * can(new TCanvas("c1","c1"));
-    TH1F * fCumulative = (TH1F*)fPlot[0]->GetCumulative(false);
+    TH1F * fCumulative = GetCumulative(fPlot[0]);
     
     double bin1 = fCumulative->GetBinContent(1);
     fCumulative->Scale(4.0e7/bin1);
@@ -80,8 +82,7 @@ void TL1Rates::DrawPlots()
     fRootFile->WriteTObject(fPlot[0]);
     fRootFile->WriteTObject(fCumulative);
 
-    fCumulative->Draw("hist");
-
+    PlotE2(fCumulative);
     can->SetLogy();
 
     DrawCmsStamp();
@@ -120,6 +121,36 @@ void TL1Rates::DrawPlots()
 
     outName = Form("%s/rates_%s_puBins.pdf", this->GetOutDir().c_str(), this->GetOutName().c_str());
     can2->SaveAs(outName.c_str());
+}
+
+TH1F * TL1Rates::GetCumulative(TH1F * plot)
+{
+    TH1F * temp = (TH1F*)plot->Clone();  
+    for(int i=0; i<plot->GetNbinsX()+1; ++i)
+    {
+        double content(0.0), error2(0.0);
+        for(int j=i; j<plot->GetNbinsX()+1; ++j)
+        {
+            content += plot->GetBinContent(j);
+            error2 += plot->GetBinError(j)*plot->GetBinError(j);
+        }
+        temp->SetBinContent(i,content);
+        temp->SetBinError(i,TMath::Sqrt(error2));
+    }
+    return temp;
+}
+
+void TL1Rates::PlotE2(TH1F * plot)
+{
+    plot->SetLineColor(plot->GetLineColor()+15);
+    plot->SetFillColor(plot->GetLineColor()+15);
+    plot->SetMarkerStyle(0);
+    TH1F * temp = (TH1F*)plot->Clone();
+    temp->SetFillStyle(0);
+    this->SetColor(temp, 0, 3);
+    plot->Draw("E2");
+    temp->SetLineWidth(2);
+    temp->Draw("histsame");
 }
 
 void TL1Rates::DrawCmsStamp()
