@@ -21,15 +21,13 @@ void makeResolutions()
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
 
-    std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
+    std::string run = "6.3fb^{-1}"; // an additional label for the plots
+    std::string outDirBase = "/afs/cern.ch/user/t/taylor/L1TriggerStudiesOutput";
     std::vector<std::string> puType = {"0PU12","13PU19","20PU"};
     std::vector<int> puBins = {0,13,20,999};
 
-    // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
-    // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
-    // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160602_r273450_SingleMu_l1t-int-v53p1";
-    // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
-    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0";
+    // CURRENTLY JUST TESTING ALL THE SCRIPTS
+    std::string inDir = "/afs/cern.ch/work/t/taylor/public/L1TriggerNtuples/run275282to275783singleMu";
     TL1EventClass * event(new TL1EventClass(inDir));
 
     std::vector<TL1Resolution*> resolution;
@@ -137,7 +135,7 @@ void makeResolutions()
         resolution[1]->RelFill(recalcRecoMht, l1Mht, pu, {recalcRecoMht});
 
         // MHT Phi
-        double recoMhtPhi = event->sums->mHtPhi;
+        double recoMhtPhi = sums->mHtPhi;
         double l1MhtPhi = event->fL1MhtPhi;
         if( sums->mHt != 0.0 && l1Mht != 0.0 )
             resolution[5]->Fill(FoldPhi(recoMhtPhi), FoldPhi(l1MhtPhi), pu);
