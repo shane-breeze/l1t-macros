@@ -19,25 +19,28 @@ void makeTurnons()
     SetMyStyle(55, 0.07, myStyle);
 
     // Basic
-    std::string sample = "Data";
-    std::string triggerName = "SingleMu";
-    std::string triggerTitle = "Single Muon";
+    std::string sampleName = "HInv";
+    std::string sampleTitle = "H #rightarrow Inv";
+    std::string triggerName = "";
+    std::string triggerTitle = "";
 
-    std::string run = "2016B";
+    std::string run = "";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
     bool doFit = false;
-    std::vector<std::string> puType = {"0PU12","13PU19","20PU"}; // Check the pu distribution to decide the relevant binning (for 2016 data these should be good)
-    std::vector<int> puBins = {0,13,20,999};
+    //std::vector<std::string> puType = {"0PU12","13PU19","20PU"}; // Check the pu distribution to decide the relevant binning (for 2016 data these should be good)
+    //std::vector<int> puBins = {0,13,20,999};
 
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160602_r273450_SingleMu_l1t-int-v53p1";
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
-    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0";
+    // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0";
+    std::string inDir = "/afs/cern.ch/work/s/sbreeze/L1NTuple_Production/20160717_Hinv125GeV/Ntuples";
     TL1EventClass * event(new TL1EventClass(inDir));
 
     std::vector<TL1Turnon*> turnons;
-    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Turnons/";
+    //std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Turnons/";
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_MC_"+sampleName+"/Turnons/";
 
     // caloMetBE and l1MetBE seeds
     turnons.emplace_back(new TL1Turnon());
@@ -68,12 +71,12 @@ void makeTurnons()
 
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)
     {
-        (*it)->SetSample(sample,"");
+        (*it)->SetSample(sampleName,sampleTitle);
         (*it)->SetTrigger(triggerName,triggerTitle);
         (*it)->SetRun(run);
         (*it)->SetOutDir(outDir);
-        (*it)->SetPuType(puType);
-        (*it)->SetPuBins(puBins);
+        //(*it)->SetPuType(puType);
+        //(*it)->SetPuBins(puBins);
         (*it)->InitPlots();
     }
 
@@ -83,7 +86,7 @@ void makeTurnons()
         unsigned position = event->GetPEvent()->GetPosition()+1;
         TL1Progress::PrintProgressBar(position, NEntries);
 
-        int pu = event->GetPEvent()->fVertex->nVtx;
+        //int pu = event->GetPEvent()->fVertex->nVtx;
         auto sums = event->GetPEvent()->fSums;
 
         double l1EmuMetBE = event->fL1EmuMet;
@@ -96,9 +99,9 @@ void makeTurnons()
         //----- MET -----//
         if( event->fMetFilterPassFlag )
         {
-            turnons[0]->Fill(caloMetBE, l1EmuMetBE, pu);
-            turnons[1]->Fill(caloMetHF, l1EmuMetBE, pu);
-            turnons[2]->Fill(caloMetHF, l1EmuMetHF, pu);
+            turnons[0]->Fill(caloMetBE, l1EmuMetBE);
+            turnons[1]->Fill(caloMetHF, l1EmuMetBE);
+            turnons[2]->Fill(caloMetHF, l1EmuMetHF);
         }
     }
 

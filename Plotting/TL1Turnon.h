@@ -33,9 +33,8 @@ class TL1Turnon : public TL1Plots
         void SetX(const std::string & xName, const std::string & xTitle);
         void SetSeed(const std::string & seedName, const std::string & seedTitle);
         void SetFit(const bool & doFit);
-    private:
-        void SetColor(TH1F * hist, float fraction, int index);
 
+    private:
         std::vector<std::vector<TH1F*>> fPlots;
         std::vector<std::vector<TGraphAsymmErrors*>> fTurnons;
         std::vector<std::vector<TF1*>> fFits;
@@ -74,7 +73,7 @@ void TL1Turnon::InitPlots()
             temp.back()->SetDirectory(0);
             temp.back()->GetXaxis()->SetTitle(fXTitle.c_str());
             temp.back()->GetYaxis()->SetTitle("Number of Entries");
-            this->SetColor(temp.back(), ipu, this->GetPuType());
+            this->SetColor(temp.back(), ipu, this->GetPuType().size());
         }
         fPlots.push_back(temp);
     }
@@ -236,29 +235,26 @@ void TL1Turnon::DrawCmsStampTurnon()
     TLatex * latex(new TLatex());
     latex->SetNDC();
     latex->SetTextFont(42);
+    if( this->GetSampleName() == "Data" )
+    {
+        latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Preliminary} 2016 Data");
+        latex->SetTextAlign(31);
+        latex->DrawLatex(0.92,0.92,Form("%s (13 TeV)",this->GetRun().c_str()));
+    }
+    else
+    {
+        latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation Preliminary}");
+        latex->SetTextAlign(31);
+        latex->DrawLatex(0.92,0.92,Form("%s (13 TeV)",this->GetSampleName().c_str()));
+    }
+    latex->SetTextAlign(32);
+    latex->DrawLatex(0.82,0.25,this->GetAddMark().c_str());
+
     double min = fXBins.front();
     double max = fXBins.back();
     TLine * line(new TLine(min,1.,max,1.));
     line->SetLineStyle(7);
     line->DrawClone();
-    if( this->GetSampleName() == "Data" )
-    {
-        latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Preliminary} 2016 Data");
-        latex->SetTextAlign(31);
-        std::string runNo = "run " + this->GetRun() + ", ";
-        //latex->DrawLatex(0.92, 0.92, Form("%s%s, #sqrt{s} = 13 TeV",runNo.c_str(),this->GetTriggerTitle().c_str()));
-        latex->DrawLatex(0.92, 0.92, Form("%s (13 TeV)",this->GetRun().c_str()));
-    }
-    else
-    {
-        latex->DrawLatex(0.17, 0.80, "#bf{CMS}");
-        latex->DrawLatex(0.17, 0.75, "#it{Simulation}");
-        latex->DrawLatex(0.17, 0.70, "#it{Preliminary}");
-        latex->SetTextAlign(31); 
-        latex->DrawLatex(0.92, 0.92, Form("%s, #sqrt{s} = 13 TeV",this->GetSampleTitle().c_str()));
-    }
-    latex->SetTextAlign(11);
-    //latex->DrawLatex(0.18,0.92,this->GetAddMark().c_str());
 }
 
 TF1 TL1Turnon::fit(TGraphAsymmErrors * eff, int p50)
