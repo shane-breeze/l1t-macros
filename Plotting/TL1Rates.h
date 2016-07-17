@@ -146,15 +146,16 @@ void TL1Rates::PlotE2(TH1F * plot, bool puOn)
     plot->SetLineColor(plot->GetLineColor()+15);
     plot->SetFillColor(plot->GetLineColor()+15);
     plot->SetMarkerStyle(0);
-    TH1F * temp = (TH1F*)plot->Clone();
-    temp->SetFillStyle(0);
-    this->SetColor(temp, 0, 3);
-
     std::string extra = "";
     if( puOn ) extra = "same";
-    plot->Draw(Form("E2%s",extra.c_str()));
-    temp->SetLineWidth(2);
-    temp->Draw("histsame");
+    plot->DrawCopy(Form("E2%s",extra.c_str()));
+
+    plot->SetFillStyle(0)
+    plot->SetLineColor(plot->GetLineColor()-15);
+    plot->SetFillStyle(0);
+    plot->SetLineWidth(2);
+    plot->DrawCopy("histsame");
+    plot->SetFillStyle(1001);
 }
 
 void TL1Rates::DrawCmsStamp()
