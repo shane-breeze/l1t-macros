@@ -29,9 +29,12 @@ void makeTurnons()
     std::vector<std::string> puType = {"0PU12","13PU19","20PU"}; // Check the pu distribution to decide the relevant binning (for 2016 data these should be good)
     std::vector<int> puBins = {0,13,20,999};
 
-    std::string inDir = "/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v71p1/";
+    std::vector<std::string> inDir;
+    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v71p1/");
+    // inDir.push_back("");
+    // inDir.push_back("");
+    // inDir.push_back("");        
     TL1EventClass * event(new TL1EventClass(inDir));
-
     std::vector<TL1Turnon*> turnons;
 
     // caloMetBE

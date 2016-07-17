@@ -26,7 +26,11 @@ void makeResolutions()
     std::vector<std::string> puType = {"0PU12","13PU19","20PU"};
     std::vector<int> puBins = {0,13,20,999};
 
-    std::string inDir = "/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v71p1/";
+    std::vector<std::string> inDir;
+    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v71p1/");
+    // inDir.push_back("");
+    // inDir.push_back("");
+    // inDir.push_back("");        
     TL1EventClass * event(new TL1EventClass(inDir));
 
     std::vector<TL1Resolution*> resolution;

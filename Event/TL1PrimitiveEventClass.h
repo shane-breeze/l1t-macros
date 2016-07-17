@@ -8,7 +8,7 @@
 class TL1PrimitiveEventClass
 {
     public:
-        TL1PrimitiveEventClass(std::string inDir);
+        TL1PrimitiveEventClass(std::vector<std::string> inDir);
         bool Next();
         void GetEntry(int i);
 
@@ -29,7 +29,7 @@ class TL1PrimitiveEventClass
 
 };
 
-TL1PrimitiveEventClass::TL1PrimitiveEventClass(std::string inDir) :
+TL1PrimitiveEventClass::TL1PrimitiveEventClass(std::vector<std::string> inDir) :
     caloTower(new TL1DataClass("l1CaloTowerTree/L1CaloTowerTree",inDir)),
     jetReco(new TL1DataClass("l1JetRecoTree/JetRecoTree",inDir)),
     metFilterReco(new TL1DataClass("l1MetFilterRecoTree/MetFilterRecoTree",inDir)),

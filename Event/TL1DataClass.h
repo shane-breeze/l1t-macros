@@ -9,7 +9,7 @@
 class TL1DataClass
 {
     public:
-        TL1DataClass(std::string chainPath, std::string inDir);
+        TL1DataClass(std::string chainPath, std::vector<std::string> inDir);
 
         Long64_t GetEntries();
         Long64_t LoadTree(int iEntry);
@@ -23,10 +23,11 @@ class TL1DataClass
 
 };
 
-TL1DataClass::TL1DataClass(std::string chainPath, std::string inDir) :
+TL1DataClass::TL1DataClass(std::string chainPath, std::vector<std::string> inDir) :
     fChain(new TChain(chainPath.c_str()))
 {
-     fNFiles = fChain->Add( Form("%s/*.root",inDir.c_str()), -1);
+    for (std::vector<std::string>::size_type i=0; i!=inDir.size(); ++i)
+    fNFiles = fChain->Add( Form("%s/*.root",inDir[i].c_str()), -1);
 }
 
 Long64_t TL1DataClass::GetEntries()
