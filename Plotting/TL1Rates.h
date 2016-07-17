@@ -26,7 +26,6 @@ class TL1Rates : public TL1Plots
 
         void SetX(const std::string & xName, const std::string & xTitle);
         void SetXBins(const std::vector<double> & xBins);
-        void SetColor(TH1F * plot, float fraction, int index);
         
     private:
         std::vector<TH1F*> fPlot;
@@ -74,19 +73,23 @@ void TL1Rates::DrawPlots()
 {
     TCanvas * can(new TCanvas("c1","c1"));
     TH1F * fCumulative = (TH1F*)fPlot[0]->GetCumulative(false);
+    
     double bin1 = fCumulative->GetBinContent(1);
     fCumulative->Scale(4.0e7/bin1);
-
+    this->SetColor(fCumulative, 0, 3);
     fRootFile->WriteTObject(fPlot[0]);
     fRootFile->WriteTObject(fCumulative);
 
-    fCumulative->Draw();
+    fCumulative->Draw("hist");
+
     can->SetLogy();
 
     DrawCmsStamp();
 
     std::string outName = Form("%s/rates_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str());
     can->SaveAs(outName.c_str());
+
+    if( !(this->GetPuType().size() > 0) ) return;
 
     TCanvas * can2(new TCanvas("c2","c2"));
     TLegend * leg2(new TLegend(0.65,0.55,0.88,0.55+0.05*this->GetPuType().size()));
@@ -96,7 +99,7 @@ void TL1Rates::DrawPlots()
         bin1 = fPuCumulative->GetBinContent(1);
         fPuCumulative->Scale(4.0e7/bin1);
 
-        this->SetColor(fPuCumulative, (double)(this->GetPuType().size()-ipu-1)/(double)(this->GetPuType().size()-2),ipu+1);
+        this->SetColor(fPuCumulative, ipu, this->GetPuType().size());
 
         fRootFile->WriteTObject(fPlot[ipu+1]);
         fRootFile->WriteTObject(fPuCumulative);
@@ -149,19 +152,6 @@ void TL1Rates::SetX(const std::string & xName, const std::string & xTitle)
 void TL1Rates::SetXBins(const std::vector<double> & xBins)
 {
     fXBins = xBins; 
-}
-
-void TL1Rates::SetColor(TH1F * plot, float fraction, int index)
-{
-    double modifier(0.15), colorIndex;
-    int colour(1);
-    if( fraction >= 0.0 )
-    {
-        colorIndex = (fraction * (1.0-2.0*modifier) + modifier) * gStyle->GetNumberOfColors();
-        colour = gStyle->GetColorPalette(colorIndex);
-    }
-    plot->SetLineColor(colour);
-    plot->SetMarkerColor(colour);
 }
 
 #endif

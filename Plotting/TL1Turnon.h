@@ -66,7 +66,7 @@ void TL1Turnon::InitPlots()
         temp.back()->SetDirectory(0);
         temp.back()->GetXaxis()->SetTitle(fXTitle.c_str());
         temp.back()->GetYaxis()->SetTitle("Number of Entries");
-        SetColor(temp.back(), (double)(i-1)/(double)(fSeeds.size()-2), i);
+        this->SetColor(temp.back(), i, fSeeds.size());
 
         for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
         {
@@ -74,7 +74,7 @@ void TL1Turnon::InitPlots()
             temp.back()->SetDirectory(0);
             temp.back()->GetXaxis()->SetTitle(fXTitle.c_str());
             temp.back()->GetYaxis()->SetTitle("Number of Entries");
-            SetColor(temp.back(), (double)(ipu)/(double)(this->GetPuType().size()-2), ipu);
+            this->SetColor(temp.back(), ipu, this->GetPuType());
         }
         fPlots.push_back(temp);
     }
@@ -304,19 +304,6 @@ void TL1Turnon::SetSeed(const std::string & seedName, const std::string & seedTi
 void TL1Turnon::SetFit(const bool & doFit)
 {
     fDoFit = doFit;
-}
-
-void TL1Turnon::SetColor(TH1F * hist, float fraction, int index)
-{
-    double modifier(0.15), colorIndex;
-    int colour(1);
-    if( fraction >= 0.0 )
-    {
-        colorIndex = (fraction * (1.0-2.0*modifier) + modifier) * gStyle->GetNumberOfColors();
-        colour = gStyle->GetColorPalette(colorIndex);
-    }
-    hist->SetLineColor(colour);
-    hist->SetMarkerColor(colour);
 }
 
 #endif
