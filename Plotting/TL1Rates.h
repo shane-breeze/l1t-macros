@@ -23,7 +23,7 @@ class TL1Rates : public TL1Plots
         virtual void Fill(const double & xVal, const double & yVal, const int & pu=0);
         virtual void DrawPlots();
         TH1F * GetCumulative(TH1F * plot);
-        void PlotE2(TH1F * plot);
+        void PlotE2(TH1F * plot, bool puOn);
         void DrawCmsStamp();
 
         void SetX(const std::string & xName, const std::string & xTitle);
@@ -82,7 +82,7 @@ void TL1Rates::DrawPlots()
     fRootFile->WriteTObject(fPlot[0]);
     fRootFile->WriteTObject(fCumulative);
 
-    PlotE2(fCumulative);
+    PlotE2(fCumulative, false);
     can->SetLogy();
 
     DrawCmsStamp();
@@ -96,17 +96,16 @@ void TL1Rates::DrawPlots()
     TLegend * leg2(new TLegend(0.65,0.55,0.88,0.55+0.05*this->GetPuType().size()));
     for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
     {
-        TH1F * fPuCumulative = (TH1F*)fPlot[ipu+1]->GetCumulative(false);
+        TH1F * fPuCumulative = GetCumulative(fPlot[ipu+1]);
+
         bin1 = fPuCumulative->GetBinContent(1);
         fPuCumulative->Scale(4.0e7/bin1);
-
         this->SetColor(fPuCumulative, ipu, this->GetPuType().size());
-
         fRootFile->WriteTObject(fPlot[ipu+1]);
         fRootFile->WriteTObject(fPuCumulative);
 
-        if( ipu==0 ) fPuCumulative->Draw();
-        else fPuCumulative->Draw("same");
+        PlotE2(fPuCumulative, true);
+        can2->SetLogy();
 
         std::stringstream entryName;
         if( ipu<this->GetPuType().size()-1 ) entryName << this->GetPuBins()[ipu] << " #leq PU < " << this->GetPuBins()[ipu+1];
@@ -125,7 +124,9 @@ void TL1Rates::DrawPlots()
 
 TH1F * TL1Rates::GetCumulative(TH1F * plot)
 {
-    TH1F * temp = (TH1F*)plot->Clone();  
+    std::string newName = Form("cumulative_%s",plot->GetName());
+    TH1F * temp = (TH1F*)plot->Clone(newName.c_str());  
+    temp->SetDirectory(0);
     for(int i=0; i<plot->GetNbinsX()+1; ++i)
     {
         double content(0.0), error2(0.0);
@@ -140,7 +141,7 @@ TH1F * TL1Rates::GetCumulative(TH1F * plot)
     return temp;
 }
 
-void TL1Rates::PlotE2(TH1F * plot)
+void TL1Rates::PlotE2(TH1F * plot, bool puOn)
 {
     plot->SetLineColor(plot->GetLineColor()+15);
     plot->SetFillColor(plot->GetLineColor()+15);
@@ -148,7 +149,10 @@ void TL1Rates::PlotE2(TH1F * plot)
     TH1F * temp = (TH1F*)plot->Clone();
     temp->SetFillStyle(0);
     this->SetColor(temp, 0, 3);
-    plot->Draw("E2");
+
+    std::string extra = "";
+    if( puOn ) extra = "same";
+    plot->Draw(Form("E2%s",extra.c_str()));
     temp->SetLineWidth(2);
     temp->Draw("histsame");
 }
