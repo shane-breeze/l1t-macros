@@ -7,7 +7,7 @@
 #include "Utilities/TL1DateTime.C"
 #include "Plotting/TL1Resolution.h"
 
-std::vector<double> bins();
+std::vector<double> bins(std::string plotType);
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 double FoldPhi(double phi);
 
@@ -35,18 +35,14 @@ void makeResolutions()
 
     std::vector<TL1Resolution*> resolution;
     
-    // NOTE: Ignore the AddRelTitle and AddRelBins for now. I was trying to add
-    // some functionality and failed terribly
-
     // caloMetBE
     resolution.emplace_back(new TL1Resolution());
     std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Resolutions/";
-    resolution[0]->SetBins(bins());
+    resolution[0]->SetPlotType("Energy");
+    resolution[0]->SetBins(bins("Energy"));
     resolution[0]->SetX("caloMetBE","Offline E_{T}^{miss}");
     resolution[0]->SetY("l1met","L1 E_{T}^{miss}");
     resolution[0]->SetOutName(triggerName+"_caloMetBE_over_l1Met");
-    resolution[0]->AddRelTitle("recoCaloMetBE","Offline E_{T}^{miss} (GeV)");
-    resolution[0]->AddRelBins({20.,40.,60.,80.,100.,120.,140.});
     resolution[0]->SetAddMark("Offline E_{T}^{miss} > 40 GeV");
 
     // mht
@@ -55,8 +51,6 @@ void makeResolutions()
     // resolution[1]->SetX("mht","Offline H_{T}^{miss}");
     // resolution[1]->SetY("l1mht","L1 H_{T}^{miss}");
     // resolution[1]->SetOutName(triggerName+"_recalcMht_over_l1Mht");
-    // resolution[1]->AddRelTitle("recoMht","Offline H_{T}^{miss} (GeV)");
-    // resolution[1]->AddRelBins({0.,10.,20.,30.,40.,50.,60.,70.,80.,100.});
     //resolution[1]->SetAddMark("L1 ETM > 40 GeV");
 
     // caloEttBE
@@ -65,42 +59,33 @@ void makeResolutions()
     // resolution[2]->SetX("caloEttBE","Offline Total E_{T}");
     // resolution[2]->SetY("l1ett","L1 Total E_{T}");
     // resolution[2]->SetOutName(triggerName+"_caloEttBE_over_l1Ett");
-    // resolution[2]->AddRelTitle("recoEtt","Offline Total E_{T} (GeV)");
-    // resolution[2]->AddRelBins({0.,10.,20.,30.,40.,50.,60.,70.,80.,100.});
     //resolution[2]->SetAddMark("L1 ETM > 40 GeV");
 
     // htt
     resolution.emplace_back(new TL1Resolution());
-    resolution[3]->SetBins(bins());
-    resolution[3]->SetX("htt","Offline Total H_{T}");
-    resolution[3]->SetY("l1htt","L1 Total H_{T}");
-    resolution[3]->SetOutName(triggerName+"_htt_over_l1Htt");
-    resolution[3]->AddRelTitle("recoHtt","Offline Total H_{T} (GeV)");
-    resolution[3]->AddRelBins({0.,10.,20.,30.,40.,50.,60.,70.,80.,100.});
-    resolution[3]->SetAddMark("Offline HTT > 100 GeV");
-
-    // My code is crap so far. So for Phi and Eta we want (l1-offline) whereas it is hard-coded to do (l1-offline)/offline. 
-    // I have just been switching the hard-coding but really need an enum to switch between: l1/offline, (l1-offline) and (l1-offline)/offline
+    resolution[1]->SetPlotType("Energy");
+    resolution[1]->SetBins(bins("Energy"));
+    resolution[1]->SetX("htt","Offline Total H_{T}");
+    resolution[1]->SetY("l1htt","L1 Total H_{T}");
+    resolution[1]->SetOutName(triggerName+"_htt_over_l1Htt");
+    resolution[1]->SetAddMark("Offline HTT > 100 GeV");
 
     // caloMetBE Phi
-    double p = TMath::Pi();
     resolution.emplace_back(new TL1Resolution());
-    resolution[4]->SetBins(bins());
-    resolution[4]->SetX("caloMetBEPhi","Offline E_{T}^{miss} Phi");
-    resolution[4]->SetY("l1metphi","L1 E_{T}^{miss} Phi");
-    resolution[4]->SetOutName(triggerName+"_caloMetBEPhi_over_l1MetPhi");
-    resolution[4]->AddRelTitle("recoCaloMetPhiBE","Offline E_{T}^{miss} Phi");
-    resolution[4]->AddRelBins({-p,-0.75*p,-0.5*p,-0.25*p,0.,0.25*p,0.5*p,0.75*p,p});
+    resolution[2]->SetPlotType("Position");
+    resolution[2]->SetBins(bins("Position"));
+    resolution[2]->SetX("caloMetBEPhi","Offline E_{T}^{miss} Phi");
+    resolution[2]->SetY("l1metphi","L1 E_{T}^{miss} Phi");
+    resolution[2]->SetOutName(triggerName+"_caloMetBEPhi_over_l1MetPhi");
     //resolution[0]->SetAddMark("L1 ETM > 40 GeV");
 
     // mht Phi
     resolution.emplace_back(new TL1Resolution());
-    resolution[5]->SetBins(bins());
-    resolution[5]->SetX("mhtPhi","Offline H_{T}^{miss} Phi");
-    resolution[5]->SetY("l1httphi","L1 Total H_{T} Phi");
-    resolution[5]->SetOutName(triggerName+"_recalcMhtPhi_over_l1MhtPhi");
-    resolution[5]->AddRelTitle("recoMhtPhi","Offline H_{T}^{miss} Phi");
-    resolution[5]->AddRelBins({-p,-0.75*p,-0.5*p,-0.25*p,0.,0.25*p,0.5*p,0.75*p,p});
+    resolution[3]->SetPlotType("Position");
+    resolution[3]->SetBins(bins("Position"));
+    resolution[3]->SetX("mhtPhi","Offline H_{T}^{miss} Phi");
+    resolution[3]->SetY("l1httphi","L1 Total H_{T} Phi");
+    resolution[3]->SetOutName(triggerName+"_recalcMhtPhi_over_l1MhtPhi");
     //resolution[0]->SetAddMark("L1 ETM > 40 GeV");
 
     for(auto it=resolution.begin(); it!=resolution.end(); ++it)
@@ -127,29 +112,25 @@ void makeResolutions()
         double recoHtt = sums->Ht;
         double l1Htt = event->fL1Htt;
         if( recoHtt > 100.0 && l1Htt > 0.02 )
-            resolution[3]->Fill(recoHtt, l1Htt, pu);
-        resolution[3]->RelFill(recoHtt, l1Htt, pu, {recoHtt}); // The {} is for the AddRel stuff :(
+            resolution[1]->Fill(recoHtt, l1Htt, pu);
 
         // MHT
-        double recalcRecoMht = event->fRecalcRecoMht;
-        double l1Mht = event->fL1Mht;
-        if( recalcRecoMht > 0.2 && l1Mht > 0.2 )
-            resolution[1]->Fill(recalcRecoMht, l1Mht, pu);
-        resolution[1]->RelFill(recalcRecoMht, l1Mht, pu, {recalcRecoMht});
+        //double recalcRecoMht = event->fRecalcRecoMht;
+        //double l1Mht = event->fL1Mht;
+        //if( recalcRecoMht > 0.2 && l1Mht > 0.2 )
+        //    resolution[1]->Fill(recalcRecoMht, l1Mht, pu);
 
         // MHT Phi
         double recoMhtPhi = sums->mHtPhi;
         double l1MhtPhi = event->fL1MhtPhi;
         if( sums->mHt != 0.0 && l1Mht != 0.0 )
-            resolution[5]->Fill(FoldPhi(recoMhtPhi), FoldPhi(l1MhtPhi), pu);
-        resolution[5]->RelFill(FoldPhi(recoMhtPhi), FoldPhi(l1MhtPhi), pu, {FoldPhi(recoMhtPhi)});
+            resolution[3]->Fill(FoldPhi(recoMhtPhi), FoldPhi(l1MhtPhi), pu);
 
         // ETT
-        double recoEtt = sums->caloSumEtBE;
-        double l1Ett = event->fL1Ett;
-        if( recoEtt != 0.0 && l1Ett != 0.0 )
-            resolution[2]->Fill(recoEtt, l1Ett, pu);
-        resolution[2]->RelFill(recoEtt, l1Ett, pu, {recoEtt});
+        //double recoEtt = sums->caloSumEtBE;
+        //double l1Ett = event->fL1Ett;
+        //if( recoEtt != 0.0 && l1Ett != 0.0 )
+        //    resolution[2]->Fill(recoEtt, l1Ett, pu);
 
         if( !event->fMuonFilterPassFlag ) continue;
 
@@ -160,15 +141,13 @@ void makeResolutions()
         {
             if( recoMet > 40.0 && l1Met != 0.0 )
                 resolution[0]->Fill(recoMet, l1Met, pu);
-            resolution[0]->RelFill(recoMet, l1Met, pu, {recoMet});
         }
 
         // MET Phi
         double recoMetPhi = sums->caloMetPhiBE;
         double l1MetPhi = event->fL1MetPhi;
         if( recoMet != 0.0 && l1Met != 0.0 )
-            resolution[4]->Fill(FoldPhi(recoMetPhi), FoldPhi(l1MetPhi), pu);
-        resolution[4]->RelFill(FoldPhi(recoMetPhi), FoldPhi(l1MetPhi), pu, {FoldPhi(recoMetPhi)});
+            resolution[2]->Fill(FoldPhi(recoMetPhi), FoldPhi(l1MetPhi), pu);
 
     }
 
@@ -177,10 +156,11 @@ void makeResolutions()
         
 }
 
-std::vector<double> bins()
+std::vector<double> bins(std::string plotType)
 {
     std::vector<double> temp;
-    for(double binLowerEdge=-1.0; binLowerEdge<=1.5; binLowerEdge+= 0.05) temp.push_back(binLowerEdge);
+    if( plotType == "Energy" ) for(double binLowerEdge=-1.0; binLowerEdge<=1.5; binLowerEdge+= 0.05) temp.push_back(binLowerEdge);
+    else if( plotType == "Position" ) for(double binLowerEdge=-0.3; binLowerEdge<=0.3; binLowerEdge+= 0.005) temp.push_back(binLowerEdge);
     return temp;
 }
 

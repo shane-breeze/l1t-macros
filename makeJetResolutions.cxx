@@ -7,7 +7,7 @@
 #include "Utilities/TL1DateTime.C"
 #include "Plotting/TL1Resolution.h"
 
-std::vector<double> bins();
+std::vector<double> bins(std::string plotType);
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 double FoldPhi(double phi);
 
@@ -54,19 +54,21 @@ void makeJetResolutions()
 
     // Jet Et - barrel + end-cap
     resolution.emplace_back(new TL1Resolution());
-    resolution[2]->SetBins(bins());
-    resolution[2]->SetX("jetEt","Offline Jet E_{T}");
-    resolution[2]->SetY("l1JetEt","L1 Jet E_{T}");
-    resolution[2]->SetOutName(triggerName+"_jetEt_over_l1JetEt_barrel-endcap");
-    resolution[2]->SetAddMark("#splitline{E_{T}^{offline} > 30 GeV}{|#eta_{jet}^{offline}| < 3.0}");
+    resolution[0]->SetPlotType("Energy");
+    resolution[0]->SetBins(bins("Energy"));
+    resolution[0]->SetX("jetEt","Offline Jet E_{T}");
+    resolution[0]->SetY("l1JetEt","L1 Jet E_{T}");
+    resolution[0]->SetOutName(triggerName+"_jetEt_over_l1JetEt_barrel-endcap");
+    resolution[0]->SetAddMark("#splitline{E_{T}^{offline} > 30 GeV}{|#eta_{jet}^{offline}| < 3.0}");
 
     // Jet Et - HF
     resolution.emplace_back(new TL1Resolution());
-    resolution[3]->SetBins(bins());
-    resolution[3]->SetX("jetEt","Offline Jet E_{T}");
-    resolution[3]->SetY("l1JetEt","L1 Jet E_{T}");
-    resolution[3]->SetOutName(triggerName+"_jetEt_over_l1JetEt_hf");
-    resolution[3]->SetAddMark("#splitline{E_{T}^{offline} > 30 GeV}{|#eta_{jet}^{offline}| > 3.0}");
+    resolution[1]->SetPlotType("Energy");
+    resolution[1]->SetBins(bins("Energy"));
+    resolution[1]->SetX("jetEt","Offline Jet E_{T}");
+    resolution[1]->SetY("l1JetEt","L1 Jet E_{T}");
+    resolution[1]->SetOutName(triggerName+"_jetEt_over_l1JetEt_hf");
+    resolution[1]->SetAddMark("#splitline{E_{T}^{offline} > 30 GeV}{|#eta_{jet}^{offline}| > 3.0}");
 
     // Jet phi - barrel
     // resolution.emplace_back(new TL1Resolution());
@@ -86,29 +88,30 @@ void makeJetResolutions()
 
     // Jet Phi - barrel + endcap
     resolution.emplace_back(new TL1Resolution());
-    resolution[6]->SetBins(bins());
-    resolution[6]->SetX("jetPhi","#phi_{jet}^{offline}");
-    resolution[6]->SetY("l1JetPhi","#phi_{jet}^{L1}");
-    resolution[6]->SetOutName(triggerName+"_jetPhi_over_l1JetPhi_barrel-endcap");
-    resolution[6]->SetAddMark("#splitline{E_{T}^{offline} > 30 GeV}{|#eta_{jet}^{offline}| < 3.0}");
+    resolution[2]->SetPlotType("Position");
+    resolution[2]->SetBins(bins("Position"));
+    resolution[2]->SetX("jetPhi","#phi_{jet}^{offline}");
+    resolution[2]->SetY("l1JetPhi","#phi_{jet}^{L1}");
+    resolution[2]->SetOutName(triggerName+"_jetPhi_over_l1JetPhi_barrel-endcap");
+    resolution[2]->SetAddMark("#splitline{E_{T}^{offline} > 30 GeV}{|#eta_{jet}^{offline}| < 3.0}");
 
     // Jet Phi - HF
     resolution.emplace_back(new TL1Resolution());
-    resolution[7]->SetBins(bins());
-    resolution[7]->SetX("jetPhi","#phi_{jet}^{offline}");
-    resolution[7]->SetY("l1JetPhi","#phi_{jet}^{L1}");
-    resolution[7]->SetOutName(triggerName+"_jetPhi_over_l1JetPhi_hf");
-    resolution[7]->SetAddMark("#splitline{E_{T}^{offline} > 30 GeV}{|#eta_{jet}^{offline}| > 3.0}");
+    resolution[3]->SetPlotType("Position");
+    resolution[3]->SetBins(bins("Position"));
+    resolution[3]->SetX("jetPhi","#phi_{jet}^{offline}");
+    resolution[3]->SetY("l1JetPhi","#phi_{jet}^{L1}");
+    resolution[3]->SetOutName(triggerName+"_jetPhi_over_l1JetPhi_hf");
+    resolution[3]->SetAddMark("#splitline{E_{T}^{offline} > 30 GeV}{|#eta_{jet}^{offline}| > 3.0}");
 
     // Jet Eta
     resolution.emplace_back(new TL1Resolution());
-    std::vector<double> etabins;
-    for(double binLowerEdge=-0.3; binLowerEdge<=0.3; binLowerEdge+= 0.01) etabins.push_back(binLowerEdge);
-    resolution[8]->SetBins(etabins);
-    resolution[8]->SetX("jetEta","|#eta_{jet}^{offline}|");
-    resolution[8]->SetY("l1JetEta","|#eta_{jet}^{L1}|");
-    resolution[8]->SetOutName(triggerName+"_jetEta_over_l1JetEta");
-    resolution[8]->SetAddMark("E_{T}^{offline} > 30 GeV");
+    resolution[4]->SetPlotType("Position");
+    resolution[4]->SetBins(bins("Position"));
+    resolution[4]->SetX("jetEta","|#eta_{jet}^{offline}|");
+    resolution[4]->SetY("l1JetEta","|#eta_{jet}^{L1}|");
+    resolution[4]->SetOutName(triggerName+"_jetEta_over_l1JetEta");
+    resolution[4]->SetAddMark("E_{T}^{offline} > 30 GeV");
 
     for(auto it=resolution.begin(); it!=resolution.end(); ++it)
     {
@@ -145,27 +148,27 @@ void makeJetResolutions()
 
             if( abs(recoEta) <= 1.479 )
             {
-                if(recoEt!=0.0 && l1Et!=0.0 && recoEt>=30.0) resolution[0]->Fill(recoEt, l1Et, pu);
-                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0) resolution[4]->Fill(recoPhi, l1Phi, pu);
+                //if(recoEt!=0.0 && l1Et!=0.0 && recoEt>=30.0) resolution[0]->Fill(recoEt, l1Et, pu);
+                //if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0) resolution[4]->Fill(recoPhi, l1Phi, pu);
 
-                if(recoEta!=0.0 && l1Eta!=0.0 && recoEt>=30.0) resolution[8]->Fill(abs(recoEta), abs(l1Eta), pu);
-                if(recoEt>=30.0 && l1Et!=0.0 ) resolution[2]->Fill(recoEt, l1Et, pu);
-                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0) resolution[6]->Fill(recoPhi, l1Phi, pu);
+                if(recoEta!=0.0 && l1Eta!=0.0 && recoEt>=30.0) resolution[4]->Fill(abs(recoEta), abs(l1Eta), pu);
+                if(recoEt>=30.0 && l1Et!=0.0 ) resolution[0]->Fill(recoEt, l1Et, pu);
+                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0) resolution[2]->Fill(recoPhi, l1Phi, pu);
             }
             else if( abs(recoEta) <= 3.0 )
             {
-                if(recoEt!=0.0 && l1Et!=0.0 && recoEt>=30.0) resolution[1]->Fill(recoEt, l1Et, pu);
-                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0) resolution[5]->Fill(recoPhi, l1Phi, pu);
+                //if(recoEt!=0.0 && l1Et!=0.0 && recoEt>=30.0) resolution[1]->Fill(recoEt, l1Et, pu);
+                //if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0) resolution[5]->Fill(recoPhi, l1Phi, pu);
 
-                if(recoEta!=0.0 && l1Eta!=0.0 && recoEt>=30.0) resolution[8]->Fill(abs(recoEta), abs(l1Eta), pu);
-                if(recoEt>=30.0 && l1Et!=0.0 ) resolution[2]->Fill(recoEt, l1Et, pu);
-                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0) resolution[6]->Fill(recoPhi, l1Phi, pu);
+                if(recoEta!=0.0 && l1Eta!=0.0 && recoEt>=30.0) resolution[4]->Fill(abs(recoEta), abs(l1Eta), pu);
+                if(recoEt>=30.0 && l1Et!=0.0 ) resolution[0]->Fill(recoEt, l1Et, pu);
+                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0) resolution[2]->Fill(recoPhi, l1Phi, pu);
             }
             else
             {
-                if(recoEt>=30.0 && l1Et!=0.0) resolution[3]->Fill(recoEt, l1Et, pu);
-                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0) resolution[7]->Fill(recoPhi, l1Phi, pu);
-                if(recoEta!=0.0 && l1Eta!=0.0 && recoEt>=30.0) resolution[8]->Fill(abs(recoEta), abs(l1Eta), pu);
+                if(recoEt>=30.0 && l1Et!=0.0) resolution[1]->Fill(recoEt, l1Et, pu);
+                if(recoPhi!=0.0 && l1Phi!=0.0 && recoEt>=30.0) resolution[3]->Fill(recoPhi, l1Phi, pu);
+                if(recoEta!=0.0 && l1Eta!=0.0 && recoEt>=30.0) resolution[4]->Fill(abs(recoEta), abs(l1Eta), pu);
             }
         }
 
@@ -175,10 +178,11 @@ void makeJetResolutions()
         (*it)->DrawPlots();
 }
 
-std::vector<double> bins()
+std::vector<double> bins(std::string plotType)
 {
     std::vector<double> temp;
-    for(double binLowerEdge=-0.3; binLowerEdge<=0.3; binLowerEdge+= 0.005) temp.push_back(binLowerEdge);
+    if( plotType == "Position" ) for(double binLowerEdge=-0.3; binLowerEdge<=0.3; binLowerEdge+= 0.005) temp.push_back(binLowerEdge);
+    else if( plotType == "Energy" ) for(double binLowerEdge=-1.0; binLowerEdge<=1.5; binLowerEdge+= 0.05) temp.push_back(binLowerEdge);
     return temp;
 }
 
