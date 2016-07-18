@@ -21,6 +21,7 @@ void makeResolutions()
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
 
+    std::string run = "2016B_v1";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
     std::vector<std::string> puType = {"0PU12","13PU19","20PU"};
     std::vector<int> puBins = {0,13,20,999};
@@ -41,25 +42,25 @@ void makeResolutions()
     // caloMetBE vs l1EmuMetBE
     resolution.emplace_back(new TL1Resolution());
     resolution[0]->SetBins(bins());
-    resolution[0]->SetX("caloMetBE","Offline E_{T}^{miss} BE (GeV)");
-    resolution[0]->SetY("l1EmuMetBE","L1 E_{T}^{miss} BE (GeV)");
-    resolution[0]->SetOutName(triggerName+"_caloMetBE_over_l1EmuMetBE");
+    resolution[0]->SetX("caloMetBE","Offline E_{T}^{miss} BE");
+    resolution[0]->SetY("l1EmuMetBE","L1 E_{T}^{miss} BE");
+    resolution[0]->SetOutName(triggerName+"_diff_caloMetBE_l1EmuMetBE");
     resolution[0]->SetAddMark("Offline E_{T}^{miss} > 40 GeV");
 
     // caloMetHF vs l1EmuMetBE
     resolution.emplace_back(new TL1Resolution());
     resolution[1]->SetBins(bins());
-    resolution[1]->SetX("caloMetHF","Offline E_{T}^{miss} HF (GeV)");
-    resolution[1]->SetY("l1EmuMetBE","L1 E_{T}^{miss} BE (GeV)");
-    resolution[1]->SetOutName(triggerName+"_caloMetHF_over_l1EmuMetBE");
+    resolution[1]->SetX("caloMetHF","Offline E_{T}^{miss} HF");
+    resolution[1]->SetY("l1EmuMetBE","L1 E_{T}^{miss} BE");
+    resolution[1]->SetOutName(triggerName+"_diff_caloMetHF_l1EmuMetBE");
     resolution[1]->SetAddMark("Offline E_{T}^{miss} > 40 GeV");
 
     // caloMetHF vs l1EmuMetHF
     resolution.emplace_back(new TL1Resolution());
     resolution[2]->SetBins(bins());
-    resolution[2]->SetX("caloMetHF","Offline E_{T}^{miss} HF (GeV)");
-    resolution[2]->SetY("l1EmuMetHF","L1 E_{T}^{miss} HF (GeV)");
-    resolution[2]->SetOutName(triggerName+"_caloMetHF_over_l1EmuMetHF");
+    resolution[2]->SetX("caloMetHF","Offline E_{T}^{miss} HF");
+    resolution[2]->SetY("l1EmuMetHF","L1 E_{T}^{miss} HF");
+    resolution[2]->SetOutName(triggerName+"_diff_caloMetHF_l1EmuMetHF");
     resolution[2]->SetAddMark("Offline E_{T}^{miss} > 40 GeV");
 
     // caloMetPhiBE vs l1EmuMetPhiBE
@@ -67,7 +68,7 @@ void makeResolutions()
     resolution[3]->SetBins(bins());
     resolution[3]->SetX("caloMetPhiBE","Offline E_{T}^{miss} Phi BE");
     resolution[3]->SetY("l1EmuMetPhiBE","L1 E_{T}^{miss} Phi BE");
-    resolution[3]->SetOutName(triggerName+"_caloMetPhiBE_over_l1EmuMetPhiBE");
+    resolution[3]->SetOutName(triggerName+"_diff_caloMetPhiBE_l1EmuMetPhiBE");
     resolution[3]->SetAddMark("Offline E_{T}^{miss} > 40 GeV");
 
     // caloMetPhiHF vs l1EmuMetPhiBE
@@ -75,7 +76,7 @@ void makeResolutions()
     resolution[4]->SetBins(bins());
     resolution[4]->SetX("caloMetPhiHF","Offline E_{T}^{miss} Phi HF");
     resolution[4]->SetY("l1EmuMetPhiBE","L1 E_{T}^{miss} Phi BE");
-    resolution[4]->SetOutName(triggerName+"_caloMetPhiHF_over_l1EmuMetPhiBE");
+    resolution[4]->SetOutName(triggerName+"_diff_caloMetPhiHF_l1EmuMetPhiBE");
     resolution[4]->SetAddMark("Offline E_{T}^{miss} > 40 GeV");
 
     // caloMetPhiHF vs l1EmuMetPhiHF
@@ -83,7 +84,7 @@ void makeResolutions()
     resolution[5]->SetBins(bins());
     resolution[5]->SetX("caloMetPhiHF","Offline E_{T}^{miss} Phi HF");
     resolution[5]->SetY("l1EmuMetPhiHF","L1 E_{T}^{miss} Phi HF");
-    resolution[5]->SetOutName(triggerName+"_caloMetPhiHF_over_l1EmuMetPhiHF");
+    resolution[5]->SetOutName(triggerName+"_diff_caloMetPhiHF_l1EmuMetPhiHF");
     resolution[5]->SetAddMark("Offline E_{T}^{miss} > 40 GeV");
 
     for(auto it=resolution.begin(); it!=resolution.end(); ++it)
@@ -121,7 +122,7 @@ void makeResolutions()
         resolution[1]->RelFill(recalcRecoMht, l1Mht, pu, {recalcRecoMht});
 
         // MHT Phi
-        double recoMhtPhi = event->sums->mHtPhi;
+        double recoMhtPhi = sums->mHtPhi;
         double l1MhtPhi = event->fL1MhtPhi;
         if( sums->mHt != 0.0 && l1Mht != 0.0 )
             resolution[5]->Fill(FoldPhi(recoMhtPhi), FoldPhi(l1MhtPhi), pu);
