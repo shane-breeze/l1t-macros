@@ -64,7 +64,7 @@ TL1PrimitiveEventClass::TL1PrimitiveEventClass(std::string inDir) :
 
 bool TL1PrimitiveEventClass::Next()
 {
-    if( fPos >= caloTower->GetEntries()-1 ) return false;
+    if( fPos >= emuUpgrade->GetEntries()-1 ) return false;
     if( fIsCaloTower ) caloTower->LoadTree(fPos);
     if( fIsJetReco ) jetReco->LoadTree(fPos);
     if( fIsMetFilterReco ) metFilterReco->LoadTree(fPos);
@@ -107,13 +107,13 @@ void TL1PrimitiveEventClass::GetEntry(int i)
 
 unsigned TL1PrimitiveEventClass::GetNEntries() const
 {
+    if( fIsEmuUpgrade ) return emuUpgrade->GetEntries();
+    if( fIsUpgrade ) return upgrade->GetEntries();
     if( fIsCaloTower ) return caloTower->GetEntries();
     if( fIsJetReco ) return jetReco->GetEntries();
     if( fIsMetFilterReco ) return metFilterReco->GetEntries();
     if( fIsMuonReco ) return muonReco->GetEntries();
     if( fIsRecoTree ) return recoTree->GetEntries();
-    if( fIsUpgrade ) return upgrade->GetEntries();
-    if( fIsEmuUpgrade ) return emuUpgrade->GetEntries();
     return 0;
 }
 

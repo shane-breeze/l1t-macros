@@ -105,17 +105,19 @@ void TL1EventClass::GetEntry(int i)
 void TL1EventClass::GetDerivatives()
 {
     // L1
-    this->GetL1Jets();
-    this->GetL1Sums();
-    this->GetL1EmuSums();
+    bool isUpgrade = fPrimitiveEvent->fIsUpgrade;
+    if( isUpgrade ) this->GetL1Jets();
+    if( isUpgrade ) this->GetL1Sums();
+    if( fPrimitiveEvent->fIsEmuUpgrade ) this->GetL1EmuSums();
 
     // Filter
-    this->MuonFilter();
-    this->JetFilter();
-    this->SumsFilter();
+    bool isJetReco = fPrimitiveEvent->fIsJetReco;
+    if( fPrimitiveEvent->fIsMuonReco ) this->MuonFilter();
+    if( isJetReco ) this->JetFilter();
+    if( fPrimitiveEvent->fIsMetFilterReco ) this->SumsFilter();
 
     // Recalc
-    this->GetRecalcL1Met();
+    if( fPrimitiveEvent->fIsCaloTower ) this->GetRecalcL1Met();
     //this->GetRecalcL1Mht();
     //this->GetRecalcL1Ett();
     
@@ -123,8 +125,8 @@ void TL1EventClass::GetDerivatives()
     //this->GetRecalcRecoEtt();
 
     // Jets
-    this->GetLeadingRecoJet();
-    this->GetMatchedL1Jet();
+    if( isJetReco ) this->GetLeadingRecoJet();
+    if( isJetReco ) this->GetMatchedL1Jet();
 }
 
 TL1PrimitiveEventClass const * TL1EventClass::GetPEvent() const
