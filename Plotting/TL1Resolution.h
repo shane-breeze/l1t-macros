@@ -19,7 +19,7 @@ class TL1Resolution : public TL1Plots
         ~TL1Resolution();
 
         virtual void InitPlots();
-        virtual void Fill(const double & xVal, const double & yVal, const int & pu);
+        virtual void Fill(const double & xVal, const double & yVal, const int & pu=0);
         virtual void DrawPlots();
 
         void RelFill(const double & xVal, const double & yVal, const int & pu, const std::vector<double> & relVals);
@@ -29,7 +29,6 @@ class TL1Resolution : public TL1Plots
         void SetBins(const std::vector<double> & bins);
         void SetX(const std::string & xName, const std::string & xTitle);
         void SetY(const std::string & yName, const std::string & yTitle);
-        void SetColor(TH1F * plot, float fraction, int index);
         void DrawCmsStamp(std::string stampPos="Left");
 
         void AddRelBins(const std::vector<double> & bins);
@@ -58,15 +57,17 @@ void TL1Resolution::InitPlots()
 {
     fRootFile = new TFile(Form("%s/res_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
 
-    fPlot.emplace_back(new TH1F(Form("res_%s_over_%s",fXName.c_str(),fYName.c_str()),"", fBins.size()-1,&(fBins)[0]));
+    fPlot.emplace_back(new TH1F(Form("res_diff_%s_%s",fXName.c_str(),fYName.c_str()),"", fBins.size()-1,&(fBins)[0]));
     fPlot.back()->SetDirectory(0);
-    fPlot.back()->GetXaxis()->SetTitle(Form("(%s - %s)/%s",fYTitle.c_str(),fXTitle.c_str(),fXTitle.c_str()));
+    //fPlot.back()->GetXaxis()->SetTitle(Form("(%s - %s)/%s",fYTitle.c_str(),fXTitle.c_str(),fXTitle.c_str()));
+    fPlot.back()->GetXaxis()->SetTitle(Form("%s - %s",fYTitle.c_str(),fXTitle.c_str()));
     fPlot.back()->GetYaxis()->SetTitle("a.u.");
     for(int i=0; i<this->GetPuType().size(); ++i)
     {
-        fPlot.emplace_back(new TH1F(Form("res_%s_over_%s_%s",fXName.c_str(),fYName.c_str(),this->GetPuType()[i].c_str()),"", fBins.size()-1,&(fBins)[0]));
+        fPlot.emplace_back(new TH1F(Form("res_diff_%s_%s_%s",fXName.c_str(),fYName.c_str(),this->GetPuType()[i].c_str()),"", fBins.size()-1,&(fBins)[0]));
         fPlot.back()->SetDirectory(0);
-        fPlot.back()->GetXaxis()->SetTitle(Form("(%s - %s)/%s",fYTitle.c_str(),fXTitle.c_str(),fXTitle.c_str()));
+        //fPlot.back()->GetXaxis()->SetTitle(Form("(%s - %s)/%s",fYTitle.c_str(),fXTitle.c_str(),fXTitle.c_str()));
+        fPlot.back()->GetXaxis()->SetTitle(Form("%s - %s",fYTitle.c_str(),fXTitle.c_str()));
         fPlot.back()->GetYaxis()->SetTitle("a.u.");
     }
 
@@ -90,10 +91,11 @@ void TL1Resolution::InitPlots()
 
 }
 
-void TL1Resolution::Fill(const double & xVal, const double & yVal, const int & pu)
+void TL1Resolution::Fill(const double & xVal, const double & yVal, const int & pu=0)
 {
     double div = 0.0;
-    if( xVal != 0.0 ) div = (yVal-xVal)/xVal;
+    //if( xVal != 0.0 ) div = (yVal-xVal)/xVal;
+    div = yVal-xVal;
     fPlot[0]->Fill(div);
     for(int i=0; i<this->GetPuType().size(); ++i)
     {
@@ -162,7 +164,7 @@ void TL1Resolution::DrawPlots()
     TLegend * leg(new TLegend(0.65,0.55,0.88,0.55+0.05*this->GetPuType().size()));
     for(int i=0; i<this->GetPuType().size(); ++i)
     {
-        this->SetColor(fPlot[i+1], (double)(this->GetPuType().size()-i-1)/(double)(this->GetPuType().size()-2),i+1);
+        this->SetColor(fPlot[i+1], i, this->GetPuType().size());
         fPlot[i+1]->Sumw2();
         fPlot[i+1]->Scale(1./fPlot[i+1]->Integral());
         fPlot[i+1]->SetMinimum(0.0);
@@ -237,7 +239,7 @@ void TL1Resolution::DrawRelPlots()
             relHist->SetMaximum(1.2*relHist->GetMaximum());
             relHist->GetXaxis()->SetTitle(fRelTitles[i].c_str());
             relHist->GetYaxis()->SetTitle(Form("%s resolution",fYTitle.c_str()));
-            this->SetColor(relHist, (double)(this->GetPuType().size()-j-1)/(double)(this->GetPuType().size()-2),j+1);
+            this->SetColor(relHist, j, this->GetPuType().size());
             hs->Add(relHist);
 
             //if( j==0 ) relHist->Draw("pe1");
@@ -320,19 +322,6 @@ void TL1Resolution::SetY(const std::string & yName, const std::string & yTitle)
 {
     fYName = yName;
     fYTitle = yTitle;
-}
-
-void TL1Resolution::SetColor(TH1F * plot, float fraction, int index)
-{
-    double modifier(0.15), colorIndex;
-    int colour(1);
-    if( fraction >= 0.0 )
-    {
-        colorIndex = (fraction * (1.0-2.0*modifier) + modifier) * gStyle->GetNumberOfColors();
-        colour = gStyle->GetColorPalette(colorIndex);
-    }
-    plot->SetLineColor(colour);
-    plot->SetMarkerColor(colour);
 }
 
 void TL1Resolution::DrawCmsStamp(std::string stampPos="Left")

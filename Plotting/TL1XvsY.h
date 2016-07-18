@@ -19,7 +19,7 @@ class TL1XvsY : public TL1Plots
         ~TL1XvsY();
 
         virtual void InitPlots();
-        virtual void Fill(const double & xVal, const double & yVal, const int & pu);
+        virtual void Fill(const double & xVal, const double & yVal, const int & pu=0);
         virtual void DrawPlots();
         void DrawCmsStamp();
 
@@ -58,7 +58,7 @@ void TL1XvsY::InitPlots()
     }
 }
 
-void TL1XvsY::Fill(const double & xVal, const double & yVal, const int & pu)
+void TL1XvsY::Fill(const double & xVal, const double & yVal, const int & pu=0)
 {
     fPlot[0]->Fill(xVal,yVal);
     for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)

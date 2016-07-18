@@ -20,13 +20,14 @@ class TL1Rates : public TL1Plots
         ~TL1Rates();
         
         virtual void InitPlots();
-        virtual void Fill(const double & xVal, const double & yVal, const int & pu);
+        virtual void Fill(const double & xVal, const double & yVal, const int & pu=0);
         virtual void DrawPlots();
+        TH1F * GetCumulative(TH1F * plot);
+        void PlotE2(TH1F * plot, bool puOn);
         void DrawCmsStamp();
 
         void SetX(const std::string & xName, const std::string & xTitle);
         void SetXBins(const std::vector<double> & xBins);
-        void SetColor(TH1F * plot, float fraction, int index);
         
     private:
         std::vector<TH1F*> fPlot;
@@ -60,27 +61,28 @@ void TL1Rates::InitPlots()
     }
 }
 
-void TL1Rates::Fill(const double & xVal, const double & yVal, const int & pu)
+void TL1Rates::Fill(const double & xVal, const double & yVal, const int & pu=0)
 {
-    fPlot[0]->Fill(xVal,pu);
+    fPlot[0]->Fill(xVal);
     for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
     {
         if( pu >= this->GetPuBins()[ipu] && pu < this->GetPuBins()[ipu+1] )
-            fPlot[ipu+1]->Fill(xVal,pu);
+            fPlot[ipu+1]->Fill(xVal);
     }
 }
 
 void TL1Rates::DrawPlots()
 {
     TCanvas * can(new TCanvas("c1","c1"));
-    TH1F * fCumulative = (TH1F*)fPlot[0]->GetCumulative(false);
+    TH1F * fCumulative = GetCumulative(fPlot[0]);
+    
     double bin1 = fCumulative->GetBinContent(1);
     fCumulative->Scale(4.0e7/bin1);
-
+    this->SetColor(fCumulative, 0, 3);
     fRootFile->WriteTObject(fPlot[0]);
     fRootFile->WriteTObject(fCumulative);
 
-    fCumulative->Draw();
+    PlotE2(fCumulative, false);
     can->SetLogy();
 
     DrawCmsStamp();
@@ -88,21 +90,22 @@ void TL1Rates::DrawPlots()
     std::string outName = Form("%s/rates_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str());
     can->SaveAs(outName.c_str());
 
+    if( !(this->GetPuType().size() > 0) ) return;
+
     TCanvas * can2(new TCanvas("c2","c2"));
     TLegend * leg2(new TLegend(0.65,0.55,0.88,0.55+0.05*this->GetPuType().size()));
     for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
     {
-        TH1F * fPuCumulative = (TH1F*)fPlot[ipu+1]->GetCumulative(false);
+        TH1F * fPuCumulative = GetCumulative(fPlot[ipu+1]);
+
         bin1 = fPuCumulative->GetBinContent(1);
         fPuCumulative->Scale(4.0e7/bin1);
-
-        this->SetColor(fPuCumulative, (double)(this->GetPuType().size()-ipu-1)/(double)(this->GetPuType().size()-2),ipu+1);
-
+        this->SetColor(fPuCumulative, ipu, this->GetPuType().size());
         fRootFile->WriteTObject(fPlot[ipu+1]);
         fRootFile->WriteTObject(fPuCumulative);
 
-        if( ipu==0 ) fPuCumulative->Draw();
-        else fPuCumulative->Draw("same");
+        PlotE2(fPuCumulative, true);
+        can2->SetLogy();
 
         std::stringstream entryName;
         if( ipu<this->GetPuType().size()-1 ) entryName << this->GetPuBins()[ipu] << " #leq PU < " << this->GetPuBins()[ipu+1];
@@ -117,6 +120,42 @@ void TL1Rates::DrawPlots()
 
     outName = Form("%s/rates_%s_puBins.pdf", this->GetOutDir().c_str(), this->GetOutName().c_str());
     can2->SaveAs(outName.c_str());
+}
+
+TH1F * TL1Rates::GetCumulative(TH1F * plot)
+{
+    std::string newName = Form("cumulative_%s",plot->GetName());
+    TH1F * temp = (TH1F*)plot->Clone(newName.c_str());  
+    temp->SetDirectory(0);
+    for(int i=0; i<plot->GetNbinsX()+1; ++i)
+    {
+        double content(0.0), error2(0.0);
+        for(int j=i; j<plot->GetNbinsX()+1; ++j)
+        {
+            content += plot->GetBinContent(j);
+            error2 += plot->GetBinError(j)*plot->GetBinError(j);
+        }
+        temp->SetBinContent(i,content);
+        temp->SetBinError(i,TMath::Sqrt(error2));
+    }
+    return temp;
+}
+
+void TL1Rates::PlotE2(TH1F * plot, bool puOn)
+{
+    plot->SetLineColor(plot->GetLineColor()+15);
+    plot->SetFillColor(plot->GetLineColor()+15);
+    plot->SetMarkerStyle(0);
+    std::string extra = "";
+    if( puOn ) extra = "same";
+    plot->DrawCopy(Form("E2%s",extra.c_str()));
+
+    plot->SetFillStyle(0)
+    plot->SetLineColor(plot->GetLineColor()-15);
+    plot->SetFillStyle(0);
+    plot->SetLineWidth(2);
+    plot->DrawCopy("histsame");
+    plot->SetFillStyle(1001);
 }
 
 void TL1Rates::DrawCmsStamp()
@@ -149,19 +188,6 @@ void TL1Rates::SetX(const std::string & xName, const std::string & xTitle)
 void TL1Rates::SetXBins(const std::vector<double> & xBins)
 {
     fXBins = xBins; 
-}
-
-void TL1Rates::SetColor(TH1F * plot, float fraction, int index)
-{
-    double modifier(0.15), colorIndex;
-    int colour(1);
-    if( fraction >= 0.0 )
-    {
-        colorIndex = (fraction * (1.0-2.0*modifier) + modifier) * gStyle->GetNumberOfColors();
-        colour = gStyle->GetColorPalette(colorIndex);
-    }
-    plot->SetLineColor(colour);
-    plot->SetMarkerColor(colour);
 }
 
 #endif

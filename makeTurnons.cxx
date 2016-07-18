@@ -19,70 +19,65 @@ void makeTurnons()
     SetMyStyle(55, 0.07, myStyle);
 
     // Basic
-    std::string sample = "Data";
-    std::string triggerName = "SingleMu";
-    std::string triggerTitle = "Single Muon";
+    std::string sampleName = "HInv";
+    std::string sampleTitle = "H #rightarrow Inv";
+    std::string triggerName = "";
+    std::string triggerTitle = "";
 
-    std::string run = "2016B";
+    std::string run = "";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
     bool doFit = false;
-    std::vector<std::string> puType = {"0PU12","13PU19","20PU"}; // Check the pu distribution to decide the relevant binning (for 2016 data these should be good)
-    std::vector<int> puBins = {0,13,20,999};
+    //std::vector<std::string> puType = {"0PU12","13PU19","20PU"}; // Check the pu distribution to decide the relevant binning (for 2016 data these should be good)
+    //std::vector<int> puBins = {0,13,20,999};
 
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples";
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160602_r273450_SingleMu_l1t-int-v53p1";
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
-    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0";
+    // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0";
+    // std::string inDir = "/afs/cern.ch/work/s/sbreeze/L1NTuple_Production/20160717_Hinv125GeV/Ntuples";
+    std::string inDir = "/afs/cern.ch/work/s/sbreeze/L1NTuple_Production";
     TL1EventClass * event(new TL1EventClass(inDir));
 
     std::vector<TL1Turnon*> turnons;
+    //std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Turnons/";
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_MC_"+sampleName+"/Turnons/";
 
-    // caloMetBE
+    // caloMetBE and l1MetBE seeds
     turnons.emplace_back(new TL1Turnon());
-    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Turnons/";
     turnons[0]->SetSeeds({0.,40.,60.,80.,100.,120.});
     turnons[0]->SetXBins(metBins());
-    turnons[0]->SetX("caloMetBE","Offline E_{T}^{miss} (GeV)");
-    turnons[0]->SetSeed("l1MetSeed","L1 MET");
-    turnons[0]->SetOutName(triggerName+"_caloMetBE_l1MetSeeds");
+    turnons[0]->SetX("caloMetBE","Offline E_{T}^{miss} BE (GeV)");
+    turnons[0]->SetSeed("l1EmuMetBESeed","L1 MET BE");
+    turnons[0]->SetOutName(triggerName+"_caloMetBE_l1EmuMetBESeeds");
     turnons[0]->SetFit(doFit);
 
-    // mht
+    // caloMetHF and l1MetBE seeds
     turnons.emplace_back(new TL1Turnon());
-    turnons[1]->SetSeeds({0.,50.,70.,100.,130.,150.});
-    turnons[1]->SetXBins(mhtBins());
-    turnons[1]->SetX("mht","Offline H_{T}^{miss} (GeV)");
-    turnons[1]->SetSeed("l1Mht","L1 MHT");
-    turnons[1]->SetOutName(triggerName+"_recalcMht_l1MhtSeeds");
+    turnons[1]->SetSeeds({0.,40.,60.,80.,100.,120.});
+    turnons[1]->SetXBins(metBins());
+    turnons[1]->SetX("caloMetHF","Offline E_{T}^{miss} HF (GeV)");
+    turnons[1]->SetSeed("l1EmuMetBESeed","L1 MET BE");
+    turnons[1]->SetOutName(triggerName+"_caloMetHF_l1EmuMetBESeeds");
     turnons[1]->SetFit(doFit);
 
-    // caloEttBE
+    // caloMetHF and l1MetHF seeds
     turnons.emplace_back(new TL1Turnon());
-    turnons[2]->SetSeeds({0.,40.,60.,100.,150.});
-    turnons[2]->SetXBins(ettBins());
-    turnons[2]->SetX("caloEttBE","Offline Total E_{T} (GeV)");
-    turnons[2]->SetSeed("l1ett","L1 ETT");
-    turnons[2]->SetOutName(triggerName+"_caloEttBE_l1EttSeeds");
+    turnons[2]->SetSeeds({0.,40.,60.,80.,100.,120.});
+    turnons[2]->SetXBins(metBins());
+    turnons[2]->SetX("caloMetHF","Offline E_{T}^{miss} HF (GeV)");
+    turnons[2]->SetSeed("l1EmuMetHFSeed","L1 MET HF");
+    turnons[2]->SetOutName(triggerName+"_caloMetHF_l1EmuMetHFSeeds");
     turnons[2]->SetFit(doFit);
 
-    // htt
-    turnons.emplace_back(new TL1Turnon());
-    turnons[3]->SetSeeds({0.,120.,160.,200.,240.,280.});
-    turnons[3]->SetXBins(httBins());
-    turnons[3]->SetX("recoHtt","Offline Total H_{T} (GeV)");
-    turnons[3]->SetSeed("l1Htt","L1 HTT");
-    turnons[3]->SetOutName(triggerName+"_recoHtt_l1HttSeeds");
-    turnons[3]->SetFit(doFit);
-    
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)
     {
-        (*it)->SetSample(sample,"");
+        (*it)->SetSample(sampleName,sampleTitle);
         (*it)->SetTrigger(triggerName,triggerTitle);
         (*it)->SetRun(run);
         (*it)->SetOutDir(outDir);
-        (*it)->SetPuType(puType);
-        (*it)->SetPuBins(puBins);
+        //(*it)->SetPuType(puType);
+        //(*it)->SetPuBins(puBins);
         (*it)->InitPlots();
     }
 
@@ -92,23 +87,23 @@ void makeTurnons()
         unsigned position = event->GetPEvent()->GetPosition()+1;
         TL1Progress::PrintProgressBar(position, NEntries);
 
-        int pu = event->GetPEvent()->fVertex->nVtx;
+        //int pu = event->GetPEvent()->fVertex->nVtx;
         auto sums = event->GetPEvent()->fSums;
 
-        //----- MHT -----//
-        turnons[1]->Fill(event->GetPEvent()->fSums->mHt, event->fL1Mht, pu);
+        double l1EmuMetBE = event->fL1EmuMet;
+        double l1EmuMetHF = event->fL1EmuMetHF;
+        double caloMetBE = sums->caloMetBE;
+        double caloMetHF = sums->caloMet;
 
-        //----- HTT -----//
-        turnons[3]->Fill(event->GetPEvent()->fSums->Ht, event->fL1Htt, pu);
-
-        if( !event->fMuonFilterPassFlag ) continue;
+        //if( !event->fMuonFilterPassFlag ) continue;
 
         //----- MET -----//
         if( event->fMetFilterPassFlag )
-            turnons[0]->Fill(sums->caloMetBE, event->fL1Met, pu);
-
-        //----- ETT -----//
-        turnons[2]->Fill(event->GetPEvent()->fSums->caloSumEtBE, event->fL1Ett, pu);
+        {
+            turnons[0]->Fill(caloMetBE, l1EmuMetBE);
+            turnons[1]->Fill(caloMetHF, l1EmuMetBE);
+            turnons[2]->Fill(caloMetHF, l1EmuMetHF);
+        }
     }
 
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)

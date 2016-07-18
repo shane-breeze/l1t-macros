@@ -4,11 +4,14 @@
 #include <string>
 #include <stdlib.h>
 
+#include <TH1.h>
+#include <TGraph.h>
+
 class TL1Plots
 {
     public:
         virtual void InitPlots() = 0;
-        virtual void Fill(const double & xVal, const double & yVal, const int & pu) = 0;
+        virtual void Fill(const double & xVal, const double & yVal, const int & pu=0) = 0;
         virtual void DrawPlots() = 0;
 
         virtual void SetSample(const std::string & sampleName, const std::string & sampleTitle);
@@ -19,6 +22,8 @@ class TL1Plots
         virtual void SetAddMark(const std::string & addMark);
         virtual void SetPuType(const std::vector<std::string> & puType);
         virtual void SetPuBins(const std::vector<int> & puBins);
+        void SetColor(TH1 * plot, int pos, int max);
+        void SetColor(TGraph * graph, int pos, int max);
 
     protected:
         std::string GetSampleName() const;
@@ -83,6 +88,39 @@ void TL1Plots::SetPuType(const std::vector<std::string> & puType)
 void TL1Plots::SetPuBins(const std::vector<int> & puBins)
 {
     fPuBins = puBins;
+}
+
+void TL1Plots::SetColor(TH1 * plot, int pos, int max)
+{
+    double modifier(0.15), colorIndex;
+    int colour(1);
+    double fraction = (double)(pos)/(double)(max-1);
+
+    if( pos > max-1 || pos < 0 || max < 0 ) colour = 1;
+    else
+    {
+        colorIndex = (fraction * (1.0-2.0*modifier) + modifier) * gStyle->GetNumberOfColors();
+        colour = gStyle->GetColorPalette(colorIndex);
+    }
+    plot->SetLineColor(colour);
+    plot->SetMarkerColor(colour);
+}
+
+void TL1Plots::SetColor(TGraph * graph, int pos, int max)
+{
+    double modifier(0.15), colorIndex;
+    int colour(1);
+    double fraction = (double)(pos)/(double)(max-1);
+
+    if( pos > max-1 || pos < 0 || max < 0 ) colour = 1;
+    else
+    {
+        colorIndex = (fraction * (1.0-2.0*modifier) + modifier) * gStyle->GetNumberOfColors();
+        colour = gStyle->GetColorPalette(colorIndex);
+    }
+    graph->SetLineColor(colour);
+    graph->SetMarkerColor(colour);
+    graph->SetFillColor(colour);
 }
 
 std::string TL1Plots::GetSampleName() const
