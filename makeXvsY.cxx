@@ -19,7 +19,8 @@ void makeXvsY()
     SetMyStyle(57, 0.14, myStyle);
 
     // Basic
-    std::string sample = "Data";
+    std::string sampleName = "Data";
+    std::string sampleTitle = "2016 Data";
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
 
@@ -32,9 +33,9 @@ void makeXvsY()
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
     std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0";
-    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/xy/";
-    TL1EventClass * event(new TL1EventClass(inDir));
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sampleName+"_"+"run-"+run+"_"+triggerName+"/xy/";
 
+    TL1EventClass * event(new TL1EventClass(inDir));
     std::vector<TL1XvsY*> xvsy;
 
     // caloMetBE vs l1EmuMetBE
@@ -87,7 +88,7 @@ void makeXvsY()
 
     for(auto it=xvsy.begin(); it!=xvsy.end(); ++it)
     {
-        (*it)->SetSample(sample,"");
+        (*it)->SetSample(sampleName,sampleTitle);
         (*it)->SetTrigger(triggerName,triggerTitle);
         (*it)->SetRun(run);
         (*it)->SetOutDir(outDir);

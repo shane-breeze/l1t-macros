@@ -17,7 +17,8 @@ void makeResolutions()
     SetMyStyle(55, 0.07, myStyle);
 
     // Basic
-    std::string sample = "Data";
+    std::string sampleName = "Data";
+    std::string sampleTitle = "2016 Data";
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
 
@@ -32,8 +33,8 @@ void makeResolutions()
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
     std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0";
     std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Resolutions/";
-    TL1EventClass * event(new TL1EventClass(inDir));
 
+    TL1EventClass * event(new TL1EventClass(inDir));
     std::vector<TL1Resolution*> resolution;
     
     // NOTE: Ignore the AddRelTitle and AddRelBins for now. I was trying to add
@@ -89,7 +90,7 @@ void makeResolutions()
 
     for(auto it=resolution.begin(); it!=resolution.end(); ++it)
     {
-        (*it)->SetSample(sample,"");
+        (*it)->SetSample(sampleName,sampleTitle);
         (*it)->SetTrigger(triggerName,triggerTitle);
         (*it)->SetRun(run);
         (*it)->SetOutDir(outDir);

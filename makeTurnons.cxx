@@ -92,6 +92,7 @@ void makeTurnons()
 
         double l1EmuMetBE = event->fL1EmuMet;
         double l1EmuMetHF = event->fL1EmuMetHF;
+        cout << "\nl1EmuMetBE = " << l1EmuMetBE << "\tl1EmuMetHF = " << l1EmuMetHF << "\n" << endl;
         double caloMetBE = sums->caloMetBE;
         double caloMetHF = sums->caloMet;
 
