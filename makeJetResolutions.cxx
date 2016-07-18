@@ -17,7 +17,8 @@ void makeJetResolutions()
     SetMyStyle(55, 0.07, myStyle);
 
     // Basic
-    std::string sample = "Data";
+    std::string sampleName = "Data";
+    std::string sampleTitle = "2016 Data";
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
 
@@ -30,13 +31,13 @@ void makeJetResolutions()
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples";
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
     std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0";
-    TL1EventClass * event(new TL1EventClass(inDir));
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sampleName+"_"+"run-"+run+"_"+triggerName+"/resJets/";
 
+    TL1EventClass * event(new TL1EventClass(inDir));
     std::vector<TL1Resolution*> resolution;
 
     // Jet Et - barrel
     resolution.emplace_back(new TL1Resolution());
-    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/resJets/";
     resolution[0]->SetBins(bins());
     resolution[0]->SetX("jetEt","Offline Jet E_{T}");
     resolution[0]->SetY("l1JetEt","L1 Jet E_{T})");
@@ -111,7 +112,7 @@ void makeJetResolutions()
 
     for(auto it=resolution.begin(); it!=resolution.end(); ++it)
     {
-        (*it)->SetSample(sample,"");
+        (*it)->SetSample(sampleName,sampleTitle);
         (*it)->SetTrigger(triggerName,triggerTitle);
         (*it)->SetRun(run);
         (*it)->SetOutDir(outDir);
