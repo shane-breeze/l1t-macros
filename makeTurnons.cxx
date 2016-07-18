@@ -36,7 +36,7 @@ void makeTurnons()
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0";
     // std::string inDir = "/afs/cern.ch/work/s/sbreeze/L1NTuple_Production/20160717_Hinv125GeV/Ntuples";
-    std::string inDir = "/afs/cern.ch/work/s/sbreeze/L1NTuple_Production";
+    std::string inDir = "/afs/cern.ch/work/s/sbreeze/L1NTuple_Production/20160717_Hinv125GeV/Ntuples";
     TL1EventClass * event(new TL1EventClass(inDir));
 
     std::vector<TL1Turnon*> turnons;
@@ -92,7 +92,6 @@ void makeTurnons()
 
         double l1EmuMetBE = event->fL1EmuMet;
         double l1EmuMetHF = event->fL1EmuMetHF;
-        cout << "\nl1EmuMetBE = " << l1EmuMetBE << "\tl1EmuMetHF = " << l1EmuMetHF << "\n" << endl;
         double caloMetBE = sums->caloMetBE;
         double caloMetHF = sums->caloMet;
 
