@@ -25,16 +25,14 @@ void makeJetXvsY()
     std::string triggerTitle = "Single Muon";
 
     std::string run = "6.3fb^{-1}"; // an additional label for the plots
-    //std::string outDirBase = "/users/jt15104/l1t-macros/l1t-macros-Output/";
-    std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
+    std::string outDirBase = "/users/jt15104/l1t-macros/l1t-macros-Output/";
     std::vector<std::string> puType = {"0PU12","13PU19","20PU"};
     std::vector<int> puBins = {0,13,20,999};
 
     std::vector<std::string> inDir;
     // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276242/");
     // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276243/");
-    // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276315/");
-    inDir.push_back("/afs/cern.ch/work/s/sbreeze/l1tClasses/public/jets_and_sums/160713_r276243_SingleMu_l1t-int-71p1");
+    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276315/");
     // inDir.push_back("");             
     
     std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/xyJets/";
