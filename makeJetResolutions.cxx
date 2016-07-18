@@ -42,7 +42,7 @@ void makeJetResolutions()
     resolution[0]->SetX("jetEt","Offline Jet E_{T}");
     resolution[0]->SetY("l1JetEt","L1 Jet E_{T})");
     resolution[0]->SetOutName(triggerName+"_jetEt_over_l1JetEt_barrel");
-    resolution[0]->SetAddMark("Offline Jet E_{T} > 30 GeV\n|#eta| < 1.479");
+    resolution[0]->SetAddMark("#splitline{Offline Jet E_{T} > 30 GeV}{|#eta| < 1.479}");
 
     // Jet Et - end-cap
     resolution.emplace_back(new TL1Resolution());
@@ -74,7 +74,7 @@ void makeJetResolutions()
     resolution[4]->SetX("jetPhi","#phi_{jet}^{offline}");
     resolution[4]->SetY("l1JetPhi","#phi_{jet}^{L1}");
     resolution[4]->SetOutName(triggerName+"_jetPhi_over_l1JetPhi_barrel");
-    resolution[4]->SetAddMark("E_{T}^{offline} > 30 GeV\n|#eta| < 1.479");
+    resolution[4]->SetAddMark("#splitline{E_{T}^{offline} > 30 GeV}{|#eta| < 1.479}");
 
     // Jet Phi - endcap
     resolution.emplace_back(new TL1Resolution());
@@ -82,7 +82,7 @@ void makeJetResolutions()
     resolution[5]->SetX("jetPhi","Offline Jet Phi");
     resolution[5]->SetY("l1JetPhi","L1 Jet Phi");
     resolution[5]->SetOutName(triggerName+"_jetPhi_over_l1JetPhi_endcap");
-    resolution[5]->SetAddMark("Offline Jet E_{T} > 30 GeV\n1.479 < |#eta| < 3.0");
+    resolution[5]->SetAddMark("#splitline{Offline Jet E_{T} > 30 GeV}{1.479 < |#eta| < 3.0}");
 
     // Jet Phi - barrel + endcap
     resolution.emplace_back(new TL1Resolution());
