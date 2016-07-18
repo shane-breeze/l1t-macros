@@ -20,7 +20,7 @@ class TL1Turnon : public TL1Plots
         ~TL1Turnon();
 
         virtual void InitPlots();
-        virtual void Fill(const double & xVal, const double & seedVal, const int & pu);
+        virtual void Fill(const double & xVal, const double & seedVal, const int & pu=0);
         virtual void DrawPlots();
         void DrawCmsStamp(std::string stampPos="Left");
         void DrawTurnons();
@@ -33,9 +33,8 @@ class TL1Turnon : public TL1Plots
         void SetX(const std::string & xName, const std::string & xTitle);
         void SetSeed(const std::string & seedName, const std::string & seedTitle);
         void SetFit(const bool & doFit);
-    private:
-        void SetColor(TH1F * hist, float fraction, int index);
 
+    private:
         std::vector<std::vector<TH1F*>> fPlots;
         std::vector<std::vector<TGraphAsymmErrors*>> fTurnons;
         std::vector<std::vector<TF1*>> fFits;
@@ -66,7 +65,7 @@ void TL1Turnon::InitPlots()
         temp.back()->SetDirectory(0);
         temp.back()->GetXaxis()->SetTitle(fXTitle.c_str());
         temp.back()->GetYaxis()->SetTitle("Number of Entries");
-        SetColor(temp.back(), (double)(i-1)/(double)(fSeeds.size()-2), i);
+        this->SetColor(temp.back(), i, fSeeds.size());
 
         for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
         {
@@ -74,13 +73,13 @@ void TL1Turnon::InitPlots()
             temp.back()->SetDirectory(0);
             temp.back()->GetXaxis()->SetTitle(fXTitle.c_str());
             temp.back()->GetYaxis()->SetTitle("Number of Entries");
-            SetColor(temp.back(), (double)(ipu)/(double)(this->GetPuType().size()-2), ipu);
+            this->SetColor(temp.back(), ipu, this->GetPuType().size());
         }
         fPlots.push_back(temp);
     }
 }
 
-void TL1Turnon::Fill(const double & xVal, const double & seedVal, const int & pu)
+void TL1Turnon::Fill(const double & xVal, const double & seedVal, const int & pu=0)
 {
     for(unsigned i=0; i<fSeeds.size(); ++i)
     {
@@ -236,29 +235,26 @@ void TL1Turnon::DrawCmsStampTurnon()
     TLatex * latex(new TLatex());
     latex->SetNDC();
     latex->SetTextFont(42);
+    if( this->GetSampleName() == "Data" )
+    {
+        latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Preliminary} 2016 Data");
+        latex->SetTextAlign(31);
+        latex->DrawLatex(0.92,0.92,Form("%s (13 TeV)",this->GetRun().c_str()));
+    }
+    else
+    {
+        latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation Preliminary}");
+        latex->SetTextAlign(31);
+        latex->DrawLatex(0.92,0.92,Form("%s (13 TeV)",this->GetSampleName().c_str()));
+    }
+    latex->SetTextAlign(32);
+    latex->DrawLatex(0.82,0.25,this->GetAddMark().c_str());
+
     double min = fXBins.front();
     double max = fXBins.back();
     TLine * line(new TLine(min,1.,max,1.));
     line->SetLineStyle(7);
     line->DrawClone();
-    if( this->GetSampleName() == "Data" )
-    {
-        latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Preliminary} 2016 Data");
-        latex->SetTextAlign(31);
-        std::string runNo = "run " + this->GetRun() + ", ";
-        //latex->DrawLatex(0.92, 0.92, Form("%s%s, #sqrt{s} = 13 TeV",runNo.c_str(),this->GetTriggerTitle().c_str()));
-        latex->DrawLatex(0.92, 0.92, Form("%s (13 TeV)",this->GetRun().c_str()));
-    }
-    else
-    {
-        latex->DrawLatex(0.17, 0.80, "#bf{CMS}");
-        latex->DrawLatex(0.17, 0.75, "#it{Simulation}");
-        latex->DrawLatex(0.17, 0.70, "#it{Preliminary}");
-        latex->SetTextAlign(31); 
-        latex->DrawLatex(0.92, 0.92, Form("%s, #sqrt{s} = 13 TeV",this->GetSampleTitle().c_str()));
-    }
-    latex->SetTextAlign(11);
-    //latex->DrawLatex(0.18,0.92,this->GetAddMark().c_str());
 }
 
 TF1 TL1Turnon::fit(TGraphAsymmErrors * eff, int p50)
@@ -304,19 +300,6 @@ void TL1Turnon::SetSeed(const std::string & seedName, const std::string & seedTi
 void TL1Turnon::SetFit(const bool & doFit)
 {
     fDoFit = doFit;
-}
-
-void TL1Turnon::SetColor(TH1F * hist, float fraction, int index)
-{
-    double modifier(0.15), colorIndex;
-    int colour(1);
-    if( fraction >= 0.0 )
-    {
-        colorIndex = (fraction * (1.0-2.0*modifier) + modifier) * gStyle->GetNumberOfColors();
-        colour = gStyle->GetColorPalette(colorIndex);
-    }
-    hist->SetLineColor(colour);
-    hist->SetMarkerColor(colour);
 }
 
 #endif

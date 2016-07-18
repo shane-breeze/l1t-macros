@@ -15,7 +15,7 @@ class TL1DataClass
         Long64_t LoadTree(int iEntry);
         Long64_t GetEntry(int iEntry);
         int GetNFiles() const;
-        void SetBranchAddress(std::string leaf, void * add);
+        int SetBranchAddress(std::string leaf, void * add);
         
     private:
         TChain * fChain;
@@ -49,9 +49,9 @@ int TL1DataClass::GetNFiles() const
     return fNFiles;
 }
 
-void TL1DataClass::SetBranchAddress(std::string leaf, void * add)
+int TL1DataClass::SetBranchAddress(std::string leaf, void * add)
 {
-    fChain->SetBranchAddress(leaf.c_str(), add);
+    return fChain->SetBranchAddress(leaf.c_str(), add);
 }
 
 

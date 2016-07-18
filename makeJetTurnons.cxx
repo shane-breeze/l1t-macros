@@ -16,7 +16,8 @@ void makeJetTurnons()
     SetMyStyle(55, 0.07, myStyle);
 
     // Basic
-    std::string sample = "Data";
+    std::string sampleName = "Data";
+    std::string sampleTitle = "2016 Data";
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
 
@@ -31,13 +32,13 @@ void makeJetTurnons()
     //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160602_r273450_SingleMu_l1t-int-v53p1";
     //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu";
     std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0";
-    TL1EventClass * event(new TL1EventClass(inDir));
+    std::string outDir = outDirBase+"/"+turnons.front()->GetDate()+"_"+sampleName+"_"+"run-"+run+"_"+triggerName+"/TurnonsJets/";
 
+    TL1EventClass * event(new TL1EventClass(inDir));
     std::vector<TL1Turnon*> turnons;
 
     // Jet Et - barrel
     turnons.emplace_back(new TL1Turnon());
-    std::string outDir = outDirBase+"/"+turnons.front()->GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/TurnonsJets/";
     turnons[0]->SetSeeds({0., 36., 68., 128., 200.});
     turnons[0]->SetXBins(bins());
     turnons[0]->SetX("recoJetEt","Offline Jet E_{T} (GeV)");
@@ -78,7 +79,7 @@ void makeJetTurnons()
 
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)
     {
-        (*it)->SetSample(sample,"");
+        (*it)->SetSample(sampleName,sampleTitle);
         (*it)->SetTrigger(triggerName,triggerTitle);
         (*it)->SetRun(run);
         (*it)->SetOutDir(outDir);

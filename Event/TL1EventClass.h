@@ -22,12 +22,18 @@ class TL1EventClass
 
         // Get L1
         double fL1Met, fL1Mht, fL1Ett, fL1Htt, fL1MetPhi, fL1MhtPhi;
+        double fL1EmuMet, fL1EmuMht, fL1EmuEtt, fL1EmuHtt, fL1EmuMetPhi, fL1EmuMhtPhi;
         double fL1MetHF, fL1MhtHF, fL1EttHF, fL1HttHF, fL1MetPhiHF, fL1MhtPhiHF;
+        double fL1EmuMetHF, fL1EmuMhtHF, fL1EmuEttHF, fL1EmuHttHF, fL1EmuMetPhiHF, fL1EmuMhtPhiHF;
         std::vector<double> fL1JetEt, fL1JetPhi, fL1JetEta;
 
         // Filter flags
         bool fMuonFilterPassFlag, fMetFilterPassFlag;
         std::vector<bool> fJetFilterPassFlags;
+        
+        // Recalc L1 MET sums
+        double fRecalcL1Met, fRecalcL1MetPhi;
+        double fRecalcL1MetHF, fRecalcL1MetPhiHF;
 
         // Recalc L1 Ht/Et Sums
         double fRecalcL1Mht, fRecalcL1MhtPhi;
@@ -51,11 +57,15 @@ class TL1EventClass
         // Get L1
         void GetL1Jets();
         void GetL1Sums();
+        void GetL1EmuSums();
 
         // Filters
         void MuonFilter();
         void JetFilter();
         void SumsFilter();
+
+        // Recalc L1 MET sum
+        void GetRecalcL1Met();
 
         // Recalc L1 Ht/Et Sums
         void GetRecalcL1Mht();
@@ -95,24 +105,28 @@ void TL1EventClass::GetEntry(int i)
 void TL1EventClass::GetDerivatives()
 {
     // L1
-    this->GetL1Jets();
-    this->GetL1Sums();
+    bool isUpgrade = fPrimitiveEvent->fIsUpgrade;
+    if( isUpgrade ) this->GetL1Jets();
+    if( isUpgrade ) this->GetL1Sums();
+    if( fPrimitiveEvent->fIsEmuUpgrade ) this->GetL1EmuSums();
 
     // Filter
-    this->MuonFilter();
-    this->JetFilter();
-    this->SumsFilter();
+    bool isJetReco = fPrimitiveEvent->fIsJetReco;
+    if( fPrimitiveEvent->fIsMuonReco ) this->MuonFilter();
+    if( isJetReco ) this->JetFilter();
+    if( fPrimitiveEvent->fIsMetFilterReco ) this->SumsFilter();
 
     // Recalc
-    this->GetRecalcL1Mht();
-    this->GetRecalcL1Ett();
+    if( fPrimitiveEvent->fIsCaloTower ) this->GetRecalcL1Met();
+    //this->GetRecalcL1Mht();
+    //this->GetRecalcL1Ett();
     
-    this->GetRecalcRecoHtSums();
-    this->GetRecalcRecoEtt();
+    //this->GetRecalcRecoHtSums();
+    //this->GetRecalcRecoEtt();
 
     // Jets
-    this->GetLeadingRecoJet();
-    this->GetMatchedL1Jet();
+    if( isJetReco ) this->GetLeadingRecoJet();
+    if( isJetReco ) this->GetMatchedL1Jet();
 }
 
 TL1PrimitiveEventClass const * TL1EventClass::GetPEvent() const
@@ -145,7 +159,7 @@ void TL1EventClass::GetL1Sums()
         double phi = upgrades->sumPhi[iter];
         if( upgrades->sumBx[iter] == 0 )
         {
-            short int sumType = upgrades->sumType[iter];
+            int sumType = upgrades->sumType[iter];
             if(sumType == l1t::EtSum::EtSumType::kTotalEt)   fL1Ett = et;
             if(sumType == l1t::EtSum::EtSumType::kTotalHt)   fL1Htt = et;
             if(sumType == l1t::EtSum::EtSumType::kMissingEt)
@@ -158,18 +172,54 @@ void TL1EventClass::GetL1Sums()
                 fL1Mht = et;
                 fL1MhtPhi = phi;
             }
-            //if(sumType == l1t::EtSum::EtSumType::kTotalEtHF) fL1EttHF = et;
-            //if(sumType == l1t::EtSum::EtSumType::kTotalHtHF) fL1HttHF = et;
-            //if(sumType == l1t::EtSum::EtSumType::kMissingEtHF)
-            //{
-            //    fL1MetHF = et;
-            //    fL1MetPhiHF = phi;
-            //}
-            //if(sumType == l1t::EtSum::EtSumType::kMissingHtHF)
-            //{
-            //    fL1MhtHF = et;
-            //    fL1MhtPhiHF = phi;
-            //}
+            if(sumType == l1t::EtSum::EtSumType::kTotalEtHF) fL1EttHF = et;
+            if(sumType == l1t::EtSum::EtSumType::kTotalHtHF) fL1HttHF = et;
+            if(sumType == l1t::EtSum::EtSumType::kMissingEtHF)
+            {
+                fL1MetHF = et;
+                fL1MetPhiHF = phi;
+            }
+            if(sumType == l1t::EtSum::EtSumType::kMissingHtHF)
+            {
+                fL1MhtHF = et;
+                fL1MhtPhiHF = phi;
+            }
+        }
+    }
+}
+
+void TL1EventClass::GetL1EmuSums()
+{
+    auto emuUpgrades = fPrimitiveEvent->fEmuUpgrade;
+    for(int iter=0; iter<emuUpgrades->nSums; ++iter)
+    {
+        double et = emuUpgrades->sumEt[iter];
+        double phi = emuUpgrades->sumPhi[iter];
+
+        int sumType = emuUpgrades->sumType[iter];
+        if(sumType == l1t::EtSum::EtSumType::kTotalEt)   fL1EmuEtt = et;
+        if(sumType == l1t::EtSum::EtSumType::kTotalHt)   fL1EmuHtt = et;
+        if(sumType == l1t::EtSum::EtSumType::kMissingEt)
+        {
+            fL1EmuMet = et;
+            fL1EmuMetPhi = phi;
+        }
+        if(sumType == l1t::EtSum::EtSumType::kMissingHt)
+        {
+            fL1EmuMht = et;
+            fL1EmuMhtPhi = phi;
+        }
+        if(sumType == l1t::EtSum::EtSumType::kTotalEtHF) fL1EmuEttHF = et;
+        if(sumType == l1t::EtSum::EtSumType::kTotalHtHF) fL1EmuHttHF = et;
+        if(sumType == l1t::EtSum::EtSumType::kMissingEtHF)
+        {
+            fL1EmuMetHF = et;
+            fL1EmuMetPhiHF = phi;
+        }
+        if(sumType == l1t::EtSum::EtSumType::kMissingHtHF)
+        {
+            fL1EmuMhtHF = et;
+            fL1EmuMhtPhiHF = phi;
         }
     }
 }
@@ -281,6 +331,29 @@ void TL1EventClass::GetRecalcL1Ett()
     }
     fRecalcL1Ett = sumEt;
     //fNJetsL1Ett = jetCount;
+}
+
+void TL1EventClass::GetRecalcL1Met()
+{
+    TVector2 met(0.0,0.0), metHF(0.0,0.0);
+    auto caloTowers = fPrimitiveEvent->fCaloTowers;
+    int ieta(0);
+    double phi(0.0), et(0.0);
+    for(int jTower=0; jTower<caloTowers->nTower; ++jTower)
+    {
+        ieta = caloTowers->ieta[jTower];
+        phi = (TMath::Pi()/36.0) * (double)caloTowers->iphi[jTower];
+        et = 0.5 * (double)caloTowers->iet[jTower];
+        TVector2 temp(0.0,0.0);
+        temp.SetMagPhi(et,phi);
+
+        if( abs(ieta) <= 28 ) met -= temp;
+        metHF -= temp;
+    }
+    fRecalcL1Met = met.Mod();
+    fRecalcL1MetPhi = met.Phi();
+    fRecalcL1MetHF = metHF.Mod();
+    fRecalcL1MetPhiHF = metHF.Phi();
 }
 
 void TL1EventClass::GetRecalcRecoHtSums()
