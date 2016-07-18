@@ -72,19 +72,19 @@ void makeXvsY()
     
     // caloMetBE Phi
     xvsy.emplace_back(new TL1XvsY());
-    xvsy[4]->SetXBins(phiBins());
-    xvsy[4]->SetX("caloMetBEPhi","Offline E_{T}^{miss} Phi");
-    xvsy[4]->SetYBins(phiBins());
-    xvsy[4]->SetY("l1MetPhi","L1 E_{T}^{miss} Phi");
-    xvsy[4]->SetOutName(triggerName+"_caloMetBEPhi_vs_l1MetPhi");
+    xvsy[2]->SetXBins(phiBins());
+    xvsy[2]->SetX("caloMetBEPhi","Offline E_{T}^{miss} Phi");
+    xvsy[2]->SetYBins(phiBins());
+    xvsy[2]->SetY("l1MetPhi","L1 E_{T}^{miss} Phi");
+    xvsy[2]->SetOutName(triggerName+"_caloMetBEPhi_vs_l1MetPhi");
 
     // mht Phi
     xvsy.emplace_back(new TL1XvsY());
-    xvsy[5]->SetXBins(phiBins());
-    xvsy[5]->SetX("recoMhtPhi","Offline H_{T}^{miss} Phi");
-    xvsy[5]->SetYBins(phiBins());
-    xvsy[5]->SetY("l1MhtPhi","L1 H_{T}^{miss} Phi");
-    xvsy[5]->SetOutName(triggerName+"_recoMhtPhi_vs_l1MhtPhi");
+    xvsy[3]->SetXBins(phiBins());
+    xvsy[3]->SetX("recoMhtPhi","Offline H_{T}^{miss} Phi");
+    xvsy[3]->SetYBins(phiBins());
+    xvsy[3]->SetY("l1MhtPhi","L1 H_{T}^{miss} Phi");
+    xvsy[3]->SetOutName(triggerName+"_recoMhtPhi_vs_l1MhtPhi");
 
     for(auto it=xvsy.begin(); it!=xvsy.end(); ++it)
     {
@@ -107,10 +107,10 @@ void makeXvsY()
         auto sums = event->GetPEvent()->fSums;
 
         //----- HTT -----//
-        double recoHtt = sums->Ht;
-        double l1Htt = event->fL1Htt;
-        if( recoHtt > 0.0 && l1Htt > 0.0 )
-            xvsy[3]->Fill(recoHtt, l1Htt, pu);
+        //double recoHtt = sums->Ht;
+        //double l1Htt = event->fL1Htt;
+        //if( recoHtt > 0.0 && l1Htt > 0.0 )
+        //    xvsy[3]->Fill(recoHtt, l1Htt, pu);
         
         //bool mhtPassFlag = event->fMhtPassFlag;
 
@@ -123,14 +123,14 @@ void makeXvsY()
         if( recoMht > 0.0 && l1Mht > 0.0 )
         {
             xvsy[1]->Fill(recoMht, l1Mht, pu);
-            xvsy[5]->Fill(FoldPhi(recoMhtPhi), FoldPhi(l1MhtPhi), pu);
+            xvsy[3]->Fill(FoldPhi(recoMhtPhi), FoldPhi(l1MhtPhi), pu);
         }
 
         //----- ETT -----//
-        double recoEtt = sums->caloSumEtBE;
-        double l1Ett = event->fL1Ett;
-        if( recoEtt > 0.0 && l1Ett > 0.0 )
-            xvsy[2]->Fill(recoEtt, l1Ett, pu);
+        //double recoEtt = sums->caloSumEtBE;
+        //double l1Ett = event->fL1Ett;
+        //if( recoEtt > 0.0 && l1Ett > 0.0 )
+        //    xvsy[2]->Fill(recoEtt, l1Ett, pu);
 
         if( !event->fMuonFilterPassFlag ) continue;
 
@@ -142,7 +142,7 @@ void makeXvsY()
         if( event->fMetFilterPassFlag && recoMet > 0.0 && l1Met > 0.0 )
         {
             xvsy[0]->Fill(recoMet, l1Met, pu);
-            xvsy[4]->Fill(FoldPhi(recoMetPhi), FoldPhi(l1MetPhi), pu);
+            xvsy[2]->Fill(FoldPhi(recoMetPhi), FoldPhi(l1MetPhi), pu);
         }
     }
 

@@ -67,12 +67,12 @@ void makeTurnons()
 
     // htt
     turnons.emplace_back(new TL1Turnon());
-    turnons[3]->SetSeeds({0.,120.,160.,200.,240.,280.});
-    turnons[3]->SetXBins(httBins());
-    turnons[3]->SetX("recoHtt","Offline Total H_{T} (GeV)");
-    turnons[3]->SetSeed("l1Htt","L1 HTT");
-    turnons[3]->SetOutName(triggerName+"_recoHtt_l1HttSeeds");
-    turnons[3]->SetFit(doFit);
+    turnons[1]->SetSeeds({0.,120.,160.,200.,240.,280.});
+    turnons[1]->SetXBins(httBins());
+    turnons[1]->SetX("recoHtt","Offline Total H_{T} (GeV)");
+    turnons[1]->SetSeed("l1Htt","L1 HTT");
+    turnons[1]->SetOutName(triggerName+"_recoHtt_l1HttSeeds");
+    turnons[1]->SetFit(doFit);
     
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)
     {
@@ -95,10 +95,10 @@ void makeTurnons()
         auto sums = event->GetPEvent()->fSums;
 
         //----- MHT -----//
-        turnons[1]->Fill(event->GetPEvent()->fSums->mHt, event->fL1Mht, pu);
+        //turnons[1]->Fill(event->GetPEvent()->fSums->mHt, event->fL1Mht, pu);
 
         //----- HTT -----//
-        turnons[3]->Fill(event->GetPEvent()->fSums->Ht, event->fL1Htt, pu);
+        turnons[1]->Fill(event->GetPEvent()->fSums->Ht, event->fL1Htt, pu);
 
         if( !event->fMuonFilterPassFlag ) continue;
 
@@ -107,7 +107,7 @@ void makeTurnons()
             turnons[0]->Fill(sums->caloMetBE, event->fL1Met, pu);
 
         //----- ETT -----//
-        turnons[2]->Fill(event->GetPEvent()->fSums->caloSumEtBE, event->fL1Ett, pu);
+        //turnons[2]->Fill(event->GetPEvent()->fSums->caloSumEtBE, event->fL1Ett, pu);
     }
 
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)

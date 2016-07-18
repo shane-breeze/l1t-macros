@@ -57,23 +57,23 @@ void makeJetTurnons()
 
     // Jet Et - barrel + endcap
     turnons.emplace_back(new TL1Turnon());
-    turnons[2]->SetSeeds({0., 36., 68., 128., 200.});
-    turnons[2]->SetXBins(bins());
-    turnons[2]->SetX("recoJetEt","Offline Jet E_{T} (GeV)");
-    turnons[2]->SetSeed("l1JetEt","L1 Jet E_{T}");
-    turnons[2]->SetOutName(triggerName+"_recoJetEt_l1JetEtSeeds_barrel-endcap");
-    turnons[2]->SetFit(doFit);
-    turnons[2]->SetAddMark("|#eta| < 3.0");
+    turnons[0]->SetSeeds({0., 36., 68., 128., 200.});
+    turnons[0]->SetXBins(bins());
+    turnons[0]->SetX("recoJetEt","Offline Jet E_{T} (GeV)");
+    turnons[0]->SetSeed("l1JetEt","L1 Jet E_{T}");
+    turnons[0]->SetOutName(triggerName+"_recoJetEt_l1JetEtSeeds_barrel-endcap");
+    turnons[0]->SetFit(doFit);
+    turnons[0]->SetAddMark("|#eta| < 3.0");
 
     // Jet Et - HF
     turnons.emplace_back(new TL1Turnon());
-    turnons[3]->SetSeeds({0., 36., 68., 128., 176.});
-    turnons[3]->SetXBins(bins());
-    turnons[3]->SetX("recoJetEt","Offline Jet E_{T} (GeV)");
-    turnons[3]->SetSeed("l1JetEt","L1 Jet E_{T}");
-    turnons[3]->SetOutName(triggerName+"_recoJetEt_l1JetEtSeeds_hf");
-    turnons[3]->SetFit(doFit);
-    turnons[3]->SetAddMark("|#eta| > 3.0");
+    turnons[1]->SetSeeds({0., 36., 68., 128., 176.});
+    turnons[1]->SetXBins(bins());
+    turnons[1]->SetX("recoJetEt","Offline Jet E_{T} (GeV)");
+    turnons[1]->SetSeed("l1JetEt","L1 Jet E_{T}");
+    turnons[1]->SetOutName(triggerName+"_recoJetEt_l1JetEtSeeds_hf");
+    turnons[1]->SetFit(doFit);
+    turnons[1]->SetAddMark("|#eta| > 3.0");
 
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)
     {
@@ -108,16 +108,16 @@ void makeJetTurnons()
 
         if( abs(recoEta) <= 1.479 )
         {
+            //turnons[0]->Fill(recoEt, l1Et, pu);
             turnons[0]->Fill(recoEt, l1Et, pu);
-            turnons[2]->Fill(recoEt, l1Et, pu);
         }
         else if( abs(recoEta) <= 3.0 )
         {
-            turnons[1]->Fill(recoEt, l1Et, pu);
-            turnons[2]->Fill(recoEt, l1Et, pu);
+            //turnons[1]->Fill(recoEt, l1Et, pu);
+            turnons[0]->Fill(recoEt, l1Et, pu);
         }
         else
-            turnons[3]->Fill(recoEt, l1Et, pu);
+            turnons[1]->Fill(recoEt, l1Et, pu);
     }
 
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)

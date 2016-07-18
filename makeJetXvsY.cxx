@@ -59,21 +59,21 @@ void makeJetXvsY()
     
     // Jet Et - barrel end-cap
     xvsy.emplace_back(new TL1XvsY());
-    xvsy[2]->SetXBins(bins(300.0));
-    xvsy[2]->SetX("jetEt","Offline Jet E_{T} (GeV)");
-    xvsy[2]->SetYBins(bins(300.0));
-    xvsy[2]->SetY("l1JetEt","L1 Jet E_{T} (GeV)");
-    xvsy[2]->SetOutName(triggerName+"_jetEt_vs_l1JetEt_barrel-endcap");
-    xvsy[2]->SetAddMark("|#eta| < 3.0");
+    xvsy[0]->SetXBins(bins(300.0));
+    xvsy[0]->SetX("jetEt","Offline Jet E_{T} (GeV)");
+    xvsy[0]->SetYBins(bins(300.0));
+    xvsy[0]->SetY("l1JetEt","L1 Jet E_{T} (GeV)");
+    xvsy[0]->SetOutName(triggerName+"_jetEt_vs_l1JetEt_barrel-endcap");
+    xvsy[0]->SetAddMark("|#eta| < 3.0");
 
     // Jet Et - HF
     xvsy.emplace_back(new TL1XvsY());
-    xvsy[3]->SetXBins(bins(300.0));
-    xvsy[3]->SetX("jetEt","Offline Jet E_{T} (GeV)");
-    xvsy[3]->SetYBins(bins(300.0));
-    xvsy[3]->SetY("l1JetEt","L1 Jet E_{T} (GeV)");
-    xvsy[3]->SetOutName(triggerName+"_jetEt_vs_l1JetEt_hf");
-    xvsy[3]->SetAddMark("|#eta| > 3.0");
+    xvsy[1]->SetXBins(bins(300.0));
+    xvsy[1]->SetX("jetEt","Offline Jet E_{T} (GeV)");
+    xvsy[1]->SetYBins(bins(300.0));
+    xvsy[1]->SetY("l1JetEt","L1 Jet E_{T} (GeV)");
+    xvsy[1]->SetOutName(triggerName+"_jetEt_vs_l1JetEt_hf");
+    xvsy[1]->SetAddMark("|#eta| > 3.0");
 
     // Jet phi - barrel
     // xvsy.emplace_back(new TL1XvsY());
@@ -95,29 +95,29 @@ void makeJetXvsY()
 
     // Jet Phi - barrel endcap
     xvsy.emplace_back(new TL1XvsY());
-    xvsy[6]->SetXBins(phiBins());
-    xvsy[6]->SetX("jetPhi","Offline Jet Phi");
-    xvsy[6]->SetYBins(phiBins());
-    xvsy[6]->SetY("l1JetPhi","L1 Jet Phi");
-    xvsy[6]->SetOutName(triggerName+"_jetPhi_vs_l1JetPhi_barrel-endcap");
-    xvsy[6]->SetAddMark("|#eta| < 3.0");
+    xvsy[2]->SetXBins(phiBins());
+    xvsy[2]->SetX("jetPhi","Offline Jet Phi");
+    xvsy[2]->SetYBins(phiBins());
+    xvsy[2]->SetY("l1JetPhi","L1 Jet Phi");
+    xvsy[2]->SetOutName(triggerName+"_jetPhi_vs_l1JetPhi_barrel-endcap");
+    xvsy[2]->SetAddMark("|#eta| < 3.0");
 
     // Jet Phi - HF
     xvsy.emplace_back(new TL1XvsY());
-    xvsy[7]->SetXBins(phiBins());
-    xvsy[7]->SetX("jetPhi","Offline Jet Phi");
-    xvsy[7]->SetYBins(phiBins());
-    xvsy[7]->SetY("l1JetPhi","L1 Jet Phi");
-    xvsy[7]->SetOutName(triggerName+"_jetPhi_vs_l1JetPhi_hf");
-    xvsy[7]->SetAddMark("|#eta| > 3.0");
+    xvsy[3]->SetXBins(phiBins());
+    xvsy[3]->SetX("jetPhi","Offline Jet Phi");
+    xvsy[3]->SetYBins(phiBins());
+    xvsy[3]->SetY("l1JetPhi","L1 Jet Phi");
+    xvsy[3]->SetOutName(triggerName+"_jetPhi_vs_l1JetPhi_hf");
+    xvsy[3]->SetAddMark("|#eta| > 3.0");
 
     // Jet Eta
     xvsy.emplace_back(new TL1XvsY());
-    xvsy[8]->SetXBins(etaBins());
-    xvsy[8]->SetX("jetEta","Offline Jet Eta");
-    xvsy[8]->SetYBins(etaBins());
-    xvsy[8]->SetY("l1JetEta","L1 Jet Eta");
-    xvsy[8]->SetOutName(triggerName+"_jetEta_vs_l1JetEta_hf");
+    xvsy[4]->SetXBins(etaBins());
+    xvsy[4]->SetX("jetEta","Offline Jet Eta");
+    xvsy[4]->SetYBins(etaBins());
+    xvsy[4]->SetY("l1JetEta","L1 Jet Eta");
+    xvsy[4]->SetOutName(triggerName+"_jetEta_vs_l1JetEta_hf");
 
     for(auto it=xvsy.begin(); it!=xvsy.end(); ++it)
     {
@@ -155,29 +155,29 @@ void makeJetXvsY()
             double l1Phi = event->fL1JetPhi[event->fMatchedL1JetIndex];
             if( abs(recoEta) <= 1.479 )
             {
+                //xvsy[0]->Fill(recoEt, l1Et, pu);
                 xvsy[0]->Fill(recoEt, l1Et, pu);
-                xvsy[2]->Fill(recoEt, l1Et, pu);
 
-                xvsy[4]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi), pu);
-                xvsy[6]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi), pu);
+                //xvsy[4]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi), pu);
+                xvsy[2]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi), pu);
 
-                xvsy[8]->Fill(recoEta, l1Eta, pu);
+                xvsy[4]->Fill(recoEta, l1Eta, pu);
             }
             else if( abs(recoEta) <= 3.0 )
             {
-                xvsy[1]->Fill(recoEt, l1Et, pu);
-                xvsy[2]->Fill(recoEt, l1Et, pu);
+                //xvsy[1]->Fill(recoEt, l1Et, pu);
+                xvsy[0]->Fill(recoEt, l1Et, pu);
 
-                xvsy[5]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi), pu);
-                xvsy[6]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi), pu);
+                //xvsy[5]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi), pu);
+                xvsy[2]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi), pu);
 
-                xvsy[8]->Fill(recoEta, l1Eta, pu);
+                xvsy[4]->Fill(recoEta, l1Eta, pu);
             }
             else
             {
-                xvsy[3]->Fill(recoEt, l1Et, pu);
-                xvsy[7]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi), pu);
-                xvsy[8]->Fill(recoEta, l1Eta, pu);
+                xvsy[1]->Fill(recoEt, l1Et, pu);
+                xvsy[3]->Fill(FoldPhi(recoPhi), FoldPhi(l1Phi), pu);
+                xvsy[4]->Fill(recoEta, l1Eta, pu);
             }
         }
     }
