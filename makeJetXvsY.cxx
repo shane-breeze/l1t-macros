@@ -34,7 +34,7 @@ void makeJetXvsY()
     // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276242/");
     // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276243/");
     // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276315/");
-    inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160713_r276243_SingleMu_l1t-int-71p1");
+    inDir.push_back("/afs/cern.ch/work/s/sbreeze/l1tClasses/public/jets_and_sums/160713_r276243_SingleMu_l1t-int-71p1");
     // inDir.push_back("");             
     
     std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/xyJets/";
