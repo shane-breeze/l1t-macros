@@ -30,13 +30,14 @@ void makeJetTurnons()
     // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276242/");
     // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276243/");
     inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276315/");    
+
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/TurnonsJets/";
     TL1EventClass * event(new TL1EventClass(inDir));
 
     std::vector<TL1Turnon*> turnons;
 
     // Jet Et - barrel
     // turnons.emplace_back(new TL1Turnon());
-    // std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/TurnonsJets/";
     // turnons[0]->SetSeeds({0., 36., 68., 128., 200.});
     // turnons[0]->SetXBins(bins());
     // turnons[0]->SetX("recoJetEt","Offline Jet E_{T} (GeV)");

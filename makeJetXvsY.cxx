@@ -34,13 +34,14 @@ void makeJetXvsY()
     // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276243/");
     inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276315/");
     // inDir.push_back("");             
+    
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/xyJets/";
     TL1EventClass * event(new TL1EventClass(inDir));
 
     std::vector<TL1XvsY*> xvsy;
 
     // Jet Et - barrel
     // xvsy.emplace_back(new TL1XvsY());
-    // std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/xyJets/";
     // xvsy[0]->SetXBins(bins(300.0));
     // xvsy[0]->SetX("jetEt","Offline Jet E_{T} (GeV)");
     // xvsy[0]->SetYBins(bins(300.0));

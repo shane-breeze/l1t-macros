@@ -34,12 +34,13 @@ void makeTurnons()
     // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276242/");
     // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276243/");
     inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276315/");    // inDir.push_back("");           
+
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Turnons/";
     TL1EventClass * event(new TL1EventClass(inDir));
     std::vector<TL1Turnon*> turnons;
 
     // caloMetBE
     turnons.emplace_back(new TL1Turnon());
-    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Turnons/";
     turnons[0]->SetSeeds({0.,40.,60.,80.,100.,120.});
     turnons[0]->SetXBins(metBins());
     turnons[0]->SetX("caloMetBE","Offline E_{T}^{miss} (GeV)");

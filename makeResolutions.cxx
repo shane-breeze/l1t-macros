@@ -31,13 +31,14 @@ void makeResolutions()
     // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276243/");
     inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276315/");
     // inDir.push_back("");            
+   
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Resolutions/";
     TL1EventClass * event(new TL1EventClass(inDir));
 
     std::vector<TL1Resolution*> resolution;
     
     // caloMetBE
     resolution.emplace_back(new TL1Resolution());
-    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Resolutions/";
     resolution[0]->SetPlotType("Energy");
     resolution[0]->SetBins(bins("Energy"));
     resolution[0]->SetX("caloMetBE","Offline E_{T}^{miss}");

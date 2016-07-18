@@ -33,13 +33,14 @@ void makeXvsY()
     // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276243/");
     inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276315/");
     // inDir.push_back("");             
+   
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/xy/";
     TL1EventClass * event(new TL1EventClass(inDir));
 
     std::vector<TL1XvsY*> xvsy;
 
     // caloMetBE
     xvsy.emplace_back(new TL1XvsY());
-    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/xy/";
     xvsy[0]->SetXBins(bins(200.0,1.0,0.0));
     xvsy[0]->SetX("caloMetBE","Offline E_{T}^{miss} (GeV)");
     xvsy[0]->SetYBins(bins(200.0,1.0,0.0));
