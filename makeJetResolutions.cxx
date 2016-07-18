@@ -31,13 +31,14 @@ void makeJetResolutions()
     // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276243/");
     inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276315/");
     // inDir.push_back("");        
-    TL1EventClass * event(new TL1EventClass(inDir));
+    
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/resJets/";
 
+    TL1EventClass * event(new TL1EventClass(inDir));
     std::vector<TL1Resolution*> resolution;
 
     // Jet Et - barrel
     // resolution.emplace_back(new TL1Resolution());
-    // std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/resJets/";
     // resolution[0]->SetBins(bins());
     // resolution[0]->SetX("jetEt","Offline Jet E_{T}");
     // resolution[0]->SetY("l1JetEt","L1 Jet E_{T})");

@@ -226,7 +226,7 @@ std::string TL1Resolution::GetXAxisTitle() const
 {
     std::string temp("");
     if( fPlotType == "Energy" ) temp = Form("(%s - %s)/%s",fYTitle.c_str(),fXTitle.c_str(),fXTitle.c_str());
-    else if( fPlotType == "Position" ) temp = Form("%s - %s",fYTitle.c_str());
+    else if( fPlotType == "Position" ) temp = Form("%s - %s",fYTitle.c_str(),fXTitle.c_str());
     return temp;
 }
 
