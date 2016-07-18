@@ -27,9 +27,9 @@ void makeResolutions()
     std::vector<int> puBins = {0,13,20,999};
 
     std::vector<std::string> inDir;
-    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276242/");
-    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276243/");
-    // inDir.push_back("");
+    // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276242/");
+    // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276243/");
+    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276315/");
     // inDir.push_back("");            
     TL1EventClass * event(new TL1EventClass(inDir));
 
@@ -50,23 +50,23 @@ void makeResolutions()
     resolution[0]->SetAddMark("Offline E_{T}^{miss} > 40 GeV");
 
     // mht
-    resolution.emplace_back(new TL1Resolution());
-    resolution[1]->SetBins(bins());
-    resolution[1]->SetX("mht","Offline H_{T}^{miss}");
-    resolution[1]->SetY("l1mht","L1 H_{T}^{miss}");
-    resolution[1]->SetOutName(triggerName+"_recalcMht_over_l1Mht");
-    resolution[1]->AddRelTitle("recoMht","Offline H_{T}^{miss} (GeV)");
-    resolution[1]->AddRelBins({0.,10.,20.,30.,40.,50.,60.,70.,80.,100.});
+    // resolution.emplace_back(new TL1Resolution());
+    // resolution[1]->SetBins(bins());
+    // resolution[1]->SetX("mht","Offline H_{T}^{miss}");
+    // resolution[1]->SetY("l1mht","L1 H_{T}^{miss}");
+    // resolution[1]->SetOutName(triggerName+"_recalcMht_over_l1Mht");
+    // resolution[1]->AddRelTitle("recoMht","Offline H_{T}^{miss} (GeV)");
+    // resolution[1]->AddRelBins({0.,10.,20.,30.,40.,50.,60.,70.,80.,100.});
     //resolution[1]->SetAddMark("L1 ETM > 40 GeV");
 
     // caloEttBE
-    resolution.emplace_back(new TL1Resolution());
-    resolution[2]->SetBins(bins());
-    resolution[2]->SetX("caloEttBE","Offline Total E_{T}");
-    resolution[2]->SetY("l1ett","L1 Total E_{T}");
-    resolution[2]->SetOutName(triggerName+"_caloEttBE_over_l1Ett");
-    resolution[2]->AddRelTitle("recoEtt","Offline Total E_{T} (GeV)");
-    resolution[2]->AddRelBins({0.,10.,20.,30.,40.,50.,60.,70.,80.,100.});
+    // resolution.emplace_back(new TL1Resolution());
+    // resolution[2]->SetBins(bins());
+    // resolution[2]->SetX("caloEttBE","Offline Total E_{T}");
+    // resolution[2]->SetY("l1ett","L1 Total E_{T}");
+    // resolution[2]->SetOutName(triggerName+"_caloEttBE_over_l1Ett");
+    // resolution[2]->AddRelTitle("recoEtt","Offline Total E_{T} (GeV)");
+    // resolution[2]->AddRelBins({0.,10.,20.,30.,40.,50.,60.,70.,80.,100.});
     //resolution[2]->SetAddMark("L1 ETM > 40 GeV");
 
     // htt

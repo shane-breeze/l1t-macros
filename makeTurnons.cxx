@@ -7,6 +7,7 @@
 #include "Utilities/TL1DateTime.C"
 #include "Plotting/TL1Turnon.h"
 
+
 vector<double> metBins();
 vector<double> mhtBins();
 vector<double> ettBins();
@@ -30,10 +31,9 @@ void makeTurnons()
     std::vector<int> puBins = {0,13,20,999};
 
     std::vector<std::string> inDir;
-    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276242/");
-    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276243/");
-    // inDir.push_back("");
-    // inDir.push_back("");           
+    // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276242/");
+    // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276243/");
+    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276315/");    // inDir.push_back("");           
     TL1EventClass * event(new TL1EventClass(inDir));
     std::vector<TL1Turnon*> turnons;
 
@@ -48,22 +48,22 @@ void makeTurnons()
     turnons[0]->SetFit(doFit);
 
     // mht
-    turnons.emplace_back(new TL1Turnon());
-    turnons[1]->SetSeeds({0.,50.,70.,100.,130.,150.});
-    turnons[1]->SetXBins(mhtBins());
-    turnons[1]->SetX("mht","Offline H_{T}^{miss} (GeV)");
-    turnons[1]->SetSeed("l1Mht","L1 MHT");
-    turnons[1]->SetOutName(triggerName+"_recalcMht_l1MhtSeeds");
-    turnons[1]->SetFit(doFit);
+    // turnons.emplace_back(new TL1Turnon());
+    // turnons[1]->SetSeeds({0.,50.,70.,100.,130.,150.});
+    // turnons[1]->SetXBins(mhtBins());
+    // turnons[1]->SetX("mht","Offline H_{T}^{miss} (GeV)");
+    // turnons[1]->SetSeed("l1Mht","L1 MHT");
+    // turnons[1]->SetOutName(triggerName+"_recalcMht_l1MhtSeeds");
+    // turnons[1]->SetFit(doFit);
 
     // caloEttBE
-    turnons.emplace_back(new TL1Turnon());
-    turnons[2]->SetSeeds({0.,40.,60.,100.,150.});
-    turnons[2]->SetXBins(ettBins());
-    turnons[2]->SetX("caloEttBE","Offline Total E_{T} (GeV)");
-    turnons[2]->SetSeed("l1ett","L1 ETT");
-    turnons[2]->SetOutName(triggerName+"_caloEttBE_l1EttSeeds");
-    turnons[2]->SetFit(doFit);
+    // turnons.emplace_back(new TL1Turnon());
+    // turnons[2]->SetSeeds({0.,40.,60.,100.,150.});
+    // turnons[2]->SetXBins(ettBins());
+    // turnons[2]->SetX("caloEttBE","Offline Total E_{T} (GeV)");
+    // turnons[2]->SetSeed("l1ett","L1 ETT");
+    // turnons[2]->SetOutName(triggerName+"_caloEttBE_l1EttSeeds");
+    // turnons[2]->SetFit(doFit);
 
     // htt
     turnons.emplace_back(new TL1Turnon());

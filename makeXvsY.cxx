@@ -29,9 +29,9 @@ void makeXvsY()
     std::vector<int> puBins = {0,13,20,999};
 
     std::vector<std::string> inDir;
-    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276242/");
-    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276243/");
-    // inDir.push_back("");
+    // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276242/");
+    // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276243/");
+    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276315/");
     // inDir.push_back("");             
     TL1EventClass * event(new TL1EventClass(inDir));
 
@@ -55,20 +55,20 @@ void makeXvsY()
     xvsy[1]->SetOutName(triggerName+"_recoMht_vs_l1Mht");
 
     // caloEttBE
-    xvsy.emplace_back(new TL1XvsY());
-    xvsy[2]->SetXBins(bins(600.0,10,0.0));
-    xvsy[2]->SetX("recoEtt","Offline Total E_{T} (GeV)");
-    xvsy[2]->SetYBins(bins(600.0,10,0.0));
-    xvsy[2]->SetY("l1Ett","L1 Total E_{T}");
-    xvsy[2]->SetOutName(triggerName+"_recoEtt_vs_l1Ett");
+    // xvsy.emplace_back(new TL1XvsY());
+    // xvsy[2]->SetXBins(bins(600.0,10,0.0));
+    // xvsy[2]->SetX("recoEtt","Offline Total E_{T} (GeV)");
+    // xvsy[2]->SetYBins(bins(600.0,10,0.0));
+    // xvsy[2]->SetY("l1Ett","L1 Total E_{T}");
+    // xvsy[2]->SetOutName(triggerName+"_recoEtt_vs_l1Ett");
 
     // htt
-    xvsy.emplace_back(new TL1XvsY());
-    xvsy[3]->SetXBins(bins(600.0,1.0,0.0));
-    xvsy[3]->SetX("recohtt","Offline Total H_{T} (GeV)");
-    xvsy[3]->SetYBins(bins(600.0,1.0,0.0));
-    xvsy[3]->SetY("l1Htt","L1 Total H_{T}");
-    xvsy[3]->SetOutName(triggerName+"_htt_vs_l1Htt");
+    // xvsy.emplace_back(new TL1XvsY());
+    // xvsy[3]->SetXBins(bins(600.0,1.0,0.0));
+    // xvsy[3]->SetX("recohtt","Offline Total H_{T} (GeV)");
+    // xvsy[3]->SetYBins(bins(600.0,1.0,0.0));
+    // xvsy[3]->SetY("l1Htt","L1 Total H_{T}");
+    // xvsy[3]->SetOutName(triggerName+"_htt_vs_l1Htt");
     
     // caloMetBE Phi
     xvsy.emplace_back(new TL1XvsY());

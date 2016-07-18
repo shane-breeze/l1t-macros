@@ -27,34 +27,33 @@ void makeJetTurnons()
     std::vector<int> puBins = {0,13,20,999};
 
     std::vector<std::string> inDir;
-    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276242/");
-    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276243/");
-    // inDir.push_back("");
-    // inDir.push_back("");          
+    // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276242/");
+    // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276243/");
+    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276315/");    
     TL1EventClass * event(new TL1EventClass(inDir));
 
     std::vector<TL1Turnon*> turnons;
 
     // Jet Et - barrel
-    turnons.emplace_back(new TL1Turnon());
-    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/TurnonsJets/";
-    turnons[0]->SetSeeds({0., 36., 68., 128., 200.});
-    turnons[0]->SetXBins(bins());
-    turnons[0]->SetX("recoJetEt","Offline Jet E_{T} (GeV)");
-    turnons[0]->SetSeed("l1JetEt","L1 Jet E_{T}");
-    turnons[0]->SetOutName(triggerName+"_recoJetEt_l1JetEtSeeds_barrel");
-    turnons[0]->SetFit(doFit);
-    turnons[0]->SetAddMark("|#eta| < 1.479");
+    // turnons.emplace_back(new TL1Turnon());
+    // std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/TurnonsJets/";
+    // turnons[0]->SetSeeds({0., 36., 68., 128., 200.});
+    // turnons[0]->SetXBins(bins());
+    // turnons[0]->SetX("recoJetEt","Offline Jet E_{T} (GeV)");
+    // turnons[0]->SetSeed("l1JetEt","L1 Jet E_{T}");
+    // turnons[0]->SetOutName(triggerName+"_recoJetEt_l1JetEtSeeds_barrel");
+    // turnons[0]->SetFit(doFit);
+    // turnons[0]->SetAddMark("|#eta| < 1.479");
 
     // Jet Et - end cap
-    turnons.emplace_back(new TL1Turnon());
-    turnons[1]->SetSeeds({0., 36., 68., 128., 200.});
-    turnons[1]->SetXBins(bins());
-    turnons[1]->SetX("recoJetEt","Offline Jet E_{T} (GeV)");
-    turnons[1]->SetSeed("l1JetEt","L1 Jet E_{T}");
-    turnons[1]->SetOutName(triggerName+"_recoJetEt_l1JetEtSeeds_endcap");
-    turnons[1]->SetFit(doFit);
-    turnons[1]->SetAddMark("1.479 < |#eta| < 3.0");
+    // turnons.emplace_back(new TL1Turnon());
+    // turnons[1]->SetSeeds({0., 36., 68., 128., 200.});
+    // turnons[1]->SetXBins(bins());
+    // turnons[1]->SetX("recoJetEt","Offline Jet E_{T} (GeV)");
+    // turnons[1]->SetSeed("l1JetEt","L1 Jet E_{T}");
+    // turnons[1]->SetOutName(triggerName+"_recoJetEt_l1JetEtSeeds_endcap");
+    // turnons[1]->SetFit(doFit);
+    // turnons[1]->SetAddMark("1.479 < |#eta| < 3.0");
 
     // Jet Et - barrel + endcap
     turnons.emplace_back(new TL1Turnon());

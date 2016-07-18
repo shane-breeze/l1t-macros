@@ -27,30 +27,30 @@ void makeJetResolutions()
     std::vector<int> puBins = {0,13,20,999};
 
     std::vector<std::string> inDir;
-    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276242/");
-    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276243/");
-    // inDir.push_back("");
+    // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276242/");
+    // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276243/");
+    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276315/");
     // inDir.push_back("");        
     TL1EventClass * event(new TL1EventClass(inDir));
 
     std::vector<TL1Resolution*> resolution;
 
     // Jet Et - barrel
-    resolution.emplace_back(new TL1Resolution());
-    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/resJets/";
-    resolution[0]->SetBins(bins());
-    resolution[0]->SetX("jetEt","Offline Jet E_{T}");
-    resolution[0]->SetY("l1JetEt","L1 Jet E_{T})");
-    resolution[0]->SetOutName(triggerName+"_jetEt_over_l1JetEt_barrel");
-    resolution[0]->SetAddMark("#splitline{Offline Jet E_{T} > 30 GeV}{|#eta| < 1.479}");
+    // resolution.emplace_back(new TL1Resolution());
+    // std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/resJets/";
+    // resolution[0]->SetBins(bins());
+    // resolution[0]->SetX("jetEt","Offline Jet E_{T}");
+    // resolution[0]->SetY("l1JetEt","L1 Jet E_{T})");
+    // resolution[0]->SetOutName(triggerName+"_jetEt_over_l1JetEt_barrel");
+    // resolution[0]->SetAddMark("#splitline{Offline Jet E_{T} > 30 GeV}{|#eta| < 1.479}");
 
     // Jet Et - end-cap
-    resolution.emplace_back(new TL1Resolution());
-    resolution[1]->SetBins(bins());
-    resolution[1]->SetX("jetEt","Offline Jet E_{T}");
-    resolution[1]->SetY("l1JetEt","L1 Jet E_{T}");
-    resolution[1]->SetOutName(triggerName+"_jetEt_over_l1JetEt_endcap");
-    resolution[1]->SetAddMark("#splitline{Offline Jet E_{T} > 30 GeV}{1.479 < |#eta| < 3.0}");
+    // resolution.emplace_back(new TL1Resolution());
+    // resolution[1]->SetBins(bins());
+    // resolution[1]->SetX("jetEt","Offline Jet E_{T}");
+    // resolution[1]->SetY("l1JetEt","L1 Jet E_{T}");
+    // resolution[1]->SetOutName(triggerName+"_jetEt_over_l1JetEt_endcap");
+    // resolution[1]->SetAddMark("#splitline{Offline Jet E_{T} > 30 GeV}{1.479 < |#eta| < 3.0}");
 
     // Jet Et - barrel + end-cap
     resolution.emplace_back(new TL1Resolution());
@@ -69,20 +69,20 @@ void makeJetResolutions()
     resolution[3]->SetAddMark("#splitline{E_{T}^{offline} > 30 GeV}{|#eta_{jet}^{offline}| > 3.0}");
 
     // Jet phi - barrel
-    resolution.emplace_back(new TL1Resolution());
-    resolution[4]->SetBins(bins());
-    resolution[4]->SetX("jetPhi","#phi_{jet}^{offline}");
-    resolution[4]->SetY("l1JetPhi","#phi_{jet}^{L1}");
-    resolution[4]->SetOutName(triggerName+"_jetPhi_over_l1JetPhi_barrel");
-    resolution[4]->SetAddMark("#splitline{E_{T}^{offline} > 30 GeV}{|#eta| < 1.479}");
+    // resolution.emplace_back(new TL1Resolution());
+    // resolution[4]->SetBins(bins());
+    // resolution[4]->SetX("jetPhi","#phi_{jet}^{offline}");
+    // resolution[4]->SetY("l1JetPhi","#phi_{jet}^{L1}");
+    // resolution[4]->SetOutName(triggerName+"_jetPhi_over_l1JetPhi_barrel");
+    // resolution[4]->SetAddMark("#splitline{E_{T}^{offline} > 30 GeV}{|#eta| < 1.479}");
 
-    // Jet Phi - endcap
-    resolution.emplace_back(new TL1Resolution());
-    resolution[5]->SetBins(bins());
-    resolution[5]->SetX("jetPhi","Offline Jet Phi");
-    resolution[5]->SetY("l1JetPhi","L1 Jet Phi");
-    resolution[5]->SetOutName(triggerName+"_jetPhi_over_l1JetPhi_endcap");
-    resolution[5]->SetAddMark("#splitline{Offline Jet E_{T} > 30 GeV}{1.479 < |#eta| < 3.0}");
+    // // Jet Phi - endcap
+    // resolution.emplace_back(new TL1Resolution());
+    // resolution[5]->SetBins(bins());
+    // resolution[5]->SetX("jetPhi","Offline Jet Phi");
+    // resolution[5]->SetY("l1JetPhi","L1 Jet Phi");
+    // resolution[5]->SetOutName(triggerName+"_jetPhi_over_l1JetPhi_endcap");
+    // resolution[5]->SetAddMark("#splitline{Offline Jet E_{T} > 30 GeV}{1.479 < |#eta| < 3.0}");
 
     // Jet Phi - barrel + endcap
     resolution.emplace_back(new TL1Resolution());

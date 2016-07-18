@@ -30,32 +30,32 @@ void makeJetXvsY()
     std::vector<int> puBins = {0,13,20,999};
 
     std::vector<std::string> inDir;
-    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276242/");
-    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276243/");
-    // inDir.push_back("");
+    // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276242/");
+    // inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276243/");
+    inDir.push_back("/hdfs/user/jt15104/copiesFromEOS/singleMuon2016_v70p1/run276315/");
     // inDir.push_back("");             
     TL1EventClass * event(new TL1EventClass(inDir));
 
     std::vector<TL1XvsY*> xvsy;
 
     // Jet Et - barrel
-    xvsy.emplace_back(new TL1XvsY());
-    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/xyJets/";
-    xvsy[0]->SetXBins(bins(300.0));
-    xvsy[0]->SetX("jetEt","Offline Jet E_{T} (GeV)");
-    xvsy[0]->SetYBins(bins(300.0));
-    xvsy[0]->SetY("l1JetEt","L1 Jet E_{T} (GeV)");
-    xvsy[0]->SetOutName(triggerName+"_jetEt_vs_l1JetEt_barrel");
-    xvsy[0]->SetAddMark("|#eta| < 1.479");
+    // xvsy.emplace_back(new TL1XvsY());
+    // std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/xyJets/";
+    // xvsy[0]->SetXBins(bins(300.0));
+    // xvsy[0]->SetX("jetEt","Offline Jet E_{T} (GeV)");
+    // xvsy[0]->SetYBins(bins(300.0));
+    // xvsy[0]->SetY("l1JetEt","L1 Jet E_{T} (GeV)");
+    // xvsy[0]->SetOutName(triggerName+"_jetEt_vs_l1JetEt_barrel");
+    // xvsy[0]->SetAddMark("|#eta| < 1.479");
 
     // Jet Et - end-cap
-    xvsy.emplace_back(new TL1XvsY());
-    xvsy[1]->SetXBins(bins(300.0));
-    xvsy[1]->SetX("jetEt","Offline Jet E_{T} (GeV)");
-    xvsy[1]->SetYBins(bins(300.0));
-    xvsy[1]->SetY("l1JetEt","L1 Jet E_{T} (GeV)");
-    xvsy[1]->SetOutName(triggerName+"_jetEt_vs_l1JetEt_endcap");
-    xvsy[1]->SetAddMark("1.479 < |#eta| < 3.0");
+    // xvsy.emplace_back(new TL1XvsY());
+    // xvsy[1]->SetXBins(bins(300.0));
+    // xvsy[1]->SetX("jetEt","Offline Jet E_{T} (GeV)");
+    // xvsy[1]->SetYBins(bins(300.0));
+    // xvsy[1]->SetY("l1JetEt","L1 Jet E_{T} (GeV)");
+    // xvsy[1]->SetOutName(triggerName+"_jetEt_vs_l1JetEt_endcap");
+    // xvsy[1]->SetAddMark("1.479 < |#eta| < 3.0");
     
     // Jet Et - barrel end-cap
     xvsy.emplace_back(new TL1XvsY());
@@ -76,22 +76,22 @@ void makeJetXvsY()
     xvsy[3]->SetAddMark("|#eta| > 3.0");
 
     // Jet phi - barrel
-    xvsy.emplace_back(new TL1XvsY());
-    xvsy[4]->SetXBins(phiBins());
-    xvsy[4]->SetX("jetPhi","Offline Jet Phi");
-    xvsy[4]->SetYBins(phiBins());
-    xvsy[4]->SetY("l1JetPhi","L1 Jet Phi");
-    xvsy[4]->SetOutName(triggerName+"_jetPhi_vs_l1JetPhi_barrel");
-    xvsy[4]->SetAddMark("|#eta| < 1.479");
+    // xvsy.emplace_back(new TL1XvsY());
+    // xvsy[4]->SetXBins(phiBins());
+    // xvsy[4]->SetX("jetPhi","Offline Jet Phi");
+    // xvsy[4]->SetYBins(phiBins());
+    // xvsy[4]->SetY("l1JetPhi","L1 Jet Phi");
+    // xvsy[4]->SetOutName(triggerName+"_jetPhi_vs_l1JetPhi_barrel");
+    // xvsy[4]->SetAddMark("|#eta| < 1.479");
 
     // Jet Phi - endcap
-    xvsy.emplace_back(new TL1XvsY());
-    xvsy[5]->SetXBins(phiBins());
-    xvsy[5]->SetX("jetPhi","Offline Jet Phi");
-    xvsy[5]->SetYBins(phiBins());
-    xvsy[5]->SetY("l1JetPhi","L1 Jet Phi");
-    xvsy[5]->SetOutName(triggerName+"_jetPhi_vs_l1JetPhi_endcap");
-    xvsy[5]->SetAddMark("1.479 < |#eta| < 3.0");
+    // xvsy.emplace_back(new TL1XvsY());
+    // xvsy[5]->SetXBins(phiBins());
+    // xvsy[5]->SetX("jetPhi","Offline Jet Phi");
+    // xvsy[5]->SetYBins(phiBins());
+    // xvsy[5]->SetY("l1JetPhi","L1 Jet Phi");
+    // xvsy[5]->SetOutName(triggerName+"_jetPhi_vs_l1JetPhi_endcap");
+    // xvsy[5]->SetAddMark("1.479 < |#eta| < 3.0");
 
     // Jet Phi - barrel endcap
     xvsy.emplace_back(new TL1XvsY());
