@@ -118,7 +118,7 @@ void makeResolutions()
 
         // MHT
         //double recalcRecoMht = event->fRecalcRecoMht;
-        //double l1Mht = event->fL1Mht;
+        double l1Mht = event->fL1Mht;
         //if( recalcRecoMht > 0.2 && l1Mht > 0.2 )
         //    resolution[1]->Fill(recalcRecoMht, l1Mht, pu);
 
