@@ -60,11 +60,11 @@ void TL1XvsY::InitPlots()
 
 void TL1XvsY::Fill(const double & xVal, const double & yVal, const int & pu=0)
 {
-    fPlot[0]->Fill(xVal,yVal);
+    fPlot[0]->Fill(xVal,yVal,this->GetPuWeights());
     for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
     {
         if( pu >= this->GetPuBins()[ipu] && pu < this->GetPuBins()[ipu+1] )
-            fPlot[ipu+1]->Fill(xVal,yVal);
+            fPlot[ipu+1]->Fill(xVal,yVal,this->GetPuWeights());
     }
 }
 

@@ -68,11 +68,11 @@ void TL1Resolution::InitPlots()
 void TL1Resolution::Fill(const double & xVal, const double & yVal, const int & pu=0)
 {
     double div = GetFillVal(xVal, yVal);
-    fPlot[0]->Fill(div);
+    fPlot[0]->Fill(div,this->GetPuWeight(pu));
     for(int i=0; i<this->GetPuType().size(); ++i)
     {
         if( pu >= this->GetPuBins()[i] && pu < this->GetPuBins()[i+1] )
-            fPlot[i+1]->Fill(div);
+            fPlot[i+1]->Fill(div,this->GetPuWeight(pu));
     }
 }
 

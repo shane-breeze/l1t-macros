@@ -22,8 +22,11 @@ class TL1Plots
         virtual void SetAddMark(const std::string & addMark);
         virtual void SetPuType(const std::vector<std::string> & puType);
         virtual void SetPuBins(const std::vector<int> & puBins);
+        virtual void SetPuFileName(const std::string & puFileName);
         void SetColor(TH1 * plot, int pos, int max);
         void SetColor(TGraph * graph, int pos, int max);
+
+        double GetPuWeight(int pu);
 
     protected:
         std::string GetSampleName() const;
@@ -90,6 +93,11 @@ void TL1Plots::SetPuBins(const std::vector<int> & puBins)
     fPuBins = puBins;
 }
 
+void TL1Plots::SetPuFileName(const std::string & puFileName)
+{
+    fPuFileName = puFileName;
+}
+
 void TL1Plots::SetColor(TH1 * plot, int pos, int max)
 {
     double modifier(0.15), colorIndex;
@@ -121,6 +129,15 @@ void TL1Plots::SetColor(TGraph * graph, int pos, int max)
     graph->SetLineColor(colour);
     graph->SetMarkerColor(colour);
     graph->SetFillColor(colour);
+}
+
+double TL1Plots::GetPuWeight(int pu)
+{
+    if( this->GetSampleName() == "Data" || pu <= 0 ) return 1.0;
+    TFile * puFile(new TFile(fPuFileName.c_str(),"READ"));
+    TH1F * puWeights = (TH1F*)puFile->Get("puRatio");
+    int bin(puWeights->GetXaxis()->FindFixBin(pu));
+    return puFile->GetBinContent(bin);
 }
 
 std::string TL1Plots::GetSampleName() const
