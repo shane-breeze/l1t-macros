@@ -21,7 +21,7 @@ void makeTurnons()
 
     // Basic
     std::string sampleName = "HInv";
-    std::string sampleTitle = "H #rightarrow Inv";
+    std::string sampleTitle = "VBF H #rightarrow Inv";
     std::string triggerName = "";
     std::string triggerTitle = "";
     std::string puFilename = "/afs/cern.ch/work/s/sbreeze/l1tClasses/PUWeights/20160719_Data-SingleMu-2016Bv1_VBFHinv/pu_mcReweightedToData.root";
@@ -29,8 +29,8 @@ void makeTurnons()
     std::string run = "";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
     bool doFit = false;
-    //std::vector<std::string> puType = {"0PU12","13PU19","20PU"}; // Check the pu distribution to decide the relevant binning (for 2016 data these should be good)
-    //std::vector<int> puBins = {0,13,20,999};
+    std::vector<std::string> puType = {"0PU12","13PU19","20PU"}; // Check the pu distribution to decide the relevant binning (for 2016 data these should be good)
+    std::vector<int> puBins = {0,13,20,999};
 
     std::vector<std::string> inDir;
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples");
@@ -54,42 +54,33 @@ void makeTurnons()
     turnons[0]->SetOutName(triggerName+"_caloMetBE_l1EmuMetBESeeds");
     turnons[0]->SetFit(doFit);
 
-    // mht
-    // turnons.emplace_back(new TL1Turnon());
-    // turnons[1]->SetSeeds({0.,50.,70.,100.,130.,150.});
-    // turnons[1]->SetXBins(mhtBins());
-    // turnons[1]->SetX("mht","Offline H_{T}^{miss} (GeV)");
-    // turnons[1]->SetSeed("l1Mht","L1 MHT");
-    // turnons[1]->SetOutName(triggerName+"_recalcMht_l1MhtSeeds");
-    // turnons[1]->SetFit(doFit);
-
-    // caloEttBE
-    // turnons.emplace_back(new TL1Turnon());
-    // turnons[2]->SetSeeds({0.,40.,60.,100.,150.});
-    // turnons[2]->SetXBins(ettBins());
-    // turnons[2]->SetX("caloEttBE","Offline Total E_{T} (GeV)");
-    // turnons[2]->SetSeed("l1ett","L1 ETT");
-    // turnons[2]->SetOutName(triggerName+"_caloEttBE_l1EttSeeds");
-    // turnons[2]->SetFit(doFit);
-
-    // htt
+    // caloMetHF and l1MetBE seeds
     turnons.emplace_back(new TL1Turnon());
-    turnons[1]->SetSeeds({0.,120.,160.,200.,240.,280.});
-    turnons[1]->SetXBins(httBins());
-    turnons[1]->SetX("recoHtt","Offline Total H_{T} (GeV)");
-    turnons[1]->SetSeed("l1Htt","L1 HTT");
-    turnons[1]->SetOutName(triggerName+"_recoHtt_l1HttSeeds");
+    turnons[1]->SetSeeds({0.,40.,60.,80.,100.,120.});
+    turnons[1]->SetXBins(metBins());
+    turnons[1]->SetX("caloMetHF","Offline E_{T}^{miss} HF (GeV)");
+    turnons[1]->SetSeed("l1EmuMetBESeed","L1 MET BE");
+    turnons[1]->SetOutName(triggerName+"_caloMetHF_l1EmuMetBESeeds");
     turnons[1]->SetFit(doFit);
-    
+
+    // caloMetHF and l1MetHF seeds
+    turnons.emplace_back(new TL1Turnon());
+    turnons[2]->SetSeeds({0.,40.,60.,80.,100.,120.});
+    turnons[2]->SetXBins(metBins());
+    turnons[2]->SetX("caloMetHF","Offline E_{T}^{miss} HF (GeV)");
+    turnons[2]->SetSeed("l1EmuMetHFSeed","L1 MET HF");
+    turnons[2]->SetOutName(triggerName+"_caloMetHF_l1EmuMetHFSeeds");
+    turnons[2]->SetFit(doFit);
+
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)
     {
         (*it)->SetSample(sampleName,sampleTitle);
         (*it)->SetTrigger(triggerName,triggerTitle);
         (*it)->SetRun(run);
         (*it)->SetOutDir(outDir);
-        //(*it)->SetPuType(puType);
-        //(*it)->SetPuBins(puBins);
-        //(*it)->SetPuFileName(puFilename);
+        (*it)->SetPuType(puType);
+        (*it)->SetPuBins(puBins);
+        (*it)->SetPuFileName(puFilename);
         (*it)->InitPlots();
     }
 
@@ -99,23 +90,25 @@ void makeTurnons()
         unsigned position = event->GetPEvent()->GetPosition()+1;
         TL1Progress::PrintProgressBar(position, NEntries);
 
-        //int pu = event->GetPEvent()->fVertex->nVtx;
+        if( triggerName == "SingleMu" )
+            if( !event->fMuonFilterPassFlag ) 
+                continue;
+        
+        int pu = event->GetPEvent()->fVertex->nVtx;
         auto sums = event->GetPEvent()->fSums;
 
-        //----- MHT -----//
-        //turnons[1]->Fill(event->GetPEvent()->fSums->mHt, event->fL1Mht, pu);
-
-        //----- HTT -----//
-        turnons[1]->Fill(event->GetPEvent()->fSums->Ht, event->fL1Htt);
-
-        //if( !event->fMuonFilterPassFlag ) continue;
+        double l1EmuMetBE = event->fL1EmuMet;
+        double l1EmuMetHF = event->fL1EmuMetHF;
+        double caloMetBE = sums->caloMetBE;
+        double caloMetHF = sums->caloMet;
 
         //----- MET -----//
         if( event->fMetFilterPassFlag )
-            turnons[0]->Fill(sums->caloMetBE, event->fL1Met);
-
-        //----- ETT -----//
-        //turnons[2]->Fill(event->GetPEvent()->fSums->caloSumEtBE, event->fL1Ett, pu);
+        {
+            turnons[0]->Fill(caloMetBE, l1EmuMetBE);
+            turnons[1]->Fill(caloMetHF, l1EmuMetBE);
+            turnons[2]->Fill(caloMetHF, l1EmuMetHF);
+        }
     }
 
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)
@@ -133,11 +126,11 @@ vector<double> metBins()
 
     //for(double binLowerEdge=  0.0; binLowerEdge< 200.1; binLowerEdge+= 2.0) temp.push_back(binLowerEdge);
 
-    for(double binLowerEdge=  0.0; binLowerEdge< 40.0; binLowerEdge+= 2.0) temp.push_back(binLowerEdge);
-    for(double binLowerEdge= 40.0; binLowerEdge< 70.0; binLowerEdge+= 5.0) temp.push_back(binLowerEdge);
-    for(double binLowerEdge= 70.0; binLowerEdge<100.0; binLowerEdge+=10.0) temp.push_back(binLowerEdge);
-    for(double binLowerEdge=100.0; binLowerEdge<160.0; binLowerEdge+=20.0) temp.push_back(binLowerEdge);
-    for(double binLowerEdge=160.0; binLowerEdge<200.1; binLowerEdge+=40.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge=  0.0; binLowerEdge< 40.0; binLowerEdge+= 4.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge= 40.0; binLowerEdge< 70.0; binLowerEdge+= 2.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge= 70.0; binLowerEdge<100.0; binLowerEdge+= 5.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge=100.0; binLowerEdge<160.0; binLowerEdge+=10.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge=160.0; binLowerEdge<260.1; binLowerEdge+=20.0) temp.push_back(binLowerEdge);
 
     return temp;
 }
