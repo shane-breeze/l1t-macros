@@ -172,19 +172,6 @@ void TL1Resolution::SetPlotType(const std::string & plotType)
     fPlotType = plotType;
 }
 
-void TL1Resolution::SetColor(TH1F * plot, float fraction, int index)
-{
-    double modifier(0.15), colorIndex;
-    int colour(1);
-    if( fraction >= 0.0 )
-    {
-        colorIndex = (fraction * (1.0-2.0*modifier) + modifier) * gStyle->GetNumberOfColors();
-        colour = gStyle->GetColorPalette(colorIndex);
-    }
-    plot->SetLineColor(colour);
-    plot->SetMarkerColor(colour);
-}
-
 void TL1Resolution::DrawCmsStamp(std::string stampPos="Left")
 {
     TLatex * latex(new TLatex());
