@@ -86,12 +86,12 @@ void TL1Turnon::Fill(const double & xVal, const double & seedVal, const int & pu
     for(unsigned i=0; i<fSeeds.size(); ++i)
     {
         if( !(seedVal >= fSeeds[i]) ) break;
-        fPlots[i][0]->Fill(xVal,this->GetPuWeights(pu));
+        fPlots[i][0]->Fill(xVal,this->GetPuWeight(pu));
 
         for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
         {
             if( pu >= this->GetPuBins()[ipu] && pu < this->GetPuBins()[ipu+1] )
-                fPlots[i][ipu+1]->Fill(xVal,this->GetPuWeights());
+                fPlots[i][ipu+1]->Fill(xVal,this->GetPuWeight(pu));
         }
     }
 }

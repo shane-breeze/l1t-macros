@@ -47,6 +47,7 @@ class TL1Plots
         std::string fAddMark;
         std::vector<std::string> fPuType;
         std::vector<int> fPuBins;
+        std::string fPuFileName;
 
 };
 
@@ -137,7 +138,7 @@ double TL1Plots::GetPuWeight(int pu)
     TFile * puFile(new TFile(fPuFileName.c_str(),"READ"));
     TH1F * puWeights = (TH1F*)puFile->Get("puRatio");
     int bin(puWeights->GetXaxis()->FindFixBin(pu));
-    return puFile->GetBinContent(bin);
+    return puWeights->GetBinContent(bin);
 }
 
 std::string TL1Plots::GetSampleName() const

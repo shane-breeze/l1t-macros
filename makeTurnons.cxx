@@ -24,6 +24,7 @@ void makeTurnons()
     std::string sampleTitle = "H #rightarrow Inv";
     std::string triggerName = "";
     std::string triggerTitle = "";
+    std::string puFilename = "/afs/cern.ch/work/s/sbreeze/l1tClasses/PUWeights/20160719_Data-SingleMu-2016Bv1_VBFHinv/pu_mcReweightedToData.root";
 
     std::string run = "";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
@@ -37,7 +38,7 @@ void makeTurnons()
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160602_r273450_SingleMu_l1t-int-v53p1");
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu");
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0");
-    inDir.push_back("/afs/cern.ch/work/s/sbreeze/L1NTuple_Production/20160717_Hinv125GeV/Ntuples");
+    inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160718_MC_VBFHinv125GeV_l1t-int-70p2");
 
     //std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Turnons/";
     std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_MC_"+sampleName+"/Turnons/";
@@ -88,6 +89,7 @@ void makeTurnons()
         (*it)->SetOutDir(outDir);
         //(*it)->SetPuType(puType);
         //(*it)->SetPuBins(puBins);
+        //(*it)->SetPuFileName(puFilename);
         (*it)->InitPlots();
     }
 
