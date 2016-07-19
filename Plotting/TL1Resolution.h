@@ -22,17 +22,14 @@ class TL1Resolution : public TL1Plots
         virtual void Fill(const double & xVal, const double & yVal, const int & pu=0);
         virtual void DrawPlots();
 
-        void RelFill(const double & xVal, const double & yVal, const int & pu, const std::vector<double> & relVals);
-        void DrawRelPlots();
-        TH1F GetRelHist(const int & i, const int & j);
-
         void SetBins(const std::vector<double> & bins);
         void SetX(const std::string & xName, const std::string & xTitle);
         void SetY(const std::string & yName, const std::string & yTitle);
+        void SetPlotType(const std::string & plotType);
         void DrawCmsStamp(std::string stampPos="Left");
 
-        void AddRelBins(const std::vector<double> & bins);
-        void AddRelTitle(const std::string & name, const std::string & title);
+        std::string GetXAxisTitle() const;
+        double GetFillVal(const double & xVal, const double & yVal) const;
 
     private:
         std::vector<TH1F*> fPlot;
@@ -42,9 +39,7 @@ class TL1Resolution : public TL1Plots
         std::string fYName, fYTitle;
         std::vector<double> fBins;
 
-        std::vector<std::vector<TH2F*>> fRelPlot;
-        std::vector<std::vector<double>> fRelBins;
-        std::vector<std::string> fRelTitles, fRelNames;
+        std::string fPlotType;
 
 };
 
@@ -57,69 +52,27 @@ void TL1Resolution::InitPlots()
 {
     fRootFile = new TFile(Form("%s/res_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
 
-    fPlot.emplace_back(new TH1F(Form("res_diff_%s_%s",fXName.c_str(),fYName.c_str()),"", fBins.size()-1,&(fBins)[0]));
+    fPlot.emplace_back(new TH1F(Form("res_%s_%s_%s",fPlotType.c_str(),fXName.c_str(),fYName.c_str()),"", fBins.size()-1,&(fBins)[0]));
     fPlot.back()->SetDirectory(0);
-    //fPlot.back()->GetXaxis()->SetTitle(Form("(%s - %s)/%s",fYTitle.c_str(),fXTitle.c_str(),fXTitle.c_str()));
-    fPlot.back()->GetXaxis()->SetTitle(Form("%s - %s",fYTitle.c_str(),fXTitle.c_str()));
+    fPlot.back()->GetXaxis()->SetTitle(GetXAxisTitle().c_str());
     fPlot.back()->GetYaxis()->SetTitle("a.u.");
     for(int i=0; i<this->GetPuType().size(); ++i)
     {
-        fPlot.emplace_back(new TH1F(Form("res_diff_%s_%s_%s",fXName.c_str(),fYName.c_str(),this->GetPuType()[i].c_str()),"", fBins.size()-1,&(fBins)[0]));
+        fPlot.emplace_back(new TH1F(Form("res_%s_%s__%s%s",fPlotType.c_str(),fXName.c_str(),fYName.c_str(),this->GetPuType()[i].c_str()),"", fBins.size()-1,&(fBins)[0]));
         fPlot.back()->SetDirectory(0);
-        //fPlot.back()->GetXaxis()->SetTitle(Form("(%s - %s)/%s",fYTitle.c_str(),fXTitle.c_str(),fXTitle.c_str()));
-        fPlot.back()->GetXaxis()->SetTitle(Form("%s - %s",fYTitle.c_str(),fXTitle.c_str()));
+        fPlot.back()->GetXaxis()->SetTitle(GetXAxisTitle().c_str());
         fPlot.back()->GetYaxis()->SetTitle("a.u.");
     }
-
-    for(int i=0; i<fRelTitles.size(); ++i)
-    {
-        std::vector<TH2F*> temp;
-        temp.emplace_back(new TH2F(Form("relRes_%s_over_%s_vs_%s",fXName.c_str(),fYName.c_str(),fRelTitles[i].c_str()),"", fBins.size()-1,&(fBins)[0], fRelBins[0].size()-1,&(fRelBins[0])[0]));
-        temp.back()->SetDirectory(0);
-        temp.back()->GetXaxis()->SetTitle(fRelTitles[i].c_str());
-        temp.back()->GetYaxis()->SetTitle(Form("%s / %s",fYTitle.c_str(),fXTitle.c_str()));
-
-        for(int j=0; j<this->GetPuType().size(); ++j)
-        {
-            temp.emplace_back(new TH2F(Form("relRes_%s_over_%s_vs_%s_%s",fXName.c_str(),fYName.c_str(),fRelTitles[i].c_str(),this->GetPuType()[j].c_str()),"", fBins.size()-1,&(fBins)[0], fRelBins[i].size()-1,&(fRelBins[i])[0]));
-            temp.back()->SetDirectory(0);
-            temp.back()->GetXaxis()->SetTitle(fRelTitles[i].c_str());
-            temp.back()->GetYaxis()->SetTitle(Form("%s / %s",fYTitle.c_str(),fXTitle.c_str()));
-        }
-        fRelPlot.push_back(temp);
-    }
-
 }
 
 void TL1Resolution::Fill(const double & xVal, const double & yVal, const int & pu=0)
 {
-    double div = 0.0;
-    //if( xVal != 0.0 ) div = (yVal-xVal)/xVal;
-    div = yVal-xVal;
+    double div = GetFillVal(xVal, yVal);
     fPlot[0]->Fill(div);
     for(int i=0; i<this->GetPuType().size(); ++i)
     {
         if( pu >= this->GetPuBins()[i] && pu < this->GetPuBins()[i+1] )
             fPlot[i+1]->Fill(div);
-    }
-}
-
-void TL1Resolution::RelFill(const double & xVal, const double & yVal, const int & pu, const std::vector<double> & relVals)
-{
-    return;
-    double div = 0.0;
-    if( xVal != 0.0 ) div = yVal/xVal;
-    if( relVals.size() != fRelTitles.size() )
-        std::cerr << "ERROR: Size of relVals is not equal to the size of fRelTitles" << std::endl;
-
-    for(int i=0; i<fRelTitles.size(); ++i)
-    {
-        fRelPlot[i][0]->Fill(relVals[i],div);
-        for(int j=0; j<this->GetPuType().size(); ++j)
-        {
-            if( pu >= this->GetPuBins()[j] && pu < this->GetPuBins()[j+1] )
-                fRelPlot[i][j+1]->Fill(relVals[i],div);
-        }
     }
 }
 
@@ -195,116 +148,6 @@ void TL1Resolution::DrawPlots()
 
     outName = Form("%s/res_%s_puBins.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str());
     can2->SaveAs(outName.c_str());
-
-//    DrawRelPlots();
-}
-
-void TL1Resolution::DrawRelPlots()
-{
-    for(int i=0; i<fRelTitles.size(); ++i)
-    {
-        TCanvas * can = new TCanvas(Form("relResC3_%i",i),"relResC3");
-
-        TH1F * relHist0 = new TH1F(GetRelHist(i,0));
-        relHist0->GetXaxis()->SetTitle(fRelTitles[i].c_str());
-        relHist0->GetYaxis()->SetTitle(Form("%s resolution",fYTitle.c_str()));
-        relHist0->SetLineColor(kBlue-4);
-        relHist0->SetMarkerColor(kBlue-4);
-
-        for(int bin=1; bin<=relHist0->GetNbinsX(); ++bin)
-        {
-            double binWidth = relHist0->GetBinWidth(bin);
-            double binCenter = relHist0->GetBinCenter(bin);
-            double binContent = relHist0->GetBinContent(bin);
-            TLine * line2 = new TLine();
-            line2->SetLineColor(relHist0->GetLineColor());
-            line2->DrawLine(binCenter-0.5*binWidth,binContent,binCenter+0.5*binWidth,binContent);
-        }
-
-        relHist0->Draw("pe");
-        fRootFile->WriteTObject(relHist0);
-        DrawCmsStamp("Right");
-
-        std::string outName = Form("%s/relRes_%s_vs_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str(),fRelNames[i].c_str());
-        can->SaveAs(outName.c_str());
-
-        TCanvas * can2(new TCanvas(Form("relResC4_%i",i),"relResC4"));
-        TLegend * leg(new TLegend(0.65,0.6,0.9,0.5+0.08*this->GetPuType().size(),this->GetAddMark().c_str()));
-        THStack * hs(new THStack(Form("stack_%s",relHist0->GetName()),"hs"));
-        hs->GetXaxis()->SetTitle(fRelTitles[i].c_str());
-        hs->GetYaxis()->SetTitle(Form("%s resolution",fYTitle.c_str()));
-        for(int j=0; j<this->GetPuType().size(); ++j)
-        {
-            TH1F * relHist = new TH1F(GetRelHist(i,j+1));
-            relHist->SetMaximum(1.2*relHist->GetMaximum());
-            relHist->GetXaxis()->SetTitle(fRelTitles[i].c_str());
-            relHist->GetYaxis()->SetTitle(Form("%s resolution",fYTitle.c_str()));
-            this->SetColor(relHist, j, this->GetPuType().size());
-            hs->Add(relHist);
-
-            //if( j==0 ) relHist->Draw("pe1");
-            //else relHist->Draw("pe1same");
-
-            //for(int bin=1; bin<=relHist->GetNbinsX(); ++bin)
-            //{
-            //    double binWidth = relHist->GetBinWidth(bin);
-            //    double binCenter = relHist->GetBinCenter(bin);
-            //    double binContent = relHist->GetBinContent(bin);
-            //    TLine * line2 = new TLine();
-            //    line2->SetLineColor(relHist->GetLineColor());
-            //    line2->DrawLine(binCenter-0.5*binWidth,binContent,binCenter+0.5*binWidth,binContent);
-            //}
-
-            fRootFile->WriteTObject(relHist);
-
-            std::stringstream entryName;
-            if( j<this->GetPuType().size()-1 ) entryName << this->GetPuBins()[j] << " #leq PU < " << this->GetPuBins()[j+1];
-            else entryName << this->GetPuBins()[j] << " #leq PU";
-            leg->AddEntry(relHist,entryName.str().c_str());
-            entryName.str("");
-        }
-        hs->Draw("penostack");
-        //TIter next(hs->GetHists());
-        //while( TH1F * hist = (TH1F*)next() )
-        //{
-        //    for(int bin=1; bin<=hist->GetNbinsX(); ++bin)
-        //    {
-        //        double binWidth = hist->GetBinWidth(bin);
-        //        double binCenter = hist->GetBinCenter(bin);
-        //        double binContent = hist->GetBinContent(bin);
-        //        TLine * line2 = new TLine();
-        //        line2->SetLineColor(hist->GetLineColor());
-        //        line2->DrawLine(binCenter-0.5*binWidth,binContent,binCenter+0.5*binWidth,binContent);
-        //    }
-        //}
-
-        DrawCmsStamp("Right");
-        leg->Draw();
-        
-        outName = Form("%s/relRes_%s_vs_%s_puBins.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str(),fRelNames[i].c_str());
-        can2->SaveAs(outName.c_str());
-    }
-}
-
-TH1F TL1Resolution::GetRelHist(const int & i, const int & j)
-{
-    TH1F relHist(Form("relHist_%s",fRelPlot[i][j]->GetName()),"", fRelBins[i].size()-1,&(fRelBins[i])[0]);
-    TH1F hMean(Form("relHistMean_%s",fRelPlot[i][j]->GetName()),"", fRelBins[i].size()-1,&(fRelBins[i])[0]);
-    TH1F hRms(Form("relHistRms_%s",fRelPlot[i][j]->GetName()),"", fRelBins[i].size()-1,&(fRelBins[i])[0]);
-    for(int k=1; k<=fRelPlot[i][j]->GetNbinsX(); ++k)
-    {
-        double mean = TMath::Abs(fRelPlot[i][j]->ProjectionY("_py",k,k)->GetMean());
-        double meanErr = fRelPlot[i][j]->ProjectionY("_py",k,k)->GetMeanError();
-        hMean.SetBinContent(k,mean);
-        hMean.SetBinError(k,meanErr);
-
-        double rms = fRelPlot[i][j]->ProjectionY("_py",k,k)->GetRMS();
-        double rmsErr = fRelPlot[i][j]->ProjectionY("_py",k,k)->GetRMSError();
-        hRms.SetBinContent(k,rms);
-        hRms.SetBinError(k,rmsErr);
-    }
-    relHist.Divide(&hRms,&hMean);
-    return relHist;
 }
 
 void TL1Resolution::SetBins(const std::vector<double> & bins)
@@ -322,6 +165,24 @@ void TL1Resolution::SetY(const std::string & yName, const std::string & yTitle)
 {
     fYName = yName;
     fYTitle = yTitle;
+}
+
+void TL1Resolution::SetPlotType(const std::string & plotType)
+{
+    fPlotType = plotType;
+}
+
+void TL1Resolution::SetColor(TH1F * plot, float fraction, int index)
+{
+    double modifier(0.15), colorIndex;
+    int colour(1);
+    if( fraction >= 0.0 )
+    {
+        colorIndex = (fraction * (1.0-2.0*modifier) + modifier) * gStyle->GetNumberOfColors();
+        colour = gStyle->GetColorPalette(colorIndex);
+    }
+    plot->SetLineColor(colour);
+    plot->SetMarkerColor(colour);
 }
 
 void TL1Resolution::DrawCmsStamp(std::string stampPos="Left")
@@ -360,15 +221,27 @@ void TL1Resolution::DrawCmsStamp(std::string stampPos="Left")
 
 }
 
-void TL1Resolution::AddRelBins(const std::vector<double> & bins)
+std::string TL1Resolution::GetXAxisTitle() const
 {
-    fRelBins.push_back(bins);
+    std::string temp("");
+    if( fPlotType == "Energy" ) temp = Form("(%s - %s)/%s",fYTitle.c_str(),fXTitle.c_str(),fXTitle.c_str());
+    else if( fPlotType == "Position" ) temp = Form("%s - %s",fYTitle.c_str(),fXTitle.c_str());
+    return temp;
 }
 
-void TL1Resolution::AddRelTitle(const std::string & name, const std::string & title)
+double TL1Resolution::GetFillVal(const double & xVal, const double & yVal) const
 {
-    fRelNames.push_back(name);
-    fRelTitles.push_back(title);
+    double div(0.0);
+    if( fPlotType == "Energy" )
+    {
+        if( xVal != 0.0 )
+            div = (yVal-xVal)/xVal;
+    }
+    else if( fPlotType == "Position" )
+    {
+        div = yVal - xVal;
+    }
+    return div;
 }
 
 #endif
