@@ -13,15 +13,17 @@ std::vector<double> bins(int min, int max);
 void generatePUWeights()
 {
     TStyle * myStyle(new TStyle(TDRStyle()));
-    SetMyStyle(55, 0.1, myStyle);
+    SetMyStyle(55, 0.08, myStyle);
 
     // DATA
     std::string sampleName = "Data";
     std::string sampleTitle = "2016 Data";
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
+    //std::string run = "276243";
     std::string run = "2016Bv1";
     std::vector<std::string> inDir;
+    // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160713_r276243_SingleMu_l1t-int-71p1/");
     inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0");
 
     // MC
@@ -39,7 +41,7 @@ void generatePUWeights()
     TL1EventClass * mcEvent(new TL1EventClass(mcDir));
 
     TL1PUWeights * puWeight(new TL1PUWeights());
-    puWeight->SetBins(bins(0,100));
+    puWeight->SetBins(bins(1,100));
     
     // Start
     puWeight->SetData(sampleName,sampleTitle,triggerName,triggerTitle,run);

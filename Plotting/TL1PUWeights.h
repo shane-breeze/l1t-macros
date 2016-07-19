@@ -48,12 +48,12 @@ void TL1PUWeights::InitPlots()
     
     fPUData = new TH1F("puData","", fBins.size()-1,&(fBins)[0]);
     fPUData->SetDirectory(0);
-    fPUData->GetXaxis()->SetTitle("PU");
+    fPUData->GetXaxis()->SetTitle("Pile-up");
     fPUData->GetYaxis()->SetTitle("a.u.");
 
     fPUMC = new TH1F("puMC","", fBins.size()-1,&(fBins)[0]);
     fPUMC->SetDirectory(0);
-    fPUMC->GetXaxis()->SetTitle("PU");
+    fPUMC->GetXaxis()->SetTitle("Pile-up");
     fPUMC->GetYaxis()->SetTitle("a.u.");
 }
 
@@ -94,25 +94,30 @@ void TL1PUWeights::DrawPlots()
     }
 
     TCanvas * can(new TCanvas("c1","c1"));
-    TLegend * leg(new TLegend(0.58,0.7,0.88,0.85));
+    TLegend * leg(new TLegend(0.56,0.7,0.86,0.85));
 
     double max(fPUMC->GetMaximum());
     double max2(fPUData->GetMaximum());
     double max3(mcReweighted->GetMaximum());
     if( max < max2 ) max = max2;
     if( max < max3 ) max = max3;
-    fPUMC->SetMaximum(max);
-    fPUData->SetMaximum(max);
-    mcReweighted->SetMaximum(max);
+    fPUMC->SetMaximum(1.1*max);
+    fPUData->SetMaximum(1.1*max);
+    mcReweighted->SetMaximum(1.1*max);
 
+    fPUMC->SetMarkerStyle(0);
     fPUMC->SetLineColor(kBlue-7);
+    fPUMC->SetMarkerColor(kBlue-7);
     fPUMC->DrawCopy("hist");
     leg->AddEntry(fPUMC,"MC");
 
+    mcReweighted->SetMarkerStyle(0);
     mcReweighted->SetLineColor(kRed-7);
+    mcReweighted->SetMarkerColor(kRed-7);
     mcReweighted->DrawCopy("histsame");
     leg->AddEntry(mcReweighted,"MC Reweighted");
 
+    fPUData->SetLineColor(0);
     fPUData->DrawCopy("psame");
     leg->AddEntry(fPUData,"Data");
 
@@ -128,7 +133,7 @@ void TL1PUWeights::DrawCmsStamp()
     TLatex * latex(new TLatex());
     latex->SetNDC();
     latex->SetTextFont(42);
-    latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Preliminary}");
+    latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Preliminary+Simulation}");
     latex->SetTextAlign(31);
     latex->DrawLatex(0.92,0.92,"(13 TeV)");
 }
