@@ -28,10 +28,11 @@ void makeRates()
     //std::vector<std::string> puType = {"0PU12","13PU19","20PU"};
     //std::vector<int> puBins = {0,13,20,999};
 
-    //std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0";
-    std::string inDir = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160717_r276653_ZeroBias_l1t-int-71p1";
-    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sampleName+"_"+"run-"+run+"_"+triggerName+"/rates/";
+    std::vector<std::string> inDir;
+    // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0");
+    inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160717_r276653_ZeroBias_l1t-int-71p1");
 
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sampleName+"_"+"run-"+run+"_"+triggerName+"/rates/";
     TL1EventClass * event(new TL1EventClass(inDir));
     std::vector<TL1Rates*> rates;
 

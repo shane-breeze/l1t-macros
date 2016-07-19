@@ -12,7 +12,7 @@
 class TL1EventClass
 {
     public:
-        TL1EventClass(std::string inDir);
+        TL1EventClass(std::vector<std::string> inDir);
 
         bool Next();
         void GetEntry(int i);
@@ -81,7 +81,7 @@ class TL1EventClass
 
 };
 
-TL1EventClass::TL1EventClass(std::string inDir) :
+TL1EventClass::TL1EventClass(std::vector<std::string> inDir) :
     fPrimitiveEvent(new TL1PrimitiveEventClass(inDir)),
     fMuonFilterPassFlag(true), fMetFilterPassFlag(true),
     fMhtPassFlag(true),
