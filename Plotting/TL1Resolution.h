@@ -54,12 +54,14 @@ void TL1Resolution::InitPlots()
 
     fPlot.emplace_back(new TH1F(Form("res_%s_%s_%s",fPlotType.c_str(),fXName.c_str(),fYName.c_str()),"", fBins.size()-1,&(fBins)[0]));
     fPlot.back()->SetDirectory(0);
+    fPlot.back()->Sumw2();
     fPlot.back()->GetXaxis()->SetTitle(GetXAxisTitle().c_str());
     fPlot.back()->GetYaxis()->SetTitle("a.u.");
     for(int i=0; i<this->GetPuType().size(); ++i)
     {
         fPlot.emplace_back(new TH1F(Form("res_%s_%s__%s%s",fPlotType.c_str(),fXName.c_str(),fYName.c_str(),this->GetPuType()[i].c_str()),"", fBins.size()-1,&(fBins)[0]));
         fPlot.back()->SetDirectory(0);
+        fPlot.back()->Sumw2();
         fPlot.back()->GetXaxis()->SetTitle(GetXAxisTitle().c_str());
         fPlot.back()->GetYaxis()->SetTitle("a.u.");
     }

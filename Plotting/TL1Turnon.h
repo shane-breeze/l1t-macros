@@ -63,6 +63,7 @@ void TL1Turnon::InitPlots()
         std::vector<TH1F*> temp;
         temp.emplace_back(new TH1F(Form("dist_%s_%s_%g",fXName.c_str(),fSeedName.c_str(),fSeeds[i]),"", fXBins.size()-1,&(fXBins)[0]));
         temp.back()->SetDirectory(0);
+        temp.back()->Sumw2();
         temp.back()->GetXaxis()->SetTitle(fXTitle.c_str());
         temp.back()->GetYaxis()->SetTitle("Number of Entries");
         this->SetColor(temp.back(), i, fSeeds.size());
@@ -71,6 +72,7 @@ void TL1Turnon::InitPlots()
         {
             temp.emplace_back(new TH1F(Form("dist_%s_%s_%g_%s",fXName.c_str(),fSeedName.c_str(),fSeeds[i],this->GetPuType()[ipu].c_str()),"", fXBins.size()-1,&(fXBins)[0]));
             temp.back()->SetDirectory(0);
+            temp.back()->Sumw2();
             temp.back()->GetXaxis()->SetTitle(fXTitle.c_str());
             temp.back()->GetYaxis()->SetTitle("Number of Entries");
             this->SetColor(temp.back(), ipu, this->GetPuType().size());

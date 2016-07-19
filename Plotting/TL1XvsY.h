@@ -47,12 +47,14 @@ void TL1XvsY::InitPlots()
     fRootFile = new TFile(Form("%s/xy_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
     fPlot.emplace_back(new TH2F(Form("xy_%s_vs_%s",fXName.c_str(),fYName.c_str()),"", fXBins.size()-1,&(fXBins)[0], fYBins.size()-1,&(fYBins)[0]));
     fPlot.back()->SetDirectory(0);
+    fPlot.back()->Sumw2();
     fPlot.back()->GetXaxis()->SetTitle(fXTitle.c_str());
     fPlot.back()->GetYaxis()->SetTitle(fYTitle.c_str());
     for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
     {
         fPlot.emplace_back(new TH2F(Form("xy_%s_vs_%s_%s",fXName.c_str(),fYName.c_str(), this->GetPuType()[ipu].c_str()),"", fXBins.size()-1,&(fXBins)[0], fYBins.size()-1,&(fYBins)[0]));
         fPlot.back()->SetDirectory(0);
+        fPlot.back()->Sumw2();
         fPlot.back()->GetXaxis()->SetTitle(fXTitle.c_str());
         fPlot.back()->GetYaxis()->SetTitle(fYTitle.c_str());
     }
