@@ -56,8 +56,8 @@ TL1Turnon::~TL1Turnon()
 
 void TL1Turnon::InitPlots()
 {
-    fPlotsRoot = new TFile(Form("%s/dists_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
-    fTurnonsRoot = new TFile(Form("%s/effs_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
+    fPlotsRoot = TFile::Open(Form("%s/dists_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
+    fTurnonsRoot = TFile::Open(Form("%s/effs_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
     for(unsigned i=0; i<fSeeds.size(); ++i)
     {
         std::vector<TH1F*> temp;
@@ -238,9 +238,9 @@ void TL1Turnon::DrawCmsStampTurnon()
     latex->SetNDC();
     latex->SetTextFont(42);
     if( this->GetSampleName() == "Data" )
-        latex->DrawLatex(0.15,0.92,Form("#bf{CMS} #it{Preliminary} %s",this->GetSampleTitle().c_str());
+        latex->DrawLatex(0.15,0.92,Form("#bf{CMS} #it{Preliminary} %s",this->GetSampleTitle().c_str()));
     else
-        latex->DrawLatex(0.15,0.92,Form("#bf{CMS} #it{Simulation Preliminary} %s",this->GetSampleTitle().c_str());
+        latex->DrawLatex(0.15,0.92,Form("#bf{CMS} #it{Simulation Preliminary} %s",this->GetSampleTitle().c_str()));
     latex->SetTextAlign(31);
     latex->DrawLatex(0.92,0.92,Form("%s (13 TeV)",this->GetRun().c_str()));
     latex->SetTextAlign(32);

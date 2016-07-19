@@ -44,7 +44,8 @@ void makeResolutions()
 
     // caloMetBE vs l1EmuMetBE
     resolution.emplace_back(new TL1Resolution());
-    resolution[0]->SetBins(bins());
+    resolution[0]->SetPlotType("Energy");
+    resolution[0]->SetBins(bins("Energy"));
     resolution[0]->SetX("caloMetBE","Offline E_{T}^{miss} BE");
     resolution[0]->SetY("l1EmuMetBE","L1 E_{T}^{miss} BE");
     resolution[0]->SetOutName(triggerName+"_diff_caloMetBE_l1EmuMetBE");
@@ -52,7 +53,8 @@ void makeResolutions()
 
     // caloMetHF vs l1EmuMetBE
     resolution.emplace_back(new TL1Resolution());
-    resolution[1]->SetBins(bins());
+    resolution[1]->SetPlotType("Energy");
+    resolution[1]->SetBins(bins("Energy"));
     resolution[1]->SetX("caloMetHF","Offline E_{T}^{miss} HF");
     resolution[1]->SetY("l1EmuMetBE","L1 E_{T}^{miss} BE");
     resolution[1]->SetOutName(triggerName+"_diff_caloMetHF_l1EmuMetBE");
@@ -60,7 +62,8 @@ void makeResolutions()
 
     // caloMetHF vs l1EmuMetHF
     resolution.emplace_back(new TL1Resolution());
-    resolution[2]->SetBins(bins());
+    resolution[2]->SetPlotType("Energy");
+    resolution[2]->SetBins(bins("Energy"));
     resolution[2]->SetX("caloMetHF","Offline E_{T}^{miss} HF");
     resolution[2]->SetY("l1EmuMetHF","L1 E_{T}^{miss} HF");
     resolution[2]->SetOutName(triggerName+"_diff_caloMetHF_l1EmuMetHF");
@@ -68,7 +71,8 @@ void makeResolutions()
 
     // caloMetPhiBE vs l1EmuMetPhiBE
     resolution.emplace_back(new TL1Resolution());
-    resolution[3]->SetBins(bins());
+    resolution[3]->SetPlotType("Position");
+    resolution[3]->SetBins(bins("Position"));
     resolution[3]->SetX("caloMetPhiBE","Offline E_{T}^{miss} Phi BE");
     resolution[3]->SetY("l1EmuMetPhiBE","L1 E_{T}^{miss} Phi BE");
     resolution[3]->SetOutName(triggerName+"_diff_caloMetPhiBE_l1EmuMetPhiBE");
@@ -76,7 +80,8 @@ void makeResolutions()
 
     // caloMetPhiHF vs l1EmuMetPhiBE
     resolution.emplace_back(new TL1Resolution());
-    resolution[4]->SetBins(bins());
+    resolution[4]->SetPlotType("Position");
+    resolution[4]->SetBins(bins("Position"));
     resolution[4]->SetX("caloMetPhiHF","Offline E_{T}^{miss} Phi HF");
     resolution[4]->SetY("l1EmuMetPhiBE","L1 E_{T}^{miss} Phi BE");
     resolution[4]->SetOutName(triggerName+"_diff_caloMetPhiHF_l1EmuMetPhiBE");
@@ -84,7 +89,8 @@ void makeResolutions()
 
     // caloMetPhiHF vs l1EmuMetPhiHF
     resolution.emplace_back(new TL1Resolution());
-    resolution[5]->SetBins(bins());
+    resolution[5]->SetPlotType("Position");
+    resolution[5]->SetBins(bins("Position"));
     resolution[5]->SetX("caloMetPhiHF","Offline E_{T}^{miss} Phi HF");
     resolution[5]->SetY("l1EmuMetPhiHF","L1 E_{T}^{miss} Phi HF");
     resolution[5]->SetOutName(triggerName+"_diff_caloMetPhiHF_l1EmuMetPhiHF");
@@ -98,7 +104,7 @@ void makeResolutions()
         (*it)->SetOutDir(outDir);
         (*it)->SetPuType(puType);
         (*it)->SetPuBins(puBins);
-        (*it)->SetPuFileName(puFileName);
+        (*it)->SetPuFileName(puFilename);
         (*it)->InitPlots();
     }
 

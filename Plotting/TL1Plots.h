@@ -135,7 +135,7 @@ void TL1Plots::SetColor(TGraph * graph, int pos, int max)
 double TL1Plots::GetPuWeight(int pu)
 {
     if( this->GetSampleName() == "Data" || pu <= 0 ) return 1.0;
-    TFile * puFile(new TFile(fPuFileName.c_str(),"READ"));
+    TFile * puFile = TFile::Open(fPuFileName.c_str(),"READ");
     TH1F * puWeights = (TH1F*)puFile->Get("puRatio");
     int bin(puWeights->GetXaxis()->FindFixBin(pu));
     return puWeights->GetBinContent(bin);

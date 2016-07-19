@@ -44,7 +44,7 @@ TL1PUWeights::~TL1PUWeights()
 
 void TL1PUWeights::InitPlots()
 {
-    fRootFile = new TFile(Form("%s/pu_mcReweightedToData.root",fOutDir.c_str()),"RECREATE");
+    fRootFile = TFile::Open(Form("%s/pu_mcReweightedToData.root",fOutDir.c_str()),"RECREATE");
     
     fPUData = new TH1F("puData","", fBins.size()-1,&(fBins)[0]);
     fPUData->SetDirectory(0);

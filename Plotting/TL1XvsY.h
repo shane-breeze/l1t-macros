@@ -44,7 +44,7 @@ TL1XvsY::~TL1XvsY()
 
 void TL1XvsY::InitPlots()
 {
-    fRootFile = new TFile(Form("%s/xy_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
+    fRootFile = TFile::Open(Form("%s/xy_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
     fPlot.emplace_back(new TH2F(Form("xy_%s_vs_%s",fXName.c_str(),fYName.c_str()),"", fXBins.size()-1,&(fXBins)[0], fYBins.size()-1,&(fYBins)[0]));
     fPlot.back()->SetDirectory(0);
     fPlot.back()->Sumw2();

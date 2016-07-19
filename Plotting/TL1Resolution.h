@@ -50,7 +50,7 @@ TL1Resolution::~TL1Resolution()
 
 void TL1Resolution::InitPlots()
 {
-    fRootFile = new TFile(Form("%s/res_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
+    fRootFile = TFile::Open(Form("%s/res_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
 
     fPlot.emplace_back(new TH1F(Form("res_%s_%s_%s",fPlotType.c_str(),fXName.c_str(),fYName.c_str()),"", fBins.size()-1,&(fBins)[0]));
     fPlot.back()->SetDirectory(0);
