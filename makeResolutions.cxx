@@ -22,7 +22,7 @@ void makeResolutions()
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
 
-    std::string run = "2016B_v1";
+    std::string run = "276243";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
     std::vector<std::string> puType = {"0PU12","13PU19","20PU"};
     std::vector<int> puBins = {0,13,20,999};
@@ -32,7 +32,8 @@ void makeResolutions()
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples");
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160602_r273450_SingleMu_l1t-int-v53p1");
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu");
-    inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0");
+    // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0");
+    inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160713_r276243_SingleMu_l1t-int-71p1/");
 
     std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sampleName+"_"+"run-"+run+"_"+triggerName+"/Resolutions/";
     TL1EventClass * event(new TL1EventClass(inDir));
@@ -135,6 +136,8 @@ void makeResolutions()
 
         if( !event->fMuonFilterPassFlag ) continue;
 
+        double recoMet = sums->caloMetBE;
+        double l1Met = event->fL1Met;
         double recoMetPhi = sums->caloMetPhiBE;
         double l1MetPhi = event->fL1MetPhi;
         if( event->fMetFilterPassFlag )

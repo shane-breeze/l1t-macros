@@ -37,8 +37,7 @@ void makeTurnons()
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160602_r273450_SingleMu_l1t-int-v53p1");
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu");
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0");
-    // inDir.push_back("/afs/cern.ch/work/s/sbreeze/L1NTuple_Production/20160717_Hinv125GeV/Ntuples");
-    inDir.push_back("/afs/cern.ch/work/s/sbreeze/L1NTuple_Production");
+    inDir.push_back("/afs/cern.ch/work/s/sbreeze/L1NTuple_Production/20160717_Hinv125GeV/Ntuples");
 
     //std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sample+"_"+"run-"+run+"_"+triggerName+"/Turnons/";
     std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_MC_"+sampleName+"/Turnons/";
@@ -105,13 +104,13 @@ void makeTurnons()
         //turnons[1]->Fill(event->GetPEvent()->fSums->mHt, event->fL1Mht, pu);
 
         //----- HTT -----//
-        turnons[1]->Fill(event->GetPEvent()->fSums->Ht, event->fL1Htt, pu);
+        turnons[1]->Fill(event->GetPEvent()->fSums->Ht, event->fL1Htt);
 
         //if( !event->fMuonFilterPassFlag ) continue;
 
         //----- MET -----//
         if( event->fMetFilterPassFlag )
-            turnons[0]->Fill(sums->caloMetBE, event->fL1Met, pu);
+            turnons[0]->Fill(sums->caloMetBE, event->fL1Met);
 
         //----- ETT -----//
         //turnons[2]->Fill(event->GetPEvent()->fSums->caloSumEtBE, event->fL1Ett, pu);

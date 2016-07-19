@@ -150,7 +150,7 @@ void TL1Rates::PlotE2(TH1F * plot, bool puOn)
     if( puOn ) extra = "same";
     plot->DrawCopy(Form("E2%s",extra.c_str()));
 
-    plot->SetFillStyle(0)
+    plot->SetFillStyle(0);
     plot->SetLineColor(plot->GetLineColor()-15);
     plot->SetFillStyle(0);
     plot->SetLineWidth(2);
