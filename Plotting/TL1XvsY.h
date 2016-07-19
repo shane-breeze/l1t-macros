@@ -118,22 +118,12 @@ void TL1XvsY::DrawCmsStamp()
     latex->SetNDC();
     latex->SetTextFont(42);
     //latex->SetTextAlign(11);
-    latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Preliminary} 2016 Data");
     if( this->GetSampleName() == "Data" )
-    {
-        //latex->DrawLatex(0.18,0.80,"
-        latex->SetTextAlign(31);
-        std::string runNo = "run " + this->GetRun() + ", ";
-        //latex->DrawLatex(0.92, 0.92, Form("%s%s, #sqrt{s} = 13 TeV",runNo.c_str(),this->GetTriggerTitle().c_str()));
-        latex->DrawLatex(0.92,0.92,Form("%s (13 TeV)",this->GetRun().c_str()));
-    }
+        latex->DrawLatex(0.15,0.92,Form("#bf{CMS} #it{Preliminary} %s",this->GetSampleTitle());
     else
-    {
-        latex->DrawLatex(0.18,0.80,"#it{Simulation}");
-        latex->DrawLatex(0.18,0.75,"#it{Preliminary}");
-        latex->SetTextAlign(31);
-        latex->DrawLatex(0.92, 0.92, Form("%s, #sqrt{s} = 13 TeV",this->GetSampleTitle().c_str()));
-    }
+        latex->DrawLatex(0.15,0.92,Form("#bf{CMS} #it{Simulation Preliminary} %s",this->GetSampleTitle());
+    latex->SetTextAlign(31);
+    latex->DrawLatex(0.92,0.92,Form("%s (13 TeV)",this->GetRun().c_str()));
     latex->SetTextAlign(32);
     latex->DrawLatex(0.82,0.25,this->GetAddMark().c_str());
 

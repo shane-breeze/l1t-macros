@@ -26,7 +26,7 @@ class TL1Resolution : public TL1Plots
         void SetX(const std::string & xName, const std::string & xTitle);
         void SetY(const std::string & yName, const std::string & yTitle);
         void SetPlotType(const std::string & plotType);
-        void DrawCmsStamp(std::string stampPos="Left");
+        void DrawCmsStamp();
 
         std::string GetXAxisTitle() const;
         double GetFillVal(const double & xVal, const double & yVal) const;
@@ -174,40 +174,19 @@ void TL1Resolution::SetPlotType(const std::string & plotType)
     fPlotType = plotType;
 }
 
-void TL1Resolution::DrawCmsStamp(std::string stampPos="Left")
+void TL1Resolution::DrawCmsStamp()
 {
     TLatex * latex(new TLatex());
     latex->SetNDC();
     latex->SetTextFont(42);
-    if( stampPos == "Left" )
-    {
-        latex->SetTextAlign(11);
-        latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Preliminary} 2016 Data");
-    }
-    if( stampPos == "Right" )
-    {
-        latex->SetTextAlign(32);
-        latex->DrawLatex(0.86,0.85,"#bf{CMS}");
-    }
-    if( this->GetSampleName() == "Data" )
-    {
-        //if( stampPos == "Left" ) latex->DrawLatex(0.18,0.80,"#it{Preliminary}");
-        if( stampPos == "Right" ) latex->DrawLatex(0.86,0.80,"#it{Preliminary}");
-        latex->SetTextAlign(31);
-        std::string runNo = "run " + this->GetRun() + ", ";
-        //latex->DrawLatex(0.92, 0.92, Form("%s%s, #sqrt{s} = 13 TeV",runNo.c_str(),this->GetTriggerTitle().c_str()));
-        latex->DrawLatex(0.92,0.92,Form("%s (13 TeV)",this->GetRun().c_str()));
-    }
-    else
-    {
-        latex->DrawLatex(0.18,0.80,"#it{Simulation}");
-        latex->DrawLatex(0.18,0.75,"#it{Preliminary}");
-        latex->SetTextAlign(31);
-        latex->DrawLatex(0.92, 0.92, Form("%s, #sqrt{s} = 13 TeV",this->GetSampleTitle().c_str()));
-    }
     latex->SetTextAlign(11);
-    //latex->DrawLatex(0.18,0.92,this->GetAddMark().c_str());
-
+    if( this->GetSampleName() == "Data" )
+        latex->DrawLatex(0.15,0.92,Form("#bf{CMS} #it{Preliminary} %s",this->GetSampleTitle().c_str()));
+    else
+        latex->DrawLatex(0.15,0.92,Form("#bf{CMS} #it{Simulation Preliminary} %s",this->GetSampleTitle().c_str()));
+    latex->SetTextAlign(31);
+    latex->DrawLatex(0.92,0.92,Form("%s (13 TeV)",this->GetRun().c_str()));
+    latex->DrawLatex(0.18,0.92,this->GetAddMark().c_str());
 }
 
 std::string TL1Resolution::GetXAxisTitle() const
