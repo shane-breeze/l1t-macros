@@ -104,13 +104,6 @@ void TL1Resolution::DrawPlots()
     line->SetNDC();
     line->DrawLine(0.0,0.0,0.0,can->GetUymax());
 
-    TLatex * latex(new TLatex());
-    latex->SetNDC();
-    latex->SetTextFont(42);
-    latex->SetTextAlign(31);
-    //latex->DrawLatex(0.9,0.7,Form("#splitline{%s}{<PU>=14}",this->GetAddMark().c_str()));
-    latex->DrawLatex(0.9,0.7,Form("%s",this->GetAddMark().c_str()));
-
     std::string outName = Form("%s/res_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str());
     can->SaveAs(outName.c_str());
 
@@ -141,7 +134,6 @@ void TL1Resolution::DrawPlots()
         entryName.str("");
     }
     DrawCmsStamp();
-    latex->DrawLatex(0.9,0.8,this->GetAddMark().c_str());
     leg->Draw();
     can2->Update();
     line->DrawLine(0.0,0.0,0.0,can2->GetUymax());
@@ -184,7 +176,7 @@ void TL1Resolution::DrawCmsStamp()
         latex->DrawLatex(0.15,0.92,Form("#bf{CMS} #it{Simulation Preliminary} %s",this->GetSampleTitle().c_str()));
     latex->SetTextAlign(31);
     latex->DrawLatex(0.92,0.92,Form("%s (13 TeV)",this->GetRun().c_str()));
-    latex->DrawLatex(0.18,0.92,this->GetAddMark().c_str());
+    latex->DrawLatex(0.9,0.8,this->GetAddMark().c_str());
 }
 
 std::string TL1Resolution::GetXAxisTitle() const

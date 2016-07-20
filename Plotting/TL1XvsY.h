@@ -114,9 +114,9 @@ void TL1XvsY::DrawCmsStamp()
     latex->SetTextFont(42);
     //latex->SetTextAlign(11);
     if( this->GetSampleName() == "Data" )
-        latex->DrawLatex(0.15,0.92,Form("#bf{CMS} #it{Preliminary} %s",this->GetSampleTitle());
+        latex->DrawLatex(0.15,0.92,Form("#bf{CMS} #it{Preliminary} %s",this->GetSampleTitle().c_str()));
     else
-        latex->DrawLatex(0.15,0.92,Form("#bf{CMS} #it{Simulation Preliminary} %s",this->GetSampleTitle());
+        latex->DrawLatex(0.15,0.92,Form("#bf{CMS} #it{Simulation Preliminary} %s",this->GetSampleTitle().c_str()));
     latex->SetTextAlign(31);
     latex->DrawLatex(0.92,0.92,Form("%s (13 TeV)",this->GetRun().c_str()));
     latex->SetTextAlign(32);

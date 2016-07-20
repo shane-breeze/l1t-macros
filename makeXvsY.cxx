@@ -39,7 +39,7 @@ void makeXvsY()
     inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160718_MC_VBFHinv125GeV_l1t-int-70p2");
 
     //std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sampleName+"_"+"run-"+run+"_"+triggerName+"/xy/";
-    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_MC_"+sampleName+"/Turnons/";
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_MC_"+sampleName+"/xy/";
     TL1EventClass * event(new TL1EventClass(inDir));
     std::vector<TL1XvsY*> xvsy;
 
