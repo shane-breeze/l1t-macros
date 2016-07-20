@@ -48,29 +48,25 @@ class TL1Turnon : public TL1Plots
         bool fDoFit;
 };
 
-TL1Turnon::~TL1Turnon()
-{
-    fPlotsRoot->Close();
-    fTurnonsRoot->Close();
-}
-
 void TL1Turnon::InitPlots()
 {
-    fPlotsRoot = new TFile(Form("%s/dists_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
-    fTurnonsRoot = new TFile(Form("%s/effs_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
+    fPlotsRoot = TFile::Open(Form("%s/dists_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
+    fTurnonsRoot = TFile::Open(Form("%s/effs_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
     for(unsigned i=0; i<fSeeds.size(); ++i)
     {
         std::vector<TH1F*> temp;
         temp.emplace_back(new TH1F(Form("dist_%s_%s_%g",fXName.c_str(),fSeedName.c_str(),fSeeds[i]),"", fXBins.size()-1,&(fXBins)[0]));
         temp.back()->SetDirectory(0);
+        temp.back()->Sumw2();
         temp.back()->GetXaxis()->SetTitle(fXTitle.c_str());
         temp.back()->GetYaxis()->SetTitle("Number of Entries");
-        this->SetColor(temp.back(), i, fSeeds.size());
+        this->SetColor(temp.back(), i-1, fSeeds.size()-1);
 
         for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
         {
             temp.emplace_back(new TH1F(Form("dist_%s_%s_%g_%s",fXName.c_str(),fSeedName.c_str(),fSeeds[i],this->GetPuType()[ipu].c_str()),"", fXBins.size()-1,&(fXBins)[0]));
             temp.back()->SetDirectory(0);
+            temp.back()->Sumw2();
             temp.back()->GetXaxis()->SetTitle(fXTitle.c_str());
             temp.back()->GetYaxis()->SetTitle("Number of Entries");
             this->SetColor(temp.back(), ipu, this->GetPuType().size());
@@ -84,12 +80,12 @@ void TL1Turnon::Fill(const double & xVal, const double & seedVal, const int & pu
     for(unsigned i=0; i<fSeeds.size(); ++i)
     {
         if( !(seedVal >= fSeeds[i]) ) break;
-        fPlots[i][0]->Fill(xVal);
+        fPlots[i][0]->Fill(xVal,this->GetPuWeight(pu));
 
         for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
         {
             if( pu >= this->GetPuBins()[ipu] && pu < this->GetPuBins()[ipu+1] )
-                fPlots[i][ipu+1]->Fill(xVal);
+                fPlots[i][ipu+1]->Fill(xVal,this->GetPuWeight(pu));
         }
     }
 }
@@ -236,17 +232,11 @@ void TL1Turnon::DrawCmsStampTurnon()
     latex->SetNDC();
     latex->SetTextFont(42);
     if( this->GetSampleName() == "Data" )
-    {
-        latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Preliminary} 2016 Data");
-        latex->SetTextAlign(31);
-        latex->DrawLatex(0.92,0.92,Form("%s (13 TeV)",this->GetRun().c_str()));
-    }
+        latex->DrawLatex(0.15,0.92,Form("#bf{CMS} #it{Preliminary} %s",this->GetSampleTitle().c_str()));
     else
-    {
-        latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation Preliminary}");
-        latex->SetTextAlign(31);
-        latex->DrawLatex(0.92,0.92,Form("%s (13 TeV)",this->GetSampleName().c_str()));
-    }
+        latex->DrawLatex(0.15,0.92,Form("#bf{CMS} #it{Simulation Preliminary} %s",this->GetSampleTitle().c_str()));
+    latex->SetTextAlign(31);
+    latex->DrawLatex(0.92,0.92,Form("%s (13 TeV)",this->GetRun().c_str()));
     latex->SetTextAlign(32);
     latex->DrawLatex(0.82,0.25,this->GetAddMark().c_str());
 

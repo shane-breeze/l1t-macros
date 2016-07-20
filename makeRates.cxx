@@ -22,6 +22,7 @@ void makeRates()
     //std::string triggerTitle = "Single Muon";
     std::string triggerName = "ZeroBias";
     std::string triggerTitle = "Zero Bias";
+    std::string puFilename = "/afs/cern.ch/work/s/sbreeze/l1tClasses/PUWeights/20160719_Data-SingleMu-2016Bv1_VBFHinv/pu_mcReweightedToData.root";
 
     std::string run = "276653";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
@@ -56,6 +57,7 @@ void makeRates()
         (*it)->SetOutDir(outDir);
         //(*it)->SetPuType(puType);
         //(*it)->SetPuBins(puBins);
+        //(*it)->SetPuFile(puFilename);
         (*it)->InitPlots();
     }
 

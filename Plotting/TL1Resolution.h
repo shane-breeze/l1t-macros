@@ -26,7 +26,7 @@ class TL1Resolution : public TL1Plots
         void SetX(const std::string & xName, const std::string & xTitle);
         void SetY(const std::string & yName, const std::string & yTitle);
         void SetPlotType(const std::string & plotType);
-        void DrawCmsStamp(std::string stampPos="Left");
+        void DrawCmsStamp();
 
         std::string GetXAxisTitle() const;
         double GetFillVal(const double & xVal, const double & yVal) const;
@@ -45,21 +45,23 @@ class TL1Resolution : public TL1Plots
 
 TL1Resolution::~TL1Resolution()
 {
-    fRootFile->Close();
+    delete fRootFile;
 }
 
 void TL1Resolution::InitPlots()
 {
-    fRootFile = new TFile(Form("%s/res_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
+    fRootFile = TFile::Open(Form("%s/res_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
 
     fPlot.emplace_back(new TH1F(Form("res_%s_%s_%s",fPlotType.c_str(),fXName.c_str(),fYName.c_str()),"", fBins.size()-1,&(fBins)[0]));
     fPlot.back()->SetDirectory(0);
+    fPlot.back()->Sumw2();
     fPlot.back()->GetXaxis()->SetTitle(GetXAxisTitle().c_str());
     fPlot.back()->GetYaxis()->SetTitle("a.u.");
     for(int i=0; i<this->GetPuType().size(); ++i)
     {
         fPlot.emplace_back(new TH1F(Form("res_%s_%s__%s%s",fPlotType.c_str(),fXName.c_str(),fYName.c_str(),this->GetPuType()[i].c_str()),"", fBins.size()-1,&(fBins)[0]));
         fPlot.back()->SetDirectory(0);
+        fPlot.back()->Sumw2();
         fPlot.back()->GetXaxis()->SetTitle(GetXAxisTitle().c_str());
         fPlot.back()->GetYaxis()->SetTitle("a.u.");
     }
@@ -68,11 +70,11 @@ void TL1Resolution::InitPlots()
 void TL1Resolution::Fill(const double & xVal, const double & yVal, const int & pu=0)
 {
     double div = GetFillVal(xVal, yVal);
-    fPlot[0]->Fill(div);
+    fPlot[0]->Fill(div,this->GetPuWeight(pu));
     for(int i=0; i<this->GetPuType().size(); ++i)
     {
         if( pu >= this->GetPuBins()[i] && pu < this->GetPuBins()[i+1] )
-            fPlot[i+1]->Fill(div);
+            fPlot[i+1]->Fill(div,this->GetPuWeight(pu));
     }
 }
 
@@ -82,7 +84,6 @@ void TL1Resolution::DrawPlots()
 
     fPlot[0]->SetLineColor(kBlue-4);
     fPlot[0]->SetMarkerColor(kBlue-4);
-    fPlot[0]->Sumw2();
     fPlot[0]->Scale(1./fPlot[0]->Integral());
     fPlot[0]->SetMinimum(0.0);
     fPlot[0]->Draw("pe");
@@ -103,13 +104,6 @@ void TL1Resolution::DrawPlots()
     line->SetNDC();
     line->DrawLine(0.0,0.0,0.0,can->GetUymax());
 
-    TLatex * latex(new TLatex());
-    latex->SetNDC();
-    latex->SetTextFont(42);
-    latex->SetTextAlign(31);
-    //latex->DrawLatex(0.9,0.7,Form("#splitline{%s}{<PU>=14}",this->GetAddMark().c_str()));
-    latex->DrawLatex(0.9,0.7,Form("%s",this->GetAddMark().c_str()));
-
     std::string outName = Form("%s/res_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str());
     can->SaveAs(outName.c_str());
 
@@ -118,7 +112,6 @@ void TL1Resolution::DrawPlots()
     for(int i=0; i<this->GetPuType().size(); ++i)
     {
         this->SetColor(fPlot[i+1], i, this->GetPuType().size());
-        fPlot[i+1]->Sumw2();
         fPlot[i+1]->Scale(1./fPlot[i+1]->Integral());
         fPlot[i+1]->SetMinimum(0.0);
         fPlot[i+1]->SetMaximum(1.1*fPlot[i+1]->GetMaximum());
@@ -141,7 +134,6 @@ void TL1Resolution::DrawPlots()
         entryName.str("");
     }
     DrawCmsStamp();
-    latex->DrawLatex(0.9,0.8,this->GetAddMark().c_str());
     leg->Draw();
     can2->Update();
     line->DrawLine(0.0,0.0,0.0,can2->GetUymax());
@@ -172,40 +164,19 @@ void TL1Resolution::SetPlotType(const std::string & plotType)
     fPlotType = plotType;
 }
 
-void TL1Resolution::DrawCmsStamp(std::string stampPos="Left")
+void TL1Resolution::DrawCmsStamp()
 {
     TLatex * latex(new TLatex());
     latex->SetNDC();
     latex->SetTextFont(42);
-    if( stampPos == "Left" )
-    {
-        latex->SetTextAlign(11);
-        latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Preliminary} 2016 Data");
-    }
-    if( stampPos == "Right" )
-    {
-        latex->SetTextAlign(32);
-        latex->DrawLatex(0.86,0.85,"#bf{CMS}");
-    }
-    if( this->GetSampleName() == "Data" )
-    {
-        //if( stampPos == "Left" ) latex->DrawLatex(0.18,0.80,"#it{Preliminary}");
-        if( stampPos == "Right" ) latex->DrawLatex(0.86,0.80,"#it{Preliminary}");
-        latex->SetTextAlign(31);
-        std::string runNo = "run " + this->GetRun() + ", ";
-        //latex->DrawLatex(0.92, 0.92, Form("%s%s, #sqrt{s} = 13 TeV",runNo.c_str(),this->GetTriggerTitle().c_str()));
-        latex->DrawLatex(0.92,0.92,Form("%s (13 TeV)",this->GetRun().c_str()));
-    }
-    else
-    {
-        latex->DrawLatex(0.18,0.80,"#it{Simulation}");
-        latex->DrawLatex(0.18,0.75,"#it{Preliminary}");
-        latex->SetTextAlign(31);
-        latex->DrawLatex(0.92, 0.92, Form("%s, #sqrt{s} = 13 TeV",this->GetSampleTitle().c_str()));
-    }
     latex->SetTextAlign(11);
-    //latex->DrawLatex(0.18,0.92,this->GetAddMark().c_str());
-
+    if( this->GetSampleName() == "Data" )
+        latex->DrawLatex(0.15,0.92,Form("#bf{CMS} #it{Preliminary} %s",this->GetSampleTitle().c_str()));
+    else
+        latex->DrawLatex(0.15,0.92,Form("#bf{CMS} #it{Simulation Preliminary} %s",this->GetSampleTitle().c_str()));
+    latex->SetTextAlign(31);
+    latex->DrawLatex(0.92,0.92,Form("%s (13 TeV)",this->GetRun().c_str()));
+    latex->DrawLatex(0.9,0.8,this->GetAddMark().c_str());
 }
 
 std::string TL1Resolution::GetXAxisTitle() const

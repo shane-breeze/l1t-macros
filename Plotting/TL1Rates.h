@@ -38,14 +38,9 @@ class TL1Rates : public TL1Plots
 
 };
 
-TL1Rates::~TL1Rates()
-{
-    fRootFile->Close();
-}
-
 void TL1Rates::InitPlots()
 {
-    fRootFile = new TFile(Form("%s/rates_%s.root", this->GetOutDir().c_str(), this->GetOutName().c_str()), "RECREATE");
+    fRootFile = TFile::Open(Form("%s/rates_%s.root", this->GetOutDir().c_str(), this->GetOutName().c_str()), "RECREATE");
     fPlot.emplace_back(new TH1F(Form("rates_%s",fXName.c_str()),"", fXBins.size()-1,&(fXBins)[0]));
     fPlot.back()->Sumw2();
     fPlot.back()->SetDirectory(0);
@@ -63,11 +58,11 @@ void TL1Rates::InitPlots()
 
 void TL1Rates::Fill(const double & xVal, const double & yVal, const int & pu=0)
 {
-    fPlot[0]->Fill(xVal);
+    fPlot[0]->Fill(xVal,this->GetPuWeight(pu));
     for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
     {
         if( pu >= this->GetPuBins()[ipu] && pu < this->GetPuBins()[ipu+1] )
-            fPlot[ipu+1]->Fill(xVal);
+            fPlot[ipu+1]->Fill(xVal,this->GetPuWeight(pu));
     }
 }
 

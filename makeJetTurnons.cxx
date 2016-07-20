@@ -20,6 +20,7 @@ void makeJetTurnons()
     std::string sampleTitle = "2016 Data";
     std::string triggerName = "SingleMu";
     std::string triggerTitle = "Single Muon";
+    std::string puFilename = "/afs/cern.ch/work/s/sbreeze/l1tClasses/PUWeights/20160719_Data-SingleMu-2016Bv1_VBFHinv/pu_mcReweightedToData.root";
 
     std::string run = "276243";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
@@ -87,6 +88,7 @@ void makeJetTurnons()
         (*it)->SetOutDir(outDir);
         (*it)->SetPuType(puType);
         (*it)->SetPuBins(puBins);
+        (*it)->SetPuFile(puFilename);
         (*it)->InitPlots();
     }
 
