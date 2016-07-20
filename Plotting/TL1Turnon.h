@@ -48,12 +48,6 @@ class TL1Turnon : public TL1Plots
         bool fDoFit;
 };
 
-TL1Turnon::~TL1Turnon()
-{
-    fPlotsRoot->Close();
-    fTurnonsRoot->Close();
-}
-
 void TL1Turnon::InitPlots()
 {
     fPlotsRoot = TFile::Open(Form("%s/dists_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");

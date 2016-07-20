@@ -38,11 +38,6 @@ class TL1Rates : public TL1Plots
 
 };
 
-TL1Rates::~TL1Rates()
-{
-    fRootFile->Close();
-}
-
 void TL1Rates::InitPlots()
 {
     fRootFile = TFile::Open(Form("%s/rates_%s.root", this->GetOutDir().c_str(), this->GetOutName().c_str()), "RECREATE");

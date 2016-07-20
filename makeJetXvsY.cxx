@@ -130,7 +130,7 @@ void makeJetXvsY()
         (*it)->SetOutDir(outDir);
         (*it)->SetPuType(puType);
         (*it)->SetPuBins(puBins);
-        (*it)->SetPuFileName(puFilename);
+        (*it)->SetPuFile(puFilename);
         (*it)->InitPlots();
     }
 

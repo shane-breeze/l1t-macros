@@ -13,6 +13,8 @@ double FoldPhi(double phi);
 
 void makeResolutions()
 {
+    TH1::AddDirectory(false);
+
     TStyle * myStyle(new TStyle(TDRStyle()));
     SetMyStyle(55, 0.07, myStyle);
 
@@ -104,7 +106,7 @@ void makeResolutions()
         (*it)->SetOutDir(outDir);
         (*it)->SetPuType(puType);
         (*it)->SetPuBins(puBins);
-        (*it)->SetPuFileName(puFilename);
+        (*it)->SetPuFile(puFilename);
         (*it)->InitPlots();
     }
 

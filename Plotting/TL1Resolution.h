@@ -45,7 +45,7 @@ class TL1Resolution : public TL1Plots
 
 TL1Resolution::~TL1Resolution()
 {
-    fRootFile->Close();
+    delete fRootFile;
 }
 
 void TL1Resolution::InitPlots()
@@ -84,7 +84,6 @@ void TL1Resolution::DrawPlots()
 
     fPlot[0]->SetLineColor(kBlue-4);
     fPlot[0]->SetMarkerColor(kBlue-4);
-    fPlot[0]->Sumw2();
     fPlot[0]->Scale(1./fPlot[0]->Integral());
     fPlot[0]->SetMinimum(0.0);
     fPlot[0]->Draw("pe");
@@ -120,7 +119,6 @@ void TL1Resolution::DrawPlots()
     for(int i=0; i<this->GetPuType().size(); ++i)
     {
         this->SetColor(fPlot[i+1], i, this->GetPuType().size());
-        fPlot[i+1]->Sumw2();
         fPlot[i+1]->Scale(1./fPlot[i+1]->Integral());
         fPlot[i+1]->SetMinimum(0.0);
         fPlot[i+1]->SetMaximum(1.1*fPlot[i+1]->GetMaximum());

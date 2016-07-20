@@ -37,11 +37,6 @@ class TL1XvsY : public TL1Plots
 
 };
 
-TL1XvsY::~TL1XvsY()
-{
-    fRootFile->Close();
-}
-
 void TL1XvsY::InitPlots()
 {
     fRootFile = TFile::Open(Form("%s/xy_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");

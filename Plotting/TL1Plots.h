@@ -10,6 +10,8 @@
 class TL1Plots
 {
     public:
+        ~TL1Plots();
+
         virtual void InitPlots() = 0;
         virtual void Fill(const double & xVal, const double & yVal, const int & pu=0) = 0;
         virtual void DrawPlots() = 0;
@@ -22,7 +24,7 @@ class TL1Plots
         virtual void SetAddMark(const std::string & addMark);
         virtual void SetPuType(const std::vector<std::string> & puType);
         virtual void SetPuBins(const std::vector<int> & puBins);
-        virtual void SetPuFileName(const std::string & puFileName);
+        virtual void SetPuFile(const std::string & puFileName);
         void SetColor(TH1 * plot, int pos, int max);
         void SetColor(TGraph * graph, int pos, int max);
 
@@ -41,15 +43,21 @@ class TL1Plots
         std::vector<int> GetPuBins() const;
 
     private:
+        TH1F * fPuWeights;
+
         std::string fSampleName, fTriggerName, fRun;
         std::string fSampleTitle, fTriggerTitle;
         std::string fOutName, fOutDir;
         std::string fAddMark;
         std::vector<std::string> fPuType;
         std::vector<int> fPuBins;
-        std::string fPuFileName;
 
 };
+
+TL1Plots::~TL1Plots()
+{
+    delete fPuWeights;
+}
 
 void TL1Plots::SetSample(const std::string & sampleName, const std::string & sampleTitle)
 {
@@ -94,9 +102,12 @@ void TL1Plots::SetPuBins(const std::vector<int> & puBins)
     fPuBins = puBins;
 }
 
-void TL1Plots::SetPuFileName(const std::string & puFileName)
+void TL1Plots::SetPuFile(const std::string & puFileName)
 {
-    fPuFileName = puFileName;
+    TFile * fPuFile = TFile::Open(puFileName.c_str(),"READ");
+    fPuWeights = (TH1F*)fPuFile->Get("puRatio");
+    fPuWeights->SetDirectory(0);
+    delete fPuFile;
 }
 
 void TL1Plots::SetColor(TH1 * plot, int pos, int max)
@@ -135,10 +146,8 @@ void TL1Plots::SetColor(TGraph * graph, int pos, int max)
 double TL1Plots::GetPuWeight(int pu)
 {
     if( this->GetSampleName() == "Data" || pu <= 0 ) return 1.0;
-    TFile * puFile = TFile::Open(fPuFileName.c_str(),"READ");
-    TH1F * puWeights = (TH1F*)puFile->Get("puRatio");
-    int bin(puWeights->GetXaxis()->FindFixBin(pu));
-    return puWeights->GetBinContent(bin);
+    int bin(fPuWeights->GetXaxis()->FindFixBin(pu));
+    return fPuWeights->GetBinContent(bin);
 }
 
 std::string TL1Plots::GetSampleName() const
