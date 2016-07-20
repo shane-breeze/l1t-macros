@@ -68,7 +68,7 @@ void TL1Rates::Fill(const double & xVal, const double & yVal, const int & pu=0)
 
 void TL1Rates::DrawPlots()
 {
-    TCanvas * can(new TCanvas("c1","c1"));
+    TCanvas * can(new TCanvas(Form("can_%d",this->GetRnd()),""));
     TH1F * fCumulative = GetCumulative(fPlot[0]);
     
     double bin1 = fCumulative->GetBinContent(1);
@@ -87,7 +87,7 @@ void TL1Rates::DrawPlots()
 
     if( !(this->GetPuType().size() > 0) ) return;
 
-    TCanvas * can2(new TCanvas("c2","c2"));
+    TCanvas * can2(new TCanvas(Form("can_%d",this->GetRnd()),""));
     TLegend * leg2(new TLegend(0.65,0.55,0.88,0.55+0.05*this->GetPuType().size()));
     for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
     {

@@ -80,7 +80,7 @@ void TL1Resolution::Fill(const double & xVal, const double & yVal, const int & p
 
 void TL1Resolution::DrawPlots()
 {
-    TCanvas * can(new TCanvas("c1","c1")); 
+    TCanvas * can(new TCanvas(Form("can_%d",this->GetRnd()),"")); 
 
     fPlot[0]->SetLineColor(kBlue-4);
     fPlot[0]->SetMarkerColor(kBlue-4);
@@ -107,7 +107,7 @@ void TL1Resolution::DrawPlots()
     std::string outName = Form("%s/res_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str());
     can->SaveAs(outName.c_str());
 
-    TCanvas * can2(new TCanvas("c2","c2")); 
+    TCanvas * can2(new TCanvas(Form("can_%d",this->GetRnd()),"")); 
     TLegend * leg(new TLegend(0.65,0.55,0.88,0.55+0.05*this->GetPuType().size()));
     for(int i=0; i<this->GetPuType().size(); ++i)
     {
