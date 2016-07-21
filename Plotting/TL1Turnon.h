@@ -92,7 +92,7 @@ void TL1Turnon::Fill(const double & xVal, const double & seedVal, const int & pu
 
 void TL1Turnon::DrawPlots()
 {
-    TCanvas * can(new TCanvas("c1","c1")); 
+    TCanvas * can(new TCanvas(Form("can_%f",this->GetRnd()),"")); 
     TLegend * leg(new TLegend(0.58,0.35,0.88,0.55));
     for(unsigned i=0; i<fPlots.size(); ++i)
     {
@@ -151,7 +151,7 @@ void TL1Turnon::DrawCmsStamp(std::string stampPos="Left")
 
 void TL1Turnon::DrawTurnons()
 {
-    TCanvas * nomCan(new TCanvas("c1","c1"));
+    TCanvas * nomCan(new TCanvas(Form("can_%f",this->GetRnd()),"c1"));
     TLegend * nomLeg(new TLegend(0.62,0.15,0.87,0.15+0.2*(2+fSeeds.size())/5.0,this->GetAddMark().c_str()));
     for(int i=1; i<fSeeds.size(); ++i)
     {
@@ -175,7 +175,7 @@ void TL1Turnon::DrawTurnons()
         fTurnonsRoot->WriteTObject(fitTemp[0]);
         nomLeg->AddEntry(temp[0], Form("%s > %g",fSeedTitle.c_str(),fSeeds[i]));
 
-        TCanvas * puCan(new TCanvas(Form("puCan_%i",i),"puCan"));
+        TCanvas * puCan(new TCanvas(Form("puCan_%f",this->GetRnd()),""));
         TLegend * puLeg(new TLegend(0.65,0.15,0.9,0.15+0.08*this->GetPuType().size(),Form("%s > %g",fSeedTitle.c_str(),fSeeds[i])));
         for(int ipu=0; ipu<GetPuType().size(); ++ipu)
         {
@@ -249,11 +249,12 @@ void TL1Turnon::DrawCmsStampTurnon()
 
 TF1 TL1Turnon::fit(TGraphAsymmErrors * eff, int p50)
 {
-    std::string func = Form("[0]*0.5*(1+TMath::Erf((x-[1])/TMath::Sqrt([2])))");
+    //std::string func = "[0]*0.5*exp([0]*0.5*(2.0*[1]+[0]*[2]*[2]-2.0*x))*(1-TMath::Erf(([1]+[0]*[2]*[2]-x)/(sqrt(2.0)*[2]))";
+    std::string func = "[0]*0.5*exp([0]*0.5*(2.0*[1]+[0]*[2]*[2]-2.0*x))*(1-TMath::Erf([1]/(sqrt(2)*[2])+[0]*[2]/sqrt(2)-x/(sqrt(2)*[2])))";
     TF1 fitFcn(Form("fit_%s",eff->GetName()),func.c_str(),fXBins.front(),fXBins.back());
     if( fDoFit )
     {
-        fitFcn.SetParameters( 1.0000,(double)p50,150.0);
+        fitFcn.SetParameters( 1.000,150.0,(double)p50 );
         eff->Fit(fitFcn.GetName(),"E0"); 
 
         for(int i=0; i<10; ++i)

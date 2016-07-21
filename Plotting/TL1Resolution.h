@@ -80,7 +80,7 @@ void TL1Resolution::Fill(const double & xVal, const double & yVal, const int & p
 
 void TL1Resolution::DrawPlots()
 {
-    TCanvas * can(new TCanvas("c1","c1")); 
+    TCanvas * can(new TCanvas(Form("can_%f",this->GetRnd()),"")); 
 
     fPlot[0]->SetLineColor(kBlue-4);
     fPlot[0]->SetMarkerColor(kBlue-4);
@@ -106,40 +106,44 @@ void TL1Resolution::DrawPlots()
 
     std::string outName = Form("%s/res_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str());
     can->SaveAs(outName.c_str());
+    delete can;
 
-    TCanvas * can2(new TCanvas("c2","c2")); 
-    TLegend * leg(new TLegend(0.65,0.55,0.88,0.55+0.05*this->GetPuType().size()));
+    THStack * stack(new THStack("hs",""));
     for(int i=0; i<this->GetPuType().size(); ++i)
     {
         this->SetColor(fPlot[i+1], i, this->GetPuType().size());
         fPlot[i+1]->Scale(1./fPlot[i+1]->Integral());
         fPlot[i+1]->SetMinimum(0.0);
-        fPlot[i+1]->SetMaximum(1.1*fPlot[i+1]->GetMaximum());
-        if( i==0 ) fPlot[i+1]->Draw("pe");
-        else fPlot[i+1]->Draw("pesame");
-        fPlot[i+1]->Draw("histsame");
+
+        std::string entryName("");
+        if( i < this->GetPuType().size()-1 ) entryName = Form("%i #leq PU < %i",this->GetPuBins()[i],this->GetPuBins()[i+1]);
+        else entryName = Form("%i #leq PU",this->GetPuBins()[i]);
+        fPlot[i+1]->SetName(entryName.c_str());
+
+        stack->Add(fPlot[i+1],"pe");
         fRootFile->WriteTObject(fPlot[i+1]);
 
-        TF1 * fitFcn2(new TF1(Form("fit_%s",fPlot[i+1]->GetName()),"gaus(0)",-1,3));
+        //TF1 * fitFcn2(new TF1(Form("fit_%s",fPlot[i+1]->GetName()),"gaus(0)",-1,3));
         //fPlot[i+1]->Fit(fitFcn2,"E0");
         //for(int j=0; j<10; ++j) fPlot[i+1]->Fit(fitFcn2,"E0M");
-        fitFcn2->SetLineColor(fPlot[i+1]->GetLineColor());
+        //fitFcn2->SetLineColor(fPlot[i+1]->GetLineColor());
         //fitFcn2->Draw("same");
         //fRootFile->WriteTObject(fitFcn2);
-        
-        std::stringstream entryName;
-        if( i < this->GetPuType().size()-1 ) entryName << this->GetPuBins()[i] << " #leq PU < " << this->GetPuBins()[i+1];
-        else entryName << this->GetPuBins()[i] << " #leq PU";
-        leg->AddEntry(fPlot[i+1],entryName.str().c_str());
-        entryName.str("");
     }
-    DrawCmsStamp();
+
+    TCanvas * can2(new TCanvas(Form("can_%f",this->GetRnd()),"")); 
+    TLegend * leg(new TLegend(0.65,0.55,0.88,0.55+0.05*this->GetPuType().size()));
+    leg->AddEntry(stack);
+
+    stack->Draw("nostack");
     leg->Draw();
+    DrawCmsStamp();
+
     can2->Update();
     line->DrawLine(0.0,0.0,0.0,can2->GetUymax());
-
     outName = Form("%s/res_%s_puBins.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str());
     can2->SaveAs(outName.c_str());
+    delete can2;
 }
 
 void TL1Resolution::SetBins(const std::vector<double> & bins)
