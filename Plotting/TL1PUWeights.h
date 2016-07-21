@@ -48,12 +48,12 @@ void TL1PUWeights::InitPlots()
     
     fPUData = new TH1F("puData","", fBins.size()-1,&(fBins)[0]);
     fPUData->SetDirectory(0);
-    fPUData->GetXaxis()->SetTitle("Pile-up");
+    fPUData->GetXaxis()->SetTitle("nvtx");
     fPUData->GetYaxis()->SetTitle("a.u.");
 
     fPUMC = new TH1F("puMC","", fBins.size()-1,&(fBins)[0]);
     fPUMC->SetDirectory(0);
-    fPUMC->GetXaxis()->SetTitle("Pile-up");
+    fPUMC->GetXaxis()->SetTitle("nvtx");
     fPUMC->GetYaxis()->SetTitle("a.u.");
 }
 
