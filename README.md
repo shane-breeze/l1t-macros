@@ -1,4 +1,9 @@
 # l1t-macros
+I run the macros in interactive mode:
+```bash
+root -l -b -q macroname.cxx
+```
+I compared the run-time with a compilied version before with no significant difference. So for ease of use I've stuck with running them in interactive mode. The code probably won't even pass through the compiler without errors now
 
 ## Code layout
 - `Event` contains classes to read in each event from the ntuples
