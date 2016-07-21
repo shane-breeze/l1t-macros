@@ -1,5 +1,30 @@
 # l1t-macros
 
+## Code layout
+- `Event` contains classes to read in each event from the ntuples
+    * `TL1DataClass.h` is a class for each tree in the ntuples
+    * `TL1PrimitiveClass.h` allows access to all the relevant trees
+    * `TL1EventClass.h` manipulates the information from the trees. Gets all the relevant variables such as level-1 quantities, recalculations of certain variables, selection criteria, ...
+- `Plotting` is completely separate from `Event`. Contains the logic for plotting
+    * `TL1Plots.h` is the base class for all the plots and contains virtual functions to initialise the plots, Fill the plots and save the plots as pdfs. Additional parameters label the dataset, output directory, pu binning, ...
+    * `TL1*.h` for the other header files each represent a different plot type: PU weights, rates vs efficiency, rates, resolutions, turnons, xvsy scatter plots
+    * `tdrstyle.C` sets the general style used throughout
+- `Tests` contains test macros. Can be disregarded for now. Mainly for development purposes
+- `Utilities` contains macros which are helpful but not necessarily required
+    * `TL1DateTime.C` uses root's `TDatime.h` for the date in the format YearMonthDay to label output files
+    * `TL1Progress.C` prints the progress bar by taking the current event and the total number of events
+- In the main directory
+    * `DefaultPlots.md` lists the default plots created from each `*.cxx` file (may not be true in the master, but all these plots can be made)
+    * `generatePUWeights.cxx` generates a root-file containing the pu weights for MC samples. Weighted to an input data sample. Also makes a plot of the PU weights
+    * `makeJetResolutions.cxx` creates plots of (L1-Offline)/Offline [for energy] or (L1-Offline) [for position] for jets
+    * `makeJetTurnons.cxx` creates turnon plots for jets
+    * `makeJetXvsY.cxx` creates a 2D scatter plots of variable X vs variable Y for jets
+    * `makeRateEfficiency.cxx` creates a plot of the L1 Rate (calculated from `makeRates.cxx`) against the absolute efficiency (for a different sample)
+    * `makeRates.cxx` creates a plot of the rate against L1 threshold
+    * `makeResolutions.cxx` creates resolution plots for energy sums
+    * `makeTurnons.cxx` creates turnon plots for energy sums
+    * `makeXvsY.cxx` creates a 2D scatter plot of variable X vs. variable Y for energy sums
+
 ## How to make it work
 
 There are three different types of macros to produce different plots:
