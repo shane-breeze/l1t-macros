@@ -4,12 +4,14 @@
 #include <string>
 #include <stdlib.h>
 
-#include <TH1.h>
+#include <TH1F.h>
 #include <TGraph.h>
+#include <TRandom3.h>
 
 class TL1Plots
 {
     public:
+        TL1Plots();
         ~TL1Plots();
 
         virtual void InitPlots() = 0;
@@ -42,8 +44,11 @@ class TL1Plots
         std::vector<std::string> GetPuType() const;
         std::vector<int> GetPuBins() const;
 
+        double GetRnd() const;
+
     private:
         TH1F * fPuWeights;
+        TRandom3 * fRnd;
 
         std::string fSampleName, fTriggerName, fRun;
         std::string fSampleTitle, fTriggerTitle;
@@ -54,9 +59,15 @@ class TL1Plots
 
 };
 
+TL1Plots::TL1Plots() :
+    fRnd(new TRandom3())
+{
+}
+
 TL1Plots::~TL1Plots()
 {
     delete fPuWeights;
+    delete fRnd;
 }
 
 void TL1Plots::SetSample(const std::string & sampleName, const std::string & sampleTitle)
@@ -198,6 +209,11 @@ std::vector<std::string> TL1Plots::GetPuType() const
 std::vector<int> TL1Plots::GetPuBins() const
 {
     return fPuBins;
+}
+
+double TL1Plots::GetRnd() const
+{
+    return fRnd->Rndm();
 }
 
 #endif
