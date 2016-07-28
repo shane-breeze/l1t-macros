@@ -22,10 +22,13 @@ class TL1EventClass
 
         // Get L1
         double fL1Met, fL1Mht, fL1Ett, fL1Htt, fL1MetPhi, fL1MhtPhi;
+        double fL1Mex, fL1Mey;
         double fL1EmuMet, fL1EmuMht, fL1EmuEtt, fL1EmuHtt, fL1EmuMetPhi, fL1EmuMhtPhi;
+        double fL1EmuMex, fL1EmuMey;
         double fL1MetHF, fL1MhtHF, fL1EttHF, fL1HttHF, fL1MetPhiHF, fL1MhtPhiHF;
         double fL1EmuMetHF, fL1EmuMhtHF, fL1EmuEttHF, fL1EmuHttHF, fL1EmuMetPhiHF, fL1EmuMhtPhiHF;
         std::vector<double> fL1JetEt, fL1JetPhi, fL1JetEta;
+        std::vector<double> fL1EmuJetEt, fL1EmuJetPhi, fL1EmuJetEta;
 
         // Filter flags
         bool fMuonFilterPassFlag, fMetFilterPassFlag;
@@ -34,6 +37,9 @@ class TL1EventClass
         // Recalc L1 MET sums
         double fRecalcL1Met, fRecalcL1MetPhi;
         double fRecalcL1MetHF, fRecalcL1MetPhiHF;
+
+        double fRecalcL1EmuMet, fRecalcL1EmuMetPhi;
+        double fRecalcL1EmuMetHF, fRecalcL1EmuMetPhiHF;
 
         // Recalc L1 Ht/Et Sums
         double fRecalcL1Mht, fRecalcL1MhtPhi;
@@ -47,15 +53,15 @@ class TL1EventClass
         double fRecalcRecoEtt;
 
         // Jets
-        bool fIsLeadingRecoJet, fIsMatchedL1Jet;
-        int fLeadingRecoJetIndex;
-        int fMatchedL1JetIndex;
+        bool fIsLeadingRecoJet, fIsMatchedL1Jet, fIsMatchedL1EmuJet;
+        int fLeadingRecoJetIndex, fMatchedL1JetIndex, fMatchedL1EmuJetIndex;
 
     private:
         TL1PrimitiveEventClass * fPrimitiveEvent;
 
         // Get L1
         void GetL1Jets();
+        void GetL1EmuJets();
         void GetL1Sums();
         void GetL1EmuSums();
 
@@ -66,6 +72,7 @@ class TL1EventClass
 
         // Recalc L1 MET sum
         void GetRecalcL1Met();
+        void GetRecalcL1EmuMet();
 
         // Recalc L1 Ht/Et Sums
         void GetRecalcL1Mht();
@@ -77,7 +84,7 @@ class TL1EventClass
 
         // Jets
         void GetLeadingRecoJet();
-        void GetMatchedL1Jet();
+        void GetMatchedL1Jet(const std::string & l1Type);
 
 };
 
@@ -85,7 +92,7 @@ TL1EventClass::TL1EventClass(std::vector<std::string> inDir) :
     fPrimitiveEvent(new TL1PrimitiveEventClass(inDir)),
     fMuonFilterPassFlag(true), fMetFilterPassFlag(true),
     fMhtPassFlag(true),
-    fIsLeadingRecoJet(true), fIsMatchedL1Jet(true)
+    fIsLeadingRecoJet(true), fIsMatchedL1Jet(true), fIsMatchedL1EmuJet(true)
 {
 }
 
@@ -106,9 +113,11 @@ void TL1EventClass::GetDerivatives()
 {
     // L1
     bool isUpgrade = fPrimitiveEvent->fIsUpgrade;
+    bool isEmuUpgrade = fPrimitiveEvent->fIsEmuUpgrade;
     if( isUpgrade ) this->GetL1Jets();
     if( isUpgrade ) this->GetL1Sums();
-    if( fPrimitiveEvent->fIsEmuUpgrade ) this->GetL1EmuSums();
+    if( isEmuUpgrade ) this->GetL1EmuJets();
+    if( isEmuUpgrade ) this->GetL1EmuSums();
 
     // Filter
     bool isJetReco = fPrimitiveEvent->fIsJetReco;
@@ -118,6 +127,7 @@ void TL1EventClass::GetDerivatives()
 
     // Recalc
     if( fPrimitiveEvent->fIsCaloTower ) this->GetRecalcL1Met();
+    if( fPrimitiveEvent->fIsEmuCaloTower ) this->GetRecalcL1EmuMet();
     //this->GetRecalcL1Mht();
     //this->GetRecalcL1Ett();
     
@@ -126,7 +136,8 @@ void TL1EventClass::GetDerivatives()
 
     // Jets
     if( isJetReco ) this->GetLeadingRecoJet();
-    if( isJetReco ) this->GetMatchedL1Jet();
+    if( isJetReco ) this->GetMatchedL1Jet("HW");
+    if( isJetReco ) this->GetMatchedL1Jet("EMU");
 }
 
 TL1PrimitiveEventClass const * TL1EventClass::GetPEvent() const
@@ -146,6 +157,22 @@ void TL1EventClass::GetL1Jets()
             fL1JetEt.push_back(fPrimitiveEvent->fUpgrade->jetEt[iJet]);
             fL1JetEta.push_back(fPrimitiveEvent->fUpgrade->jetEta[iJet]);
             fL1JetPhi.push_back(fPrimitiveEvent->fUpgrade->jetPhi[iJet]);
+        }
+    }
+}
+
+void TL1EventClass::GetL1EmuJets()
+{
+    fL1EmuJetEt.clear();
+    fL1EmuJetEta.clear();
+    fL1EmuJetPhi.clear();
+    for(unsigned iJet=0; iJet<fPrimitiveEvent->fEmuUpgrade->nJets; ++iJet)
+    {
+        if( fPrimitiveEvent->fEmuUpgrade->jetBx[iJet] == 0 )
+        {
+            fL1EmuJetEt.push_back(fPrimitiveEvent->fEmuUpgrade->jetEt[iJet]);
+            fL1EmuJetEta.push_back(fPrimitiveEvent->fEmuUpgrade->jetEta[iJet]);
+            fL1EmuJetPhi.push_back(fPrimitiveEvent->fEmuUpgrade->jetPhi[iJet]);
         }
     }
 }
@@ -184,6 +211,8 @@ void TL1EventClass::GetL1Sums()
                 fL1MhtHF = et;
                 fL1MhtPhiHF = phi;
             }
+            if(sumType == l1t::EtSum::EtSumType::kTotalEtx) fL1Mex = et;
+            if(sumType == l1t::EtSum::EtSumType::kTotalEty) fL1Mey = et;
         }
     }
 }
@@ -221,6 +250,8 @@ void TL1EventClass::GetL1EmuSums()
             fL1EmuMhtHF = et;
             fL1EmuMhtPhiHF = phi;
         }
+        if(sumType == l1t::EtSum::EtSumType::kTotalEtx) fL1EmuMex = et;
+        if(sumType == l1t::EtSum::EtSumType::kTotalEty) fL1EmuMey = et;
     }
 }
 
@@ -356,6 +387,29 @@ void TL1EventClass::GetRecalcL1Met()
     fRecalcL1MetPhiHF = metHF.Phi();
 }
 
+void TL1EventClass::GetRecalcL1EmuMet()
+{
+    TVector2 met(0.0,0.0), metHF(0.0,0.0);
+    auto caloTowers = fPrimitiveEvent->fEmuCaloTowers;
+    int ieta(0);
+    double phi(0.0), et(0.0);
+    for(int jTower=0; jTower<caloTowers->nTower; ++jTower)
+    {
+        ieta = caloTowers->ieta[jTower];
+        phi = (TMath::Pi()/36.0) * (double)caloTowers->iphi[jTower];
+        et = 0.5 * (double)caloTowers->iet[jTower];
+        TVector2 temp(0.0,0.0);
+        temp.SetMagPhi(et,phi);
+
+        if( abs(ieta) <= 28 ) met -= temp;
+        metHF -= temp;
+    }
+    fRecalcL1EmuMet = met.Mod();
+    fRecalcL1EmuMetPhi = met.Phi();
+    fRecalcL1EmuMetHF = metHF.Mod();
+    fRecalcL1EmuMetPhiHF = metHF.Phi();
+}
+
 void TL1EventClass::GetRecalcRecoHtSums()
 {
     TVector2 * mht(new TVector2(0.,0.));
@@ -421,10 +475,13 @@ void TL1EventClass::GetLeadingRecoJet()
     }
 }
 
-void TL1EventClass::GetMatchedL1Jet()
+void TL1EventClass::GetMatchedL1Jet(const std::string & l1Type)
 {
     // No leading jet, no match
-    fIsMatchedL1Jet = false;
+    if( l1Type == "HW" )
+        fIsMatchedL1Jet = false;
+    else if( l1Type == "EMU" )
+        fIsMatchedL1EmuJet = false;
     if( !fIsLeadingRecoJet ) return;
 
     // Keep track of the current matched l1 jet. Set minDeltaR to 0.3
@@ -436,11 +493,24 @@ void TL1EventClass::GetMatchedL1Jet()
     double leadingRecoJetEta = recoJet->eta[fLeadingRecoJetIndex]; 
     double leadingRecoJetPhi = recoJet->phi[fLeadingRecoJetIndex];
 
-    for(int iL1=0; iL1<fL1JetEt.size(); ++iL1)
+    std::vector<double> l1JetEts, l1JetEtas, l1JetPhis;
+    if(l1Type == "HW")
+    {
+        l1JetEts = fL1JetEt;
+        l1JetEtas = fL1JetEta;
+        l1JetPhis = fL1JetPhi;
+    }
+    else if(l1Type == "EMU")
+    {
+        l1JetEts = fL1EmuJetEt;
+        l1JetEtas = fL1EmuJetEta;
+        l1JetPhis = fL1EmuJetPhi;
+    }
+    for(int iL1=0; iL1<l1JetEts.size(); ++iL1)
     {
         // Get l1 jet parameters
-        double l1JetEta = fL1JetEta[iL1];
-        double l1JetPhi = fL1JetPhi[iL1];
+        double l1JetEta = l1JetEtas[iL1];
+        double l1JetPhi = l1JetPhis[iL1];
 
         // Check dEta > dR
         double dEta = leadingRecoJetEta - l1JetEta;
@@ -462,8 +532,16 @@ void TL1EventClass::GetMatchedL1Jet()
     // If minDeltaR has changed then we have a match
     if( minDeltaR < 0.3 )
     {
-        fIsMatchedL1Jet = true;
-        fMatchedL1JetIndex = iMatchedL1;
+        if( l1Type == "HW" )
+        {
+            fIsMatchedL1Jet = true;
+            fMatchedL1JetIndex = iMatchedL1;
+        }
+        else if( l1Type == "EMU" )
+        {
+            fIsMatchedL1EmuJet = true;
+            fMatchedL1EmuJetIndex = iMatchedL1;
+        }
     }
 }
 
