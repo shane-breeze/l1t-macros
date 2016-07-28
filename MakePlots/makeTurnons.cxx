@@ -14,7 +14,7 @@ vector<double> ettBins();
 vector<double> httBins();
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 
-void makeTurnons(const int & SET)
+void makeTurnons(const int & SET, const bool & combine)
 {
     TStyle * myStyle(new TStyle(TDRStyle()));
     SetMyStyle(55, 0.07, myStyle);
@@ -38,6 +38,7 @@ void makeTurnons(const int & SET)
     std::vector<std::string> puType = {"0PU12","13PU19","20PU"}; // Check the pu distribution to decide the relevant binning (for 2016 data these should be good)
     std::vector<int> puBins = {0,13,20,999};
 
+    std::string outDir("");
     std::vector<std::string> inDir;
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160511_l1t-integration-v48p2/SingleMu/Ntuples");
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160519_l1t-integration-v53p1/SingleMu_273301/Ntuples");
@@ -46,17 +47,28 @@ void makeTurnons(const int & SET)
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0");
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160713_r276243_SingleMu_l1t-int-71p1/");
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160718_MC_VBFHinv125GeV_l1t-int-70p2");
-    std::string files = "root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/Collision2016-wRECO-l1t-integration-v71p1/SingleMuon/crab_Collision2016-wRECO-l1t-integration-v71p1__276525_SingleMuon/160713_153738/0000/L1Ntuple_%i.root";
-    for(int i=1+(SET*10); i<=10+(SET*10); ++i)
-        inDir.push_back(Form(files.c_str(),i));
+    if(!combine)
+    {
+        std::string files = "root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/Collision2016-wRECO-l1t-integration-v71p1/SingleMuon/crab_Collision2016-wRECO-l1t-integration-v71p1__276525_SingleMuon/160713_153738/0000/L1Ntuple_%i.root";
+        for(int i=1+(SET*10); i<=10+(SET*10); ++i)
+            inDir.push_back(Form(files.c_str(),i));
+        // std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_MC_"+sampleName+"_highMET/Turnons/";
+        outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sampleName+"_"+"run-"+run+"_"+triggerName+Form("_highMET_SET%i/Turnons/",SET);
+    }
+    else
+    {
+        // std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_MC_"+sampleName+"_highMET/Turnons/";
+        outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sampleName+"_"+"run-"+run+"_"+triggerName+"_highMET_hadd/Turnons/";
+    }
 
-    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sampleName+"_"+"run-"+run+"_"+triggerName+Form("_highMET_SET%i/Turnons/",SET);
-    // std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_MC_"+sampleName+"_highMET/Turnons/";
     TL1EventClass * event(new TL1EventClass(inDir));
     std::vector<TL1Turnon*> turnons;
 
+    std::string baseOWdir = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput/20160728_Data_run-276525_SingleMu_highMET_hadd/Turnons/";
+
     // caloMetBE and l1MetBE seeds
     turnons.emplace_back(new TL1Turnon());
+    turnons[0]->SetOverwriteNames(baseOWdir+"dists_SingleMu_caloMetBE_l1MetBESeeds.root","dist_caloMetBE_l1MetBESeed");
     turnons[0]->SetSeeds({0.,40.,60.,80.,100.,120.});
     turnons[0]->SetXBins(metBins());
     turnons[0]->SetX("caloMetBE","Offline E_{T}^{miss} BE (GeV)");
@@ -66,6 +78,7 @@ void makeTurnons(const int & SET)
 
     // caloMetHF and l1MetBE seeds
     turnons.emplace_back(new TL1Turnon());
+    turnons[1]->SetOverwriteNames(baseOWdir+"dists_SingleMu_caloMetHF_l1MetBESeeds.root","dist_caloMetHF_l1MetBESeed");
     turnons[1]->SetSeeds({0.,40.,60.,80.,100.,120.});
     turnons[1]->SetXBins(metBins());
     turnons[1]->SetX("caloMetHF","Offline E_{T}^{miss} HF (GeV)");
@@ -75,6 +88,7 @@ void makeTurnons(const int & SET)
 
     // caloMetHF and l1MetHF seeds
     turnons.emplace_back(new TL1Turnon());
+    turnons[2]->SetOverwriteNames(baseOWdir+"dists_SingleMu_caloMetHF_l1MetHFSeeds.root","dist_caloMetHF_l1MetHFSeed");
     turnons[2]->SetSeeds({0.,40.,60.,80.,100.,120.});
     turnons[2]->SetXBins(metBins());
     turnons[2]->SetX("caloMetHF","Offline E_{T}^{miss} HF (GeV)");
@@ -91,11 +105,14 @@ void makeTurnons(const int & SET)
         (*it)->SetPuType(puType);
         (*it)->SetPuBins(puBins);
         (*it)->SetPuFile(puFilename);
-        (*it)->InitPlots();
+        if( !combine ) (*it)->InitPlots();
+        else (*it)->OverwritePlots();
+
     }
 
-    unsigned NEntries = event->GetPEvent()->GetNEntries();
-    while( event->Next() )
+    unsigned NEntries(0);
+    if(!combine) NEntries = event->GetPEvent()->GetNEntries();
+    while( event->Next() && (!combine) )
     {
         unsigned position = event->GetPEvent()->GetPosition()+1;
         TL1Progress::PrintProgressBar(position, NEntries);
@@ -124,7 +141,7 @@ void makeTurnons(const int & SET)
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)
     {
         (*it)->DrawPlots();
-        //(*it)->DrawTurnons();
+        (*it)->DrawTurnons();
     }
 
     cout << "Output saved in:\n" << outDir << endl;

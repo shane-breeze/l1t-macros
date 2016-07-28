@@ -15,9 +15,11 @@ class TL1Plots
         ~TL1Plots();
 
         virtual void InitPlots() = 0;
+        virtual void OverwritePlots() = 0;
         virtual void Fill(const double & xVal, const double & yVal, const int & pu=0) = 0;
         virtual void DrawPlots() = 0;
 
+        virtual void SetOverwriteNames(const std::string & owRootName, const std::string & owHistName);
         virtual void SetSample(const std::string & sampleName, const std::string & sampleTitle);
         virtual void SetTrigger(const std::string & triggerName, const std::string & triggerTitle);
         virtual void SetRun(const std::string & run);
@@ -33,6 +35,8 @@ class TL1Plots
         double GetPuWeight(int pu);
 
     protected:
+        std::string GetOverwriteRootFilename() const;
+        std::string GetOverwriteHistname() const;
         std::string GetSampleName() const;
         std::string GetTriggerName() const;
         std::string GetRun() const;
@@ -50,6 +54,7 @@ class TL1Plots
         TH1F * fPuWeights;
         TRandom3 * fRnd;
 
+        std::string fOverwriteRootFilename, fOverwriteHistname;
         std::string fSampleName, fTriggerName, fRun;
         std::string fSampleTitle, fTriggerTitle;
         std::string fOutName, fOutDir;
@@ -68,6 +73,12 @@ TL1Plots::~TL1Plots()
 {
     delete fPuWeights;
     delete fRnd;
+}
+
+void TL1Plots::SetOverwriteNames(const std::string & owRootName, const std::string & owHistName)
+{
+    fOverwriteRootFilename = owRootName; 
+    fOverwriteHistname = owHistName;
 }
 
 void TL1Plots::SetSample(const std::string & sampleName, const std::string & sampleTitle)
@@ -152,6 +163,16 @@ void TL1Plots::SetColor(TGraph * graph, int pos, int max)
     graph->SetLineColor(colour);
     graph->SetMarkerColor(colour);
     graph->SetFillColor(colour);
+}
+
+std::string TL1Plots::GetOverwriteRootFilename() const
+{
+    return fOverwriteRootFilename;
+}
+
+std::string TL1Plots::GetOverwriteHistname() const
+{
+    return fOverwriteHistname;
 }
 
 double TL1Plots::GetPuWeight(int pu)

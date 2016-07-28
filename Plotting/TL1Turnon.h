@@ -20,6 +20,7 @@ class TL1Turnon : public TL1Plots
         ~TL1Turnon();
 
         virtual void InitPlots();
+        virtual void OverwritePlots();
         virtual void Fill(const double & xVal, const double & seedVal, const int & pu=0);
         virtual void DrawPlots();
         void DrawCmsStamp(std::string stampPos="Left");
@@ -48,6 +49,12 @@ class TL1Turnon : public TL1Plots
         bool fDoFit;
 };
 
+TL1Turnon::~TL1Turnon()
+{
+    delete fPlotsRoot;
+    delete fTurnonsRoot;
+}
+
 void TL1Turnon::InitPlots()
 {
     fPlotsRoot = TFile::Open(Form("%s/dists_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
@@ -73,6 +80,35 @@ void TL1Turnon::InitPlots()
         }
         fPlots.push_back(temp);
     }
+}
+
+void TL1Turnon::OverwritePlots()
+{
+    fPlots.clear();
+    TFile * rootFile = TFile::Open(this->GetOverwriteRootFilename().c_str(),"READ");
+
+    fPlotsRoot = TFile::Open(Form("%s/dists_%s_overwrite.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
+    fTurnonsRoot = TFile::Open(Form("%s/effs_%s_overwrite.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
+    for(unsigned i=0; i<fSeeds.size(); ++i)
+    {
+        std::vector<TH1F*> temp;
+        temp.push_back((TH1F*)rootFile->Get(Form("%s_%i",this->GetOverwriteHistname().c_str(),(int)fSeeds[i])));
+        temp.back()->SetDirectory(0);
+        temp.back()->GetXaxis()->SetTitle(fXTitle.c_str());
+        temp.back()->GetYaxis()->SetTitle("Number of Entries");
+        this->SetColor(temp.back(), i-1, fSeeds.size()-1);
+
+        for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
+        {
+            temp.push_back((TH1F*)rootFile->Get(Form("%s_%i_%s",this->GetOverwriteHistname().c_str(),(int)fSeeds[i],this->GetPuType()[ipu].c_str())));
+            temp.back()->SetDirectory(0);
+            temp.back()->GetXaxis()->SetTitle(fXTitle.c_str());
+            temp.back()->GetYaxis()->SetTitle("Number of Entries");
+            this->SetColor(temp.back(), ipu, this->GetPuType().size());
+        }
+        fPlots.push_back(temp);
+    }
+    delete rootFile;
 }
 
 void TL1Turnon::Fill(const double & xVal, const double & seedVal, const int & pu=0)
