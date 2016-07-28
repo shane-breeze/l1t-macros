@@ -1,11 +1,11 @@
 #include <string>
 #include <vector>
 
-#include "Plotting/tdrstyle.C"
-#include "Event/TL1EventClass.h"
-#include "Utilities/TL1Progress.C"
-#include "Utilities/TL1DateTime.C"
-#include "Plotting/TL1Turnon.h"
+#include "../Plotting/tdrstyle.C"
+#include "../Event/TL1EventClass.h"
+#include "../Utilities/TL1Progress.C"
+#include "../Utilities/TL1DateTime.C"
+#include "../Plotting/TL1Turnon.h"
 
 
 vector<double> metBins();
@@ -14,7 +14,7 @@ vector<double> ettBins();
 vector<double> httBins();
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 
-void makeTurnons()
+void makeTurnons(const int & SET)
 {
     TStyle * myStyle(new TStyle(TDRStyle()));
     SetMyStyle(55, 0.07, myStyle);
@@ -46,9 +46,11 @@ void makeTurnons()
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0");
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160713_r276243_SingleMu_l1t-int-71p1/");
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160718_MC_VBFHinv125GeV_l1t-int-70p2");
-    inDir.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/Collision2016-wRECO-l1t-integration-v71p1/SingleMuon/crab_Collision2016-wRECO-l1t-integration-v71p1__276525_SingleMuon/160713_153738/0000/");
+    std::string files = "root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/Collision2016-wRECO-l1t-integration-v71p1/SingleMuon/crab_Collision2016-wRECO-l1t-integration-v71p1__276525_SingleMuon/160713_153738/0000/L1Ntuple_%i.root";
+    for(int i=1+(SET*10); i<=10+(SET*10); ++i)
+        inDir.push_back(Form(files.c_str(),i));
 
-    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sampleName+"_"+"run-"+run+"_"+triggerName+"_highMET/Turnons/";
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sampleName+"_"+"run-"+run+"_"+triggerName+Form("_highMET_SET%i/Turnons/",SET);
     // std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_MC_"+sampleName+"_highMET/Turnons/";
     TL1EventClass * event(new TL1EventClass(inDir));
     std::vector<TL1Turnon*> turnons;
@@ -122,7 +124,7 @@ void makeTurnons()
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)
     {
         (*it)->DrawPlots();
-        (*it)->DrawTurnons();
+        //(*it)->DrawTurnons();
     }
 
     cout << "Output saved in:\n" << outDir << endl;

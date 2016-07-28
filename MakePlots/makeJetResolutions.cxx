@@ -1,11 +1,11 @@
 #include <string>
 #include <vector>
 
-#include "Plotting/tdrstyle.C"
-#include "Event/TL1EventClass.h"
-#include "Utilities/TL1Progress.C"
-#include "Utilities/TL1DateTime.C"
-#include "Plotting/TL1Resolution.h"
+#include "../Plotting/tdrstyle.C"
+#include "../Event/TL1EventClass.h"
+#include "../Utilities/TL1Progress.C"
+#include "../Utilities/TL1DateTime.C"
+#include "../Plotting/TL1Resolution.h"
 
 std::vector<double> bins(std::string plotType);
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
