@@ -2,7 +2,7 @@ import glob
 import os
 import subprocess
 
-wilddir = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput/20160728_Data_run-276525_SingleMu_highMET_SET*/Turnons/"
+wilddir = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput/20160728_Data_run-276525_SingleMu_highMET_SET*/Turnons"
 outdir = wilddir.replace("_SET*","_hadd")
 basedirs = glob.glob(wilddir)
 
@@ -23,5 +23,7 @@ for fileToHadd in os.listdir(basedirs[0]):
         if not os.path.exists(rootFilePath): continue
         haddList.append(rootFilePath)
     process += haddList
-
     subprocess.call(process)
+
+for rmdir in glob.glob(wilddir.replace(wilddir.split("/")[-1],"")):
+    subprocess.call(["rm -r",rmdir])
