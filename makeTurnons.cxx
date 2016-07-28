@@ -31,7 +31,7 @@ void makeTurnons()
     std::string puFilename = "/afs/cern.ch/work/s/sbreeze/l1tClasses/PUWeights/20160719_Data-SingleMu-2016Bv1_VBFHinv/pu_mcReweightedToData.root";
 
     // std::string run = "2016Bv1";
-    std::string run = "276243";
+    std::string run = "276525";
     // std::string run = "";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
     bool doFit = false;
@@ -44,11 +44,12 @@ void makeTurnons()
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160602_r273450_SingleMu_l1t-int-v53p1");
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160607_combinedRuns_SingleMu");
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0");
-    inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160713_r276243_SingleMu_l1t-int-71p1/");
+    // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160713_r276243_SingleMu_l1t-int-71p1/");
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160718_MC_VBFHinv125GeV_l1t-int-70p2");
+    inDir.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/Collision2016-wRECO-l1t-integration-v71p1/SingleMuon/crab_Collision2016-wRECO-l1t-integration-v71p1__276525_SingleMuon/160713_153738/0000/");
 
-    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sampleName+"_"+"run-"+run+"_"+triggerName+"_TestingFit/Turnons/";
-    // std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_MC_"+sampleName+"_MET+HF/Turnons/";
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sampleName+"_"+"run-"+run+"_"+triggerName+"_highMET/Turnons/";
+    // std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_MC_"+sampleName+"_highMET/Turnons/";
     TL1EventClass * event(new TL1EventClass(inDir));
     std::vector<TL1Turnon*> turnons;
 
@@ -57,8 +58,8 @@ void makeTurnons()
     turnons[0]->SetSeeds({0.,40.,60.,80.,100.,120.});
     turnons[0]->SetXBins(metBins());
     turnons[0]->SetX("caloMetBE","Offline E_{T}^{miss} BE (GeV)");
-    turnons[0]->SetSeed("l1EmuMetBESeed","L1 MET BE");
-    turnons[0]->SetOutName(triggerName+"_caloMetBE_l1EmuMetBESeeds");
+    turnons[0]->SetSeed("l1MetBESeed","L1 MET BE");
+    turnons[0]->SetOutName(triggerName+"_caloMetBE_l1MetBESeeds");
     turnons[0]->SetFit(doFit);
 
     // caloMetHF and l1MetBE seeds
@@ -66,8 +67,8 @@ void makeTurnons()
     turnons[1]->SetSeeds({0.,40.,60.,80.,100.,120.});
     turnons[1]->SetXBins(metBins());
     turnons[1]->SetX("caloMetHF","Offline E_{T}^{miss} HF (GeV)");
-    turnons[1]->SetSeed("l1EmuMetBESeed","L1 MET BE");
-    turnons[1]->SetOutName(triggerName+"_caloMetHF_l1EmuMetBESeeds");
+    turnons[1]->SetSeed("l1MetBESeed","L1 MET BE");
+    turnons[1]->SetOutName(triggerName+"_caloMetHF_l1MetBESeeds");
     turnons[1]->SetFit(doFit);
 
     // caloMetHF and l1MetHF seeds
@@ -75,8 +76,8 @@ void makeTurnons()
     turnons[2]->SetSeeds({0.,40.,60.,80.,100.,120.});
     turnons[2]->SetXBins(metBins());
     turnons[2]->SetX("caloMetHF","Offline E_{T}^{miss} HF (GeV)");
-    turnons[2]->SetSeed("l1EmuMetHFSeed","L1 MET HF");
-    turnons[2]->SetOutName(triggerName+"_caloMetHF_l1EmuMetHFSeeds");
+    turnons[2]->SetSeed("l1MetHFSeed","L1 MET HF");
+    turnons[2]->SetOutName(triggerName+"_caloMetHF_l1MetHFSeeds");
     turnons[2]->SetFit(doFit);
 
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)
@@ -104,17 +105,17 @@ void makeTurnons()
         int pu = event->GetPEvent()->fVertex->nVtx;
         auto sums = event->GetPEvent()->fSums;
 
-        double l1EmuMetBE = event->fL1EmuMet;
-        double l1EmuMetHF = event->fL1EmuMetHF;
+        double l1MetBE = event->fL1Met;
+        double l1MetHF = event->fL1MetHF;
         double caloMetBE = sums->caloMetBE;
         double caloMetHF = sums->caloMet;
 
         //----- MET -----//
         if( event->fMetFilterPassFlag )
         {
-            turnons[0]->Fill(caloMetBE, l1EmuMetBE);
-            turnons[1]->Fill(caloMetHF, l1EmuMetBE);
-            turnons[2]->Fill(caloMetHF, l1EmuMetHF);
+            turnons[0]->Fill(caloMetBE, l1MetBE);
+            turnons[1]->Fill(caloMetHF, l1MetBE);
+            turnons[2]->Fill(caloMetHF, l1MetHF);
         }
     }
 
@@ -133,11 +134,13 @@ vector<double> metBins()
 
     //for(double binLowerEdge=  0.0; binLowerEdge< 200.1; binLowerEdge+= 2.0) temp.push_back(binLowerEdge);
 
-    for(double binLowerEdge=  0.0; binLowerEdge< 40.0; binLowerEdge+= 4.0) temp.push_back(binLowerEdge);
-    for(double binLowerEdge= 40.0; binLowerEdge< 70.0; binLowerEdge+= 2.0) temp.push_back(binLowerEdge);
-    for(double binLowerEdge= 70.0; binLowerEdge<100.0; binLowerEdge+= 5.0) temp.push_back(binLowerEdge);
-    for(double binLowerEdge=100.0; binLowerEdge<160.0; binLowerEdge+=10.0) temp.push_back(binLowerEdge);
-    for(double binLowerEdge=160.0; binLowerEdge<260.1; binLowerEdge+=20.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge=  0.0; binLowerEdge< 40.0; binLowerEdge+=  2.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge= 40.0; binLowerEdge< 70.0; binLowerEdge+=  5.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge= 70.0; binLowerEdge< 90.0; binLowerEdge+= 10.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge= 90.0; binLowerEdge<150.0; binLowerEdge+= 20.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge=150.0; binLowerEdge<300.0; binLowerEdge+= 50.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge=300.0; binLowerEdge<500.0; binLowerEdge+=100.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge=400.0; binLowerEdge<800.1; binLowerEdge+=200.0) temp.push_back(binLowerEdge);
 
     return temp;
 }
