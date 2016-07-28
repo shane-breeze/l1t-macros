@@ -7,12 +7,15 @@
 #include <TF1.h>
 #include <TH1F.h>
 #include <TGraphAsymmErrors.h>
+#include <TEfficiency.h>
 #include <TCanvas.h>
 #include <TLegend.h>
 #include <TLatex.h>
 #include <TLine.h>
 
 #include "TL1Plots.h"
+
+TGraphAsymmErrors GetEfficiency(TH1F * total, TH1F * pass);
 
 class TL1Turnon : public TL1Plots
 {
@@ -36,7 +39,7 @@ class TL1Turnon : public TL1Plots
         void SetFit(const bool & doFit);
 
     private:
-        std::vector<std::vector<TH1F*>> fPlots;
+        std::vector<std::vector<TH1F*>> fEffs;
         std::vector<std::vector<TGraphAsymmErrors*>> fTurnons;
         std::vector<std::vector<TF1*>> fFits;
 
@@ -192,7 +195,7 @@ void TL1Turnon::DrawTurnons()
     for(int i=1; i<fSeeds.size(); ++i)
     {
         std::vector<TGraphAsymmErrors*> temp;
-        temp.emplace_back(new TGraphAsymmErrors(fPlots[i][0], fPlots[0][0]));
+        temp.emplace_back(new TGraphAsymmErrors(GetEfficiency(fPlots[0][0], fPlots[i][0])));
         temp[0]->SetLineColor(fPlots[i][0]->GetLineColor());
         temp[0]->SetMarkerColor(fPlots[i][0]->GetMarkerColor());
         temp[0]->GetXaxis()->SetTitle(fPlots[i][0]->GetXaxis()->GetTitle());
@@ -215,7 +218,7 @@ void TL1Turnon::DrawTurnons()
         TLegend * puLeg(new TLegend(0.65,0.15,0.9,0.15+0.08*this->GetPuType().size(),Form("%s > %g",fSeedTitle.c_str(),fSeeds[i])));
         for(int ipu=0; ipu<GetPuType().size(); ++ipu)
         {
-            temp.emplace_back(new TGraphAsymmErrors(fPlots[i][ipu+1], fPlots[0][ipu+1]));
+            temp.emplace_back(new TGraphAsymmErrors(GetEfficiency(fPlots[0][ipu+1], fPlots[i][ipu+1])));
             temp[ipu+1]->SetLineColor(fPlots[i][ipu+1]->GetLineColor());
             temp[ipu+1]->SetMarkerColor(fPlots[i][ipu+1]->GetMarkerColor());
             temp[ipu+1]->GetXaxis()->SetTitle(fPlots[i][ipu+1]->GetXaxis()->GetTitle());
@@ -327,6 +330,26 @@ void TL1Turnon::SetSeed(const std::string & seedName, const std::string & seedTi
 void TL1Turnon::SetFit(const bool & doFit)
 {
     fDoFit = doFit;
+}
+
+TGraphAsymmErrors GetEfficiency(TH1F * total, TH1F * pass)
+{
+    TEfficiency * eff = new TEfficiency(*pass, *total);
+    std::vector<double> x, y, exl, exh, eyl, eyh;
+    double binWidth(0.0);
+    for(int bin=1; bin<=total->GetNbinsX()+1; ++bin)
+    {
+        binWidth = 0.5*total->GetBinWidth(bin);
+        x.push_back(total->GetBinCenter(bin));
+        y.push_back(eff->GetEfficiency(bin));
+        exl.push_back(binWidth);
+        exh.push_back(binWidth);
+        eyl.push_back(eff->GetEfficiencyErrorLow(bin));
+        eyh.push_back(eff->GetEfficiencyErrorUp(bin));
+    }
+    TGraphAsymmErrors efficiency(x.size(),&(x[0]),&(y[0]),&(exl[0]),&(exh[0]),&(eyl[0]),&(eyh[0]));
+    efficiency.SetName(Form("%s_DIV_%s",pass->GetName(),total->GetName()));
+    return efficiency;
 }
 
 #endif
