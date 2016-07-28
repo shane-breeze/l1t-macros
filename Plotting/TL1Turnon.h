@@ -206,8 +206,8 @@ void TL1Turnon::DrawTurnons()
         DrawCmsStampTurnon();
         TLatex * latex = new TLatex();
         latex->SetNDC();
-        latex->SetTextFont(42);
-        latex->DrawLatex(0.65,0.41,this->GetAddMark().c_str());
+        //latex->SetTextFont(42);
+        //latex->DrawLatex(0.65,0.41,this->GetAddMark().c_str());
 
         std::string puOutName = Form("%s/effs_%s_puBins_seed%i.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str(),(int)fSeeds[i]);
         puCan->SaveAs(puOutName.c_str());
@@ -237,8 +237,8 @@ void TL1Turnon::DrawCmsStampTurnon()
         latex->DrawLatex(0.15,0.92,Form("#bf{CMS} #it{Simulation Preliminary} %s",this->GetSampleTitle().c_str()));
     latex->SetTextAlign(31);
     latex->DrawLatex(0.92,0.92,Form("%s (13 TeV)",this->GetRun().c_str()));
-    latex->SetTextAlign(32);
-    latex->DrawLatex(0.82,0.25,this->GetAddMark().c_str());
+    //latex->SetTextAlign(32);
+    //latex->DrawLatex(0.82,0.25,this->GetAddMark().c_str());
 
     double min = fXBins.front();
     double max = fXBins.back();
