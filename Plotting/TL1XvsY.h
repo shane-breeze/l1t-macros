@@ -67,7 +67,7 @@ void TL1XvsY::Fill(const double & xVal, const double & yVal, const int & pu=0)
 
 void TL1XvsY::DrawPlots()
 {
-    TCanvas * can(new TCanvas(Form("can_%d",this->GetRnd()),"")); 
+    TCanvas * can(new TCanvas(Form("can_%f",this->GetRnd()),"")); 
     fPlot[0]->SetMinimum(1);
     fPlot[0]->Draw("colz");
     fRootFile->WriteTObject(fPlot[0]);
@@ -85,7 +85,7 @@ void TL1XvsY::DrawPlots()
 
     for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
     {
-        TCanvas * can2(new TCanvas(Form("can_%d",this->GetRnd()),""));
+        TCanvas * can2(new TCanvas(Form("can_%f",this->GetRnd()),""));
         fPlot[ipu+1]->SetMinimum(1);
         fPlot[ipu+1]->Draw("colz");
         fRootFile->WriteTObject(fPlot[ipu+1]);
