@@ -29,7 +29,8 @@ class TL1Plots
         virtual void SetPuType(const std::vector<std::string> & puType);
         virtual void SetPuBins(const std::vector<int> & puBins);
         virtual void SetPuFile(const std::string & puFileName);
-        void SetColor(TObject * obj, int pos, int max);
+        void SetColor(TH1 * obj, int pos, int max);
+        void SetColor(TGraph * obj, int pos, int max);
 
         double GetPuWeight(int pu);
 
@@ -131,7 +132,23 @@ void TL1Plots::SetPuFile(const std::string & puFileName)
     delete fPuFile;
 }
 
-void TL1Plots::SetColor(TObject * obj, int pos, int max)
+void TL1Plots::SetColor(TH1 * obj, int pos, int max)
+{
+    double modifier(0.15), colorIndex;
+    int colour(1);
+    double fraction = (double)(pos)/(double)(max-1);
+
+    if( pos > max-1 || pos < 0 || max < 0 ) colour = 1;
+    else
+    {
+        colorIndex = (fraction * (1.0-2.0*modifier) + modifier) * gStyle->GetNumberOfColors();
+        colour = gStyle->GetColorPalette(colorIndex);
+    }
+    obj->SetLineColor(colour);
+    obj->SetMarkerColor(colour);
+}
+
+void TL1Plots::SetColor(TGraph * obj, int pos, int max)
 {
     double modifier(0.15), colorIndex;
     int colour(1);
