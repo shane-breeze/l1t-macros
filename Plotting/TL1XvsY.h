@@ -67,14 +67,14 @@ void TL1XvsY::OverwritePlots()
     TFile * rootFile = TFile::Open(this->GetOverwriteRootFilename().c_str(),"READ");
 
     fRootFile = TFile::Open(Form("%s/xy_%s_overwrite.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
-    fPlot.push_back((TH1F*)rootFile->Get(this->GetOverwriteHistname().c_str()));
+    fPlot.push_back((TH2F*)rootFile->Get(this->GetOverwriteHistname().c_str()));
     fPlot.back()->SetDirectory(0);
     fPlot.back()->GetXaxis()->SetTitle(fXTitle.c_str());
     fPlot.back()->GetYaxis()->SetTitle(fYTitle.c_str());
 
     for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
     {
-        fPlot.push_back((TH1F*)rootFile->Get("%s_%s",this->GetOverwriteHistname().c_str(),this->GetPuType()[ipu].c_str()));
+        fPlot.push_back((TH2F*)rootFile->Get("%s_%s",this->GetOverwriteHistname().c_str(),this->GetPuType()[ipu].c_str()));
         fPlot.back()->SetDirectory(0);
         fPlot.back()->GetXaxis()->SetTitle(fXTitle.c_str());
         fPlot.back()->GetYaxis()->SetTitle(fYTitle.c_str());
