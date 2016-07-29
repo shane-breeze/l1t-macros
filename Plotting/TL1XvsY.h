@@ -19,6 +19,7 @@ class TL1XvsY : public TL1Plots
         ~TL1XvsY();
 
         virtual void InitPlots();
+        virtual void OverwritePlots();
         virtual void Fill(const double & xVal, const double & yVal, const int & pu=0);
         virtual void DrawPlots();
         void DrawCmsStamp();
@@ -37,6 +38,11 @@ class TL1XvsY : public TL1Plots
 
 };
 
+TL1XvsY::~TL1XvsY()
+{
+    delete fRootFile;
+}
+
 void TL1XvsY::InitPlots()
 {
     fRootFile = TFile::Open(Form("%s/xy_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
@@ -53,6 +59,27 @@ void TL1XvsY::InitPlots()
         fPlot.back()->GetXaxis()->SetTitle(fXTitle.c_str());
         fPlot.back()->GetYaxis()->SetTitle(fYTitle.c_str());
     }
+}
+
+void TL1XvsY::OverwritePlots()
+{
+    fPlot.clear();
+    TFile * rootFile = TFile::Open(this->GetOverwriteRootFilename().c_str(),"READ");
+
+    fRootFile = TFile::Open(Form("%s/xy_%s_overwrite.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
+    fPlot.push_back((TH1F*)rootFile->Get(this->GetOverwriteHistname().c_str()));
+    fPlot.back()->SetDirectory(0);
+    fPlot.back()->GetXaxis()->SetTitle(fXTitle.c_str());
+    fPlot.back()->GetYaxis()->SetTitle(fYTitle.c_str());
+
+    for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
+    {
+        fPlot.push_back((TH1F*)rootFile->Get("%s_%s",this->GetOverwriteHistname().c_str(),this->GetPuType()[ipu].c_str()));
+        fPlot.back()->SetDirectory(0);
+        fPlot.back()->GetXaxis()->SetTitle(fXTitle.c_str());
+        fPlot.back()->GetYaxis()->SetTitle(fYTitle.c_str());
+    }
+    delete rootFile;
 }
 
 void TL1XvsY::Fill(const double & xVal, const double & yVal, const int & pu=0)
