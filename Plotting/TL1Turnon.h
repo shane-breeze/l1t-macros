@@ -190,21 +190,30 @@ void TL1Turnon::DrawCmsStamp(std::string stampPos="Left")
 void TL1Turnon::DrawTurnons()
 {
     TCanvas * nomCan(new TCanvas(Form("can_%f",this->GetRnd()),"c1"));
-    TLegend * nomLeg(new TLegend(0.62,0.15,0.87,0.15+0.2*(2+fSeeds.size())/5.0,this->GetAddMark().c_str()));
+    TLegend * nomLeg(new TLegend(0.58,0.15,0.83,0.15+0.16*(2+fSeeds.size())/5.0,this->GetAddMark().c_str()));
+    TArrow * arrow = new TArrow();
     for(int i=1; i<fSeeds.size(); ++i)
     {
         std::vector<TGraphAsymmErrors*> temp;
         temp.emplace_back(new TGraphAsymmErrors(GetEfficiency(fPlots[0][0], fPlots[i][0])));
+        arrow->SetLineColor(fPlots[i][0]->GetLineColor());
+        arrow->SetFillColor(fPlots[i][0]->GetLineColor());
         temp[0]->SetLineColor(fPlots[i][0]->GetLineColor());
         temp[0]->SetMarkerColor(fPlots[i][0]->GetMarkerColor());
+        temp[0]->SetFillColor(0);
         temp[0]->GetXaxis()->SetTitle(fPlots[i][0]->GetXaxis()->GetTitle());
-        temp[0]->GetXaxis()->SetLimits(fXBins.front(), fXBins.back());
+        temp[0]->GetXaxis()->SetLimits(temp[0]->GetX()[0]-temp[0]->GetErrorXlow(0), temp[0]->GetX()[temp[0]->GetN()-1]+0.9*temp[0]->GetErrorXhigh(temp[0]->GetN()-1));
         temp[0]->GetYaxis()->SetTitle("Efficiency");
         temp[0]->SetMinimum(0.0);
         temp[0]->SetMaximum(1.1);
         nomCan->cd();
         if( i == 1 ) temp[0]->Draw("ap");
         else temp[0]->Draw("psame");
+        arrow->DrawArrow(temp[0]->GetX()[temp[0]->GetN()-1]+0.89*temp[0]->GetErrorXhigh(temp[0]->GetN()-1),
+                temp[0]->GetY()[temp[0]->GetN()-1],
+                temp[0]->GetX()[temp[0]->GetN()-1]+0.9*temp[0]->GetErrorXhigh(temp[0]->GetN()-1),
+                temp[0]->GetY()[temp[0]->GetN()-1],
+                0.013);
         fTurnonsRoot->WriteTObject(temp[0]);
 
         std::vector<TF1*> fitTemp;
@@ -218,16 +227,24 @@ void TL1Turnon::DrawTurnons()
         for(int ipu=0; ipu<GetPuType().size(); ++ipu)
         {
             temp.emplace_back(new TGraphAsymmErrors(GetEfficiency(fPlots[0][ipu+1], fPlots[i][ipu+1])));
+            arrow->SetLineColor(fPlots[i][ipu+1]->GetLineColor());
+            arrow->SetFillColor(fPlots[i][ipu+1]->GetLineColor());
             temp[ipu+1]->SetLineColor(fPlots[i][ipu+1]->GetLineColor());
             temp[ipu+1]->SetMarkerColor(fPlots[i][ipu+1]->GetMarkerColor());
+            temp[ipu+1]->SetFillColor(0);
             temp[ipu+1]->GetXaxis()->SetTitle(fPlots[i][ipu+1]->GetXaxis()->GetTitle());
-            temp[ipu+1]->GetXaxis()->SetLimits(fXBins.front(), fXBins.back());
+            temp[ipu+1]->GetXaxis()->SetLimits(temp[ipu+1]->GetX()[0]-temp[ipu+1]->GetErrorXlow(0), temp[ipu+1]->GetX()[temp[ipu+1]->GetN()-1]+0.9*temp[ipu+1]->GetErrorXhigh(temp[ipu+1]->GetN()-1));
             temp[ipu+1]->GetYaxis()->SetTitle("Efficiency");
             temp[ipu+1]->SetMinimum(0.0);
             temp[ipu+1]->SetMaximum(1.1);
             puCan->cd();
             if( ipu == 0 ) temp[ipu+1]->Draw("ap");
             else temp[ipu+1]->Draw("psame");
+            arrow->DrawArrow(temp[ipu]->GetX()[temp[ipu]->GetN()-1]+0.89*temp[ipu]->GetErrorXhigh(temp[ipu]->GetN()-1),
+                    temp[ipu]->GetY()[temp[ipu]->GetN()-1],
+                    temp[ipu]->GetX()[temp[ipu]->GetN()-1]+0.9*temp[ipu]->GetErrorXhigh(temp[ipu]->GetN()-1),
+                    temp[ipu]->GetY()[temp[ipu]->GetN()-1],
+                    0.013);
             fTurnonsRoot->WriteTObject(temp[ipu+1]);
             
             fitTemp.emplace_back(new TF1(fit(temp[ipu+1], fSeeds[i])));
@@ -353,7 +370,7 @@ TGraphAsymmErrors GetEfficiency(TH1F * total, TH1F * pass)
     eyl.push_back(eff->GetEfficiencyErrorLow(total->GetNbinsX()+1));
     eyh.push_back(eff->GetEfficiencyErrorUp(total->GetNbinsX()+1));
 
-    TGraphAsymmErrors efficiency(x.size()+1,&(x[0]),&(y[0]),&(exl[0]),&(exh[0]),&(eyl[0]),&(eyh[0]));
+    TGraphAsymmErrors efficiency(x.size(),&(x[0]),&(y[0]),&(exl[0]),&(exh[0]),&(eyl[0]),&(eyh[0]));
     efficiency.SetName(Form("%s_DIV_%s",pass->GetName(),total->GetName()));
     return efficiency;
 }
