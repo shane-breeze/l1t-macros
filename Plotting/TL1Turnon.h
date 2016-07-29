@@ -31,7 +31,6 @@ class TL1Turnon : public TL1Plots
         void DrawCmsStampTurnon();
         TF1 fit(TGraphAsymmErrors * eff, int p50);
 
-
         void SetSeeds(const vector<double> & seeds);
         void SetXBins(const vector<double> & xBins);
         void SetX(const std::string & xName, const std::string & xTitle);
@@ -39,7 +38,7 @@ class TL1Turnon : public TL1Plots
         void SetFit(const bool & doFit);
 
     private:
-        std::vector<std::vector<TH1F*>> fEffs;
+        std::vector<std::vector<TH1F*>> fPlots;
         std::vector<std::vector<TGraphAsymmErrors*>> fTurnons;
         std::vector<std::vector<TF1*>> fFits;
 
@@ -337,7 +336,7 @@ TGraphAsymmErrors GetEfficiency(TH1F * total, TH1F * pass)
     TEfficiency * eff = new TEfficiency(*pass, *total);
     std::vector<double> x, y, exl, exh, eyl, eyh;
     double binWidth(0.0);
-    for(int bin=1; bin<=total->GetNbinsX()+1; ++bin)
+    for(int bin=1; bin<=total->GetNbinsX(); ++bin)
     {
         binWidth = 0.5*total->GetBinWidth(bin);
         x.push_back(total->GetBinCenter(bin));
@@ -347,7 +346,14 @@ TGraphAsymmErrors GetEfficiency(TH1F * total, TH1F * pass)
         eyl.push_back(eff->GetEfficiencyErrorLow(bin));
         eyh.push_back(eff->GetEfficiencyErrorUp(bin));
     }
-    TGraphAsymmErrors efficiency(x.size(),&(x[0]),&(y[0]),&(exl[0]),&(exh[0]),&(eyl[0]),&(eyh[0]));
+    x.push_back(total->GetBinCenter(total->GetNbinsX())+2*binWidth);
+    y.push_back(eff->GetEfficiency(total->GetNbinsX()+1));
+    exl.push_back(binWidth);
+    exh.push_back(binWidth);
+    eyl.push_back(eff->GetEfficiencyErrorLow(total->GetNbinsX()+1));
+    eyh.push_back(eff->GetEfficiencyErrorUp(total->GetNbinsX()+1));
+
+    TGraphAsymmErrors efficiency(x.size()+1,&(x[0]),&(y[0]),&(exl[0]),&(exh[0]),&(eyl[0]),&(eyh[0]));
     efficiency.SetName(Form("%s_DIV_%s",pass->GetName(),total->GetName()));
     return efficiency;
 }
