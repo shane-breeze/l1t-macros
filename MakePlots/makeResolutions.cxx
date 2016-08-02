@@ -11,7 +11,7 @@ std::vector<double> bins(std::string plotType);
 void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
 double FoldPhi(double phi);
 
-void makeResolutions()
+void makeResolutions(const int & SET, const bool & combine)
 {
     TStyle * myStyle(new TStyle(TDRStyle()));
     SetMyStyle(55, 0.07, myStyle);
@@ -133,9 +133,11 @@ void makeResolutions()
         else (*it)->OverwritePlots();
     }
 
-    unsigned NEntries = event->GetPEvent()->GetNEntries();
-    while( event->Next() )
+    unsigned NEntries(0);
+    if(!combine) NEntries = event->GetPEvent()->GetNEntries();
+    while( event->Next() && (!combine) )
     {
+       
         unsigned position = event->GetPEvent()->GetPosition()+1;
         TL1Progress::PrintProgressBar(position, NEntries);
 
