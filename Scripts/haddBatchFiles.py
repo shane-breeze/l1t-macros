@@ -1,8 +1,9 @@
 import glob
 import os
 import subprocess
+import optparse
 
-wilddir = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput/20160728_Data_run-276525_SingleMu_highMET_SET*/Turnons"
+wilddir = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput/20160729_Data_run-276525_SingleMu_highMET_SET*/Turnons"
 outdir = wilddir.replace("_SET*","_hadd")
 basedirs = glob.glob(wilddir)
 
@@ -26,4 +27,6 @@ for fileToHadd in os.listdir(basedirs[0]):
     subprocess.call(process)
 
 for rmdir in glob.glob(wilddir.replace(wilddir.split("/")[-1],"")):
-    subprocess.call(["rm -r",rmdir])
+    if rmdir[-1] == '/': rmdir = rmdir[:-1]
+    print "rm -r", rmdir
+    subprocess.call(["rm -r",rmdir],shell=True)

@@ -19,6 +19,7 @@ class TL1Resolution : public TL1Plots
         ~TL1Resolution();
 
         virtual void InitPlots();
+        virtual void OverwritePlots();
         virtual void Fill(const double & xVal, const double & yVal, const int & pu=0);
         virtual void DrawPlots();
 
@@ -65,6 +66,26 @@ void TL1Resolution::InitPlots()
         fPlot.back()->GetXaxis()->SetTitle(GetXAxisTitle().c_str());
         fPlot.back()->GetYaxis()->SetTitle("a.u.");
     }
+}
+
+void TL1Resolution::OverwritePlots()
+{
+    fPlot.clear();
+    TFile * rootFile = TFile::Open(this->GetOverwriteRootFilename().c_str(),"READ");
+
+    fRootFile = TFile::Open(Form("%s/res_%s_overwrite.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
+    fPlot.push_back((TH1F*)rootFile->Get(this->GetOverwriteHistname().c_str()));
+    fPlot.back()->SetDirectory(0);
+    fPlot.back()->GetXaxis()->SetTitle(GetXAxisTitle().c_str());
+    fPlot.back()->GetYaxis()->SetTitle("a.u.");
+    for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
+    {
+        fPlot.push_back((TH1F*)rootFile->Get(Form("%s_%s",this->GetOverwriteHistname().c_str(),this->GetPuType()[ipu].c_str())));
+        fPlot.back()->SetDirectory(0);
+        fPlot.back()->GetXaxis()->SetTitle(GetXAxisTitle().c_str());
+        fPlot.back()->GetYaxis()->SetTitle("a.u.");
+    }
+    delete rootFile;
 }
 
 void TL1Resolution::Fill(const double & xVal, const double & yVal, const int & pu=0)
