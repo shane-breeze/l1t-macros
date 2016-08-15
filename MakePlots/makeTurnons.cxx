@@ -30,9 +30,8 @@ void makeTurnons(const int & SET, const bool & combine)
     // std::string triggerTitle = "";
     std::string puFilename = "/afs/cern.ch/work/s/sbreeze/l1tClasses/PUWeights/20160719_Data-SingleMu-2016Bv1_VBFHinv/pu_mcReweightedToData.root";
 
-    // std::string run = "2016Bv1";
     std::string run = "276525";
-    // std::string run = "";
+    //std::string run = "";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
     bool doFit = false;
     std::vector<std::string> puType = {"0PU12","13PU19","20PU"}; // Check the pu distribution to decide the relevant binning (for 2016 data these should be good)
@@ -49,7 +48,7 @@ void makeTurnons(const int & SET, const bool & combine)
     // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160718_MC_VBFHinv125GeV_l1t-int-70p2");
     if(!combine)
     {
-        std::string files = "root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/Collision2016-wRECO-l1t-integration-v71p1/SingleMuon/crab_Collision2016-wRECO-l1t-integration-v71p1__276525_SingleMuon/160713_153738/0000/L1Ntuple_%i.root";
+        std::string files = "root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/Collision2016-wRECO-l1t-integration-v71p1/SingleMuon/crab_Collision2016-wRECO-l1t-integration-v71p1__278017_SingleMuon/160809_012632/0000/L1Ntuple_%i.root";
         for(int i=1+(SET*10); i<=10+(SET*10); ++i)
             inDir.push_back(Form(files.c_str(),i));
         // std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_MC_"+sampleName+"_highMET/Turnons/";
@@ -61,6 +60,8 @@ void makeTurnons(const int & SET, const bool & combine)
         outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sampleName+"_"+"run-"+run+"_"+triggerName+"_highMET_hadd/Turnons/";
     }
 
+    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sampleName+"_"+"run-"+run+"_"+triggerName+"/Turnons/";
+    //std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_MC_"+sampleName+"_HFhighPt/JetTurnons/";
     TL1EventClass * event(new TL1EventClass(inDir));
     std::vector<TL1Turnon*> turnons;
 
@@ -76,25 +77,15 @@ void makeTurnons(const int & SET, const bool & combine)
     turnons[0]->SetOutName(triggerName+"_caloMetBE_l1MetBESeeds");
     turnons[0]->SetFit(doFit);
 
-    // caloMetHF and l1MetBE seeds
+    // htt and l1htt seeds
     turnons.emplace_back(new TL1Turnon());
-    turnons[1]->SetOverwriteNames(baseOWdir+"dists_SingleMu_caloMetHF_l1MetBESeeds.root","dist_caloMetHF_l1MetBESeed");
+    turnons[1]->SetOverwriteNames(baseOWdir+"dists_SingleMu_recoHtt_l1HttSeeds.root","dist_recoHtt_l1HttSeeds");
     turnons[1]->SetSeeds({0.,40.,60.,80.,100.,120.});
-    turnons[1]->SetXBins(metBins());
-    turnons[1]->SetX("caloMetHF","Offline E_{T}^{miss} HF (GeV)");
-    turnons[1]->SetSeed("l1MetBESeed","L1 MET BE");
-    turnons[1]->SetOutName(triggerName+"_caloMetHF_l1MetBESeeds");
+    turnons[1]->SetXBins(httBins());
+    turnons[1]->SetX("recoHtt","Offline Total H_{T} (GeV)");
+    turnons[1]->SetSeed("l1HttSeed","L1 HTT");
+    turnons[1]->SetOutName(triggerName+"_recoHtt_l1HttSeeds");
     turnons[1]->SetFit(doFit);
-
-    // caloMetHF and l1MetHF seeds
-    turnons.emplace_back(new TL1Turnon());
-    turnons[2]->SetOverwriteNames(baseOWdir+"dists_SingleMu_caloMetHF_l1MetHFSeeds.root","dist_caloMetHF_l1MetHFSeed");
-    turnons[2]->SetSeeds({0.,40.,60.,80.,100.,120.});
-    turnons[2]->SetXBins(metBins());
-    turnons[2]->SetX("caloMetHF","Offline E_{T}^{miss} HF (GeV)");
-    turnons[2]->SetSeed("l1MetHFSeed","L1 MET HF");
-    turnons[2]->SetOutName(triggerName+"_caloMetHF_l1MetHFSeeds");
-    turnons[2]->SetFit(doFit);
 
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)
     {
@@ -107,7 +98,6 @@ void makeTurnons(const int & SET, const bool & combine)
         (*it)->SetPuFile(puFilename);
         if( !combine ) (*it)->InitPlots();
         else (*it)->OverwritePlots();
-
     }
 
     unsigned NEntries(0);
@@ -125,17 +115,16 @@ void makeTurnons(const int & SET, const bool & combine)
         auto sums = event->GetPEvent()->fSums;
 
         double l1MetBE = event->fL1Met;
-        double l1MetHF = event->fL1MetHF;
         double caloMetBE = sums->caloMetBE;
-        double caloMetHF = sums->caloMet;
+        double l1Htt = event->fL1Htt;
+        double recoHtt = sums->Htt;
 
         //----- MET -----//
         if( event->fMetFilterPassFlag )
-        {
             turnons[0]->Fill(caloMetBE, l1MetBE);
-            turnons[1]->Fill(caloMetHF, l1MetBE);
-            turnons[2]->Fill(caloMetHF, l1MetHF);
-        }
+
+        //----- HTT -----//
+        turnons[1]->Fill(recoHtt, l1Htt);
     }
 
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)
