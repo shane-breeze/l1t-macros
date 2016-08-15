@@ -93,7 +93,7 @@ void makeTurnons(const int & SET, const bool & combine)
         (*it)->SetOutDir(outDir);
         (*it)->SetPuType(puType);
         (*it)->SetPuBins(puBins);
-        (*it)->SetPuFile(puFilename);
+        if( sampleName != "Data" ) (*it)->SetPuFile(puFilename);
         if( !combine ) (*it)->InitPlots();
         else (*it)->OverwritePlots();
     }
