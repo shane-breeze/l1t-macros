@@ -115,7 +115,7 @@ void makeTurnons(const int & SET, const bool & combine)
         double l1MetBE = event->fL1Met;
         double caloMetBE = sums->caloMetBE;
         double l1Htt = event->fL1Htt;
-        double recoHtt = sums->Htt;
+        double recoHtt = sums->Ht;
 
         //----- MET -----//
         if( event->fMetFilterPassFlag )
