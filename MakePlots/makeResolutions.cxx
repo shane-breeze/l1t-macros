@@ -60,9 +60,11 @@ void makeResolutions(const int & SET, const bool & combine)
     TL1EventClass * event(new TL1EventClass(inDir));
     std::vector<TL1Resolution*> resolution;
 
+    std::string baseOWdir = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput/20160729_Data_run-276525_SingleMu_highMET_hadd/Turnons/";
+
     // caloMetBE vs l1MetBE
     resolution.emplace_back(new TL1Resolution());
-    resolution[0]->SetOverwriteNames(baseOWdir+"res_SingleMu_diff_caloMetBE_l1MetBE.root","res_diff_caloMetBE_vs_l1MetBE");
+    if(combine) resolution[0]->SetOverwriteNames(baseOWdir+"res_SingleMu_diff_caloMetBE_l1MetBE.root","res_diff_caloMetBE_vs_l1MetBE");
     resolution[0]->SetPlotType("Energy");
     resolution[0]->SetBins(bins("Energy"));
     resolution[0]->SetX("caloMetBE","Offline E_{T}^{miss} BE");
@@ -72,7 +74,7 @@ void makeResolutions(const int & SET, const bool & combine)
 
     // caloMetHF vs l1MetBE
     resolution.emplace_back(new TL1Resolution());
-    resolution[1]->SetOverwriteNames(baseOWdir+"res_SingleMu_diff_caloMetHF_l1MetBE.root","res_diff_caloMetHF_vs_l1MetBE");
+    if(combine) resolution[1]->SetOverwriteNames(baseOWdir+"res_SingleMu_diff_caloMetHF_l1MetBE.root","res_diff_caloMetHF_vs_l1MetBE");
     resolution[1]->SetPlotType("Energy");
     resolution[1]->SetBins(bins("Energy"));
     resolution[1]->SetX("caloMetHF","Offline E_{T}^{miss} HF");
@@ -82,7 +84,7 @@ void makeResolutions(const int & SET, const bool & combine)
 
     // caloMetHF vs l1MetHF
     resolution.emplace_back(new TL1Resolution());
-    resolution[2]->SetOverwriteNames(baseOWdir+"res_SingleMu_diff_caloMetHF_l1MetHF.root","res_diff_caloMetHF_vs_l1MetHF");
+    if(combine) resolution[2]->SetOverwriteNames(baseOWdir+"res_SingleMu_diff_caloMetHF_l1MetHF.root","res_diff_caloMetHF_vs_l1MetHF");
     resolution[2]->SetPlotType("Energy");
     resolution[2]->SetBins(bins("Energy"));
     resolution[2]->SetX("caloMetHF","Offline E_{T}^{miss} HF");
@@ -92,7 +94,7 @@ void makeResolutions(const int & SET, const bool & combine)
 
     // caloMetPhiBE vs l1MetPhiBE
     resolution.emplace_back(new TL1Resolution());
-    resolution[3]->SetOverwriteNames(baseOWdir+"res_SingleMu_diff_caloMetPhiBE_l1MetPhiBE.root","res_diff_caloMetPhiBE_vs_l1MetPhiBE");
+    if(combine) resolution[3]->SetOverwriteNames(baseOWdir+"res_SingleMu_diff_caloMetPhiBE_l1MetPhiBE.root","res_diff_caloMetPhiBE_vs_l1MetPhiBE");
     resolution[3]->SetPlotType("Position");
     resolution[3]->SetBins(bins("Position"));
     resolution[3]->SetX("caloMetPhiBE","Offline E_{T}^{miss} Phi BE");
@@ -102,7 +104,7 @@ void makeResolutions(const int & SET, const bool & combine)
 
     // caloMetPhiHF vs l1MetPhiBE
     resolution.emplace_back(new TL1Resolution());
-    resolution[4]->SetOverwriteNames(baseOWdir+"res_SingleMu_diff_caloMetPhiHF_l1MetPhiBE.root","res_diff_caloMetPhiHF_vs_l1MetPhiBE");
+    if(combine) resolution[4]->SetOverwriteNames(baseOWdir+"res_SingleMu_diff_caloMetPhiHF_l1MetPhiBE.root","res_diff_caloMetPhiHF_vs_l1MetPhiBE");
     resolution[4]->SetPlotType("Position");
     resolution[4]->SetBins(bins("Position"));
     resolution[4]->SetX("caloMetPhiHF","Offline E_{T}^{miss} Phi HF");
@@ -112,7 +114,7 @@ void makeResolutions(const int & SET, const bool & combine)
 
     // caloMetPhiHF vs l1MetPhiHF
     resolution.emplace_back(new TL1Resolution());
-    resolution[5]->SetOverwriteNames(baseOWdir+"res_SingleMu_diff_caloMetPhiHF_l1MetPhiHF.root","res_diff_caloMetPhiHF_vs_l1MetPhiHF");
+    if(combine) resolution[5]->SetOverwriteNames(baseOWdir+"res_SingleMu_diff_caloMetPhiHF_l1MetPhiHF.root","res_diff_caloMetPhiHF_vs_l1MetPhiHF");
     resolution[5]->SetPlotType("Position");
     resolution[5]->SetBins(bins("Position"));
     resolution[5]->SetX("caloMetPhiHF","Offline E_{T}^{miss} Phi HF");
