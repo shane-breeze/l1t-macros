@@ -63,7 +63,7 @@ void makeTurnons(const int & SET, const bool & combine)
     TL1EventClass * event(new TL1EventClass(inDir));
     std::vector<TL1Turnon*> turnons;
 
-    std::string baseOWdir = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput/20160729_Data_run-276525_SingleMu_highMET_hadd/Turnons/";
+    std::string baseOWdir = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput/20160815_"+sampleName+"_run-"+run+"_"+triggerName+"_hadd/Turnons/";
 
     // caloMetBE and l1MetBE seeds
     turnons.emplace_back(new TL1Turnon());
