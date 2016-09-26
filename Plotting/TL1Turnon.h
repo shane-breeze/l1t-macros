@@ -93,6 +93,7 @@ void TL1Turnon::OverwritePlots()
     fTurnonsRoot = TFile::Open(Form("%s/effs_%s_overwrite.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
     for(unsigned i=0; i<fSeeds.size(); ++i)
     {
+        //cout << "fSeeds[i] = " << fSeeds[i] << endl;
         std::vector<TH1F*> temp;
         temp.push_back((TH1F*)rootFile->Get(Form("%s_%i",this->GetOverwriteHistname().c_str(),(int)fSeeds[i])));
         temp.back()->SetDirectory(0);
@@ -102,6 +103,7 @@ void TL1Turnon::OverwritePlots()
 
         for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
         {
+            //cout << "GetPuType()[ipu] = " << this->GetPuType()[ipu] << endl;
             temp.push_back((TH1F*)rootFile->Get(Form("%s_%i_%s",this->GetOverwriteHistname().c_str(),(int)fSeeds[i],this->GetPuType()[ipu].c_str())));
             temp.back()->SetDirectory(0);
             temp.back()->GetXaxis()->SetTitle(fXTitle.c_str());

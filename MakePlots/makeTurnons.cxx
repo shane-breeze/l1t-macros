@@ -30,7 +30,7 @@ void makeTurnons(const int & SET, const bool & combine)
     // std::string triggerTitle = "";
     std::string puFilename = "/afs/cern.ch/work/s/sbreeze/l1tClasses/PUWeights/20160719_Data-SingleMu-2016Bv1_VBFHinv/pu_mcReweightedToData.root";
 
-    std::string run = "276525";
+    std::string run = "278017";
     //std::string run = "";
     std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
     bool doFit = false;
@@ -57,17 +57,18 @@ void makeTurnons(const int & SET, const bool & combine)
     else
     {
         // std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_MC_"+sampleName+"_highMET/Turnons/";
-        outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sampleName+"_"+"run-"+run+"_"+triggerName+"_highMET_hadd/Turnons/";
+        outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sampleName+"_"+"run-"+run+"_"+triggerName+"_hadd/Turnons/";
     }
 
     TL1EventClass * event(new TL1EventClass(inDir));
     std::vector<TL1Turnon*> turnons;
 
-    std::string baseOWdir = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput/20160815_"+sampleName+"_run-"+run+"_"+triggerName+"_hadd/Turnons/";
+    //std::string baseOWdir = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput/20160815_"+sampleName+"_run-"+run+"_"+triggerName+"_hadd/Turnons/";
+    std::string baseOWdir = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput/20160816_Data_run-278017_SingleMu_hadd/Turnons/";
 
     // caloMetBE and l1MetBE seeds
     turnons.emplace_back(new TL1Turnon());
-    turnons[0]->SetOverwriteNames(baseOWdir+"dists_SingleMu_caloMetBE_l1MetBESeeds.root","dist_caloMetBE_l1MetBESeed");
+    turnons[0]->SetOverwriteNames(baseOWdir+"/dists_SingleMu_caloMetBE_l1MetBESeeds.root","dist_caloMetBE_l1MetBESeed");
     turnons[0]->SetSeeds({0.,40.,60.,80.,100.,120.});
     turnons[0]->SetXBins(metBins());
     turnons[0]->SetX("caloMetBE","Offline E_{T}^{miss} BE (GeV)");
@@ -77,7 +78,7 @@ void makeTurnons(const int & SET, const bool & combine)
 
     // htt and l1htt seeds
     turnons.emplace_back(new TL1Turnon());
-    turnons[1]->SetOverwriteNames(baseOWdir+"dists_SingleMu_recoHtt_l1HttSeeds.root","dist_recoHtt_l1HttSeeds");
+    turnons[1]->SetOverwriteNames(baseOWdir+"/dists_SingleMu_recoHtt_l1HttSeeds.root","dist_recoHtt_l1HttSeeds");
     turnons[1]->SetSeeds({0.,40.,60.,80.,100.,120.});
     turnons[1]->SetXBins(httBins());
     turnons[1]->SetX("recoHtt","Offline Total H_{T} (GeV)");
@@ -85,6 +86,7 @@ void makeTurnons(const int & SET, const bool & combine)
     turnons[1]->SetOutName(triggerName+"_recoHtt_l1HttSeeds");
     turnons[1]->SetFit(doFit);
 
+    int i(0);
     for(auto it=turnons.begin(); it!=turnons.end(); ++it)
     {
         (*it)->SetSample(sampleName,sampleTitle);
@@ -93,6 +95,8 @@ void makeTurnons(const int & SET, const bool & combine)
         (*it)->SetOutDir(outDir);
         (*it)->SetPuType(puType);
         (*it)->SetPuBins(puBins);
+        cout << i << endl;
+        ++i;
         if( sampleName != "Data" ) (*it)->SetPuFile(puFilename);
         if( !combine ) (*it)->InitPlots();
         else (*it)->OverwritePlots();
