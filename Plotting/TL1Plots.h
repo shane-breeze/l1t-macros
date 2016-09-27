@@ -8,6 +8,8 @@
 #include <TGraph.h>
 #include <TRandom3.h>
 
+#include "../Debug/DebugHandler.h"
+
 class TL1Plots
 {
     public:
@@ -127,6 +129,8 @@ void TL1Plots::SetPuBins(const std::vector<int> & puBins)
 void TL1Plots::SetPuFile(const std::string & puFileName)
 {
     TFile * fPuFile = TFile::Open(puFileName.c_str(),"READ");
+    DebugHandler::CheckTFile(fPuFile);
+
     fPuWeights = (TH1F*)fPuFile->Get("puRatio");
     fPuWeights->SetDirectory(0);
     delete fPuFile;

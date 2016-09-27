@@ -13,6 +13,7 @@
 #include <TStyle.h>
 
 #include "TL1Plots.h"
+#include "../Debug/DebugHandler.h"
 
 class TL1Rates : public TL1Plots
 {
@@ -41,6 +42,8 @@ class TL1Rates : public TL1Plots
 void TL1Rates::InitPlots()
 {
     fRootFile = TFile::Open(Form("%s/rates_%s.root", this->GetOutDir().c_str(), this->GetOutName().c_str()), "RECREATE");
+    DebugHandler::CheckTFile(fRootFile);
+
     fPlot.emplace_back(new TH1F(Form("rates_%s",fXName.c_str()),"", fXBins.size()-1,&(fXBins)[0]));
     fPlot.back()->Sumw2();
     fPlot.back()->SetDirectory(0);

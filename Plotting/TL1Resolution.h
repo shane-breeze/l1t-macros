@@ -12,6 +12,7 @@
 #include <TLatex.h>
 
 #include "TL1Plots.h"
+#include "../Debug/DebugHandler.h"
 
 class TL1Resolution : public TL1Plots
 {
@@ -54,6 +55,7 @@ TL1Resolution::~TL1Resolution()
 void TL1Resolution::InitPlots()
 {
     fRootFile = TFile::Open(Form("%s/res_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
+    DebugHandler::CheckTFile(fRootFile);
 
     fPlot.emplace_back(new TH1F(Form("res_%s_%s_%s",fPlotType.c_str(),fXName.c_str(),fYName.c_str()),"", fBins.size()-1,&(fBins)[0]));
     fPlot.back()->SetDirectory(0);
@@ -74,8 +76,11 @@ void TL1Resolution::OverwritePlots()
 {
     fPlot.clear();
     TFile * rootFile = TFile::Open(this->GetOverwriteRootFilename().c_str(),"READ");
+    DebugHandler::CheckTFile(rootFile);
 
     fRootFile = TFile::Open(Form("%s/res_%s_overwrite.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
+    DebugHandler::CheckTFile(fRootFile);
+
     fPlot.push_back((TH1F*)rootFile->Get(this->GetOverwriteHistname().c_str()));
     fPlot.back()->SetDirectory(0);
     fPlot.back()->GetXaxis()->SetTitle(GetXAxisTitle().c_str());

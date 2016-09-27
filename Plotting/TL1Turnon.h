@@ -14,6 +14,7 @@
 #include <TLine.h>
 
 #include "TL1Plots.h"
+#include "../Debug/DebugHandler.h"
 
 TGraphAsymmErrors GetEfficiency(TH1F * total, TH1F * pass);
 
@@ -60,7 +61,10 @@ TL1Turnon::~TL1Turnon()
 void TL1Turnon::InitPlots()
 {
     fPlotsRoot = TFile::Open(Form("%s/dists_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
+    DebugHandler::CheckTFile(fPlotsRoot);
     fTurnonsRoot = TFile::Open(Form("%s/effs_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
+    DebugHandler::CheckTFile(fTurnonsRoot);
+
     for(unsigned i=0; i<fSeeds.size(); ++i)
     {
         std::vector<TH1F*> temp;
@@ -88,9 +92,13 @@ void TL1Turnon::OverwritePlots()
 {
     fPlots.clear();
     TFile * rootFile = TFile::Open(this->GetOverwriteRootFilename().c_str(),"READ");
+    DebugHandler::CheckTFile(rootFile);
 
     fPlotsRoot = TFile::Open(Form("%s/dists_%s_overwrite.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
+    DebugHandler::CheckTFile(fPlotsRoot);
     fTurnonsRoot = TFile::Open(Form("%s/effs_%s_overwrite.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
+    DebugHandler::CheckTFile(fTurnonsRoot);
+
     for(unsigned i=0; i<fSeeds.size(); ++i)
     {
         //cout << "fSeeds[i] = " << fSeeds[i] << endl;

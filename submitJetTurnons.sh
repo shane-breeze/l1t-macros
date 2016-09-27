@@ -7,4 +7,4 @@ eval `scramv1 runtime -sh`
 cmsenv
 cd /afs/cern.ch/work/s/sbreeze/l1tClasses/
 
-root -q -b -l "MakePlots/makeJetTurnons.cxx($1,false)"
+root -q -b -l "MakePlots/makeJetTurnons.cxx($1,$2,$3,false)"
