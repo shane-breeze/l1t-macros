@@ -129,7 +129,7 @@ void TL1Plots::SetPuBins(const std::vector<int> & puBins)
 void TL1Plots::SetPuFile(const std::string & puFileName)
 {
     TFile * fPuFile = TFile::Open(puFileName.c_str(),"READ");
-    DebugHandler::CheckTFile(fPuFile);
+    DebugHandler::CheckTFile(fPuFile, __FILE__, __LINE__);
 
     fPuWeights = (TH1F*)fPuFile->Get("puRatio");
     fPuWeights->SetDirectory(0);

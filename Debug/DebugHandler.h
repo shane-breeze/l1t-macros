@@ -2,23 +2,37 @@
 #define DEBUGHANDLER_H
 
 #include <string>
+#include <cstdlib>
+#include <iostream>
 
 #include <TFile.h>
 
 namespace DebugHandler
 {
-    void Throw(const bool & throwTest, const std::string & output)
+    void ErrorCheck(const bool & isError, const std::string & output, const std::string & file, const int & line)
     {
-        if( !throwTest )
-            throw output;
+        if( isError )
+        {
+            std::cerr << "\nError in " << file << " on Line " << line << std::endl;
+            std::cerr << "\t" << output << std::endl;
+            exit(-1);
+        }
     }
     
-    void CheckTFile(TFile * testFile)
+    void CheckTFile(TFile * testFile, const std::string & file, const int & line)
     {
         if( !testFile->IsOpen() )
-            throw "Error: The file "+testFile->GetName()+" is not open!";
+        {
+            std::cerr << "\nError in " << file << " on Line " << line << std::endl;
+            std::cerr << "\tThe file " << testFile->GetName() << " is not open!" << std::endl;
+            exit(-1);
+        }
         if( !testFile->IsZombie() )
-            throw "Error: Zombie file "+testFile->GetName();
+        {
+            std::cerr << "\nError in " << file << " on Line " << line << endl;
+            std::cerr << "\tZombie file " << string(testFile->GetName()) << std::endl;
+            exit(-1);
+        }
     }
 }
 

@@ -61,9 +61,7 @@ TL1Turnon::~TL1Turnon()
 void TL1Turnon::InitPlots()
 {
     fPlotsRoot = TFile::Open(Form("%s/dists_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
-    DebugHandler::CheckTFile(fPlotsRoot);
     fTurnonsRoot = TFile::Open(Form("%s/effs_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
-    DebugHandler::CheckTFile(fTurnonsRoot);
 
     for(unsigned i=0; i<fSeeds.size(); ++i)
     {
@@ -92,12 +90,12 @@ void TL1Turnon::OverwritePlots()
 {
     fPlots.clear();
     TFile * rootFile = TFile::Open(this->GetOverwriteRootFilename().c_str(),"READ");
-    DebugHandler::CheckTFile(rootFile);
+    DebugHandler::CheckTFile(rootFile, __FILE__, __LINE__);
 
     fPlotsRoot = TFile::Open(Form("%s/dists_%s_overwrite.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
-    DebugHandler::CheckTFile(fPlotsRoot);
+    DebugHandler::CheckTFile(fPlotsRoot, __FILE__, __LINE__);
     fTurnonsRoot = TFile::Open(Form("%s/effs_%s_overwrite.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
-    DebugHandler::CheckTFile(fTurnonsRoot);
+    DebugHandler::CheckTFile(fTurnonsRoot, __FILE__, __LINE__);
 
     for(unsigned i=0; i<fSeeds.size(); ++i)
     {
@@ -168,6 +166,7 @@ void TL1Turnon::DrawPlots()
 
     std::string outName = Form("%s/dists_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str());
     can->SaveAs(outName.c_str());
+    delete can;
 }
 
 void TL1Turnon::DrawCmsStamp(std::string stampPos="Left")
@@ -276,6 +275,7 @@ void TL1Turnon::DrawTurnons()
 
         std::string puOutName = Form("%s/effs_%s_puBins_seed%i.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str(),(int)fSeeds[i]);
         puCan->SaveAs(puOutName.c_str());
+        delete puCan;
     }
     nomCan->cd();
     nomLeg->Draw();
@@ -289,6 +289,7 @@ void TL1Turnon::DrawTurnons()
 
     std::string nomOutName = Form("%s/effs_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str());
     nomCan->SaveAs(nomOutName.c_str());
+    delete nomCan;
 }
 
 void TL1Turnon::DrawCmsStampTurnon()

@@ -42,7 +42,7 @@ class TL1Rates : public TL1Plots
 void TL1Rates::InitPlots()
 {
     fRootFile = TFile::Open(Form("%s/rates_%s.root", this->GetOutDir().c_str(), this->GetOutName().c_str()), "RECREATE");
-    DebugHandler::CheckTFile(fRootFile);
+    DebugHandler::CheckTFile(fRootFile, __FILE__, __LINE__);
 
     fPlot.emplace_back(new TH1F(Form("rates_%s",fXName.c_str()),"", fXBins.size()-1,&(fXBins)[0]));
     fPlot.back()->Sumw2();

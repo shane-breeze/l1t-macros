@@ -18,7 +18,7 @@
 void makeJetTurnons(const int & CHUNK, const int & NFILES, const int & NJOBS, const bool & COMBINE)
 {
     // Check CHUNK < NJOBS
-    DebugHandler::Throw(CHUNK >= NJOBS, "Error: The CHUNK number exceeds the number of jobs");
+    DebugHandler::ErrorCheck(CHUNK >= NJOBS, "The CHUNK number exceeds the number of jobs", __FILE__, __LINE__);
 
     // Set ROOT style
     TStyle * myStyle(new TStyle(TDRStyle()));
@@ -40,8 +40,10 @@ void makeJetTurnons(const int & CHUNK, const int & NFILES, const int & NJOBS, co
     if(!COMBINE)
     {
         outDir = dataset->outDirBase+"/"+TL1DateTime::GetDate()+"_"+\
-            dataset->sampleName+"_"+"run-"+dataset->run+"_"+dataset->triggerName+\
-            Form("_CHUNK%i/TurnonsJets/",CHUNK);
+            dataset->sampleName+"_"+"run-"+dataset->run+"_"+dataset->triggerName;
+        if( CHUNK > 1 )
+            outDir += Form("_CHUNK%i",CHUNK);
+        outDir += "/TurnonsJets/";
 
         int nFilesPerJob( NFILES / NJOBS );
         int finalFile( nFilesPerJob*(1+CHUNK) );
@@ -118,5 +120,5 @@ void makeJetTurnons(const int & CHUNK, const int & NFILES, const int & NJOBS, co
         it->second->DrawPlots();
         it->second->DrawTurnons();
     }
-    cout << "Output saved in:\n" << outDir << endl;
+    cout << "\tOutput saved in:\n" << outDir << endl;
 }
