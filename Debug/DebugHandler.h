@@ -7,13 +7,20 @@
 
 #include <TFile.h>
 
+#include "../Utilities/colormod.h"
+
 namespace DebugHandler
 {
     void ErrorCheck(const bool & isError, const std::string & output, const std::string & file, const int & line)
     {
         if( isError )
         {
-            std::cerr << "\nError in " << file << " on Line " << line << std::endl;
+            Color::Modifier red(Color::FG_RED);
+            Color::Modifier blue(Color::FG_BLUE);
+            Color::Modifier def(Color::FG_DEFAULT);
+
+            std::cerr << "\nError in " << blue << file << def;
+            std::cerr << " on Line " << red << line << def << std::endl;
             std::cerr << "\t" << output << std::endl;
             exit(-1);
         }
@@ -21,16 +28,24 @@ namespace DebugHandler
     
     void CheckTFile(TFile * testFile, const std::string & file, const int & line)
     {
+        Color::Modifier red(Color::FG_RED);
+        Color::Modifier blue(Color::FG_BLUE);
+        Color::Modifier def(Color::FG_DEFAULT);
+
         if( !testFile->IsOpen() )
         {
-            std::cerr << "\nError in " << file << " on Line " << line << std::endl;
-            std::cerr << "\tThe file " << testFile->GetName() << " is not open!" << std::endl;
+            std::cerr << "\nError in " << blue << file << def;
+            std::cerr << " on Line " << red << line << def << std::endl;
+            std::cerr << "\tThe file " << testFile->GetName();
+            std::cerr << " is not open!" << std::endl;
             exit(-1);
         }
         if( !testFile->IsZombie() )
         {
-            std::cerr << "\nError in " << file << " on Line " << line << endl;
-            std::cerr << "\tZombie file " << string(testFile->GetName()) << std::endl;
+            std::cerr << "\nError in " << blue << file << def;
+            std::cerr << " on Line " << red << line << def << endl;
+            std::cerr << "\tZombie file " << string(testFile->GetName());
+            std::cerr << std::endl;
             exit(-1);
         }
     }
