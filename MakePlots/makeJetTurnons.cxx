@@ -26,8 +26,7 @@ void makeJetTurnons(const int & CHUNK, const int & NFILES, const int & NJOBS, co
 
     // Get config objects
     ntuple_cfg * dataset = new ntuple_cfg(GetNtuple_cfg());
-    std::string baseOWdir = dataset->baseOWdir + "/TurnonsJets/";
-    std::map< std::string, TL1Turnon* > turnons = jetTurnons(dataset->triggerName, dataset->doFit);
+    std::map< std::string, TL1Turnon* > turnons = jetTurnons(dataset);
 
     // Split the files into CHUNKS:
     // 1 to n; n+1 to 2n; 2n+1 to 3n ... NJOBS*n to NFILES
@@ -41,7 +40,7 @@ void makeJetTurnons(const int & CHUNK, const int & NFILES, const int & NJOBS, co
     {
         outDir = dataset->outDirBase+"/"+TL1DateTime::GetDate()+"_"+\
             dataset->sampleName+"_"+"run-"+dataset->run+"_"+dataset->triggerName;
-        if( CHUNK > 1 )
+        if( NJOBS > 1 )
             outDir += Form("_CHUNK%i",CHUNK);
         outDir += "/TurnonsJets/";
 
@@ -71,7 +70,7 @@ void makeJetTurnons(const int & CHUNK, const int & NFILES, const int & NJOBS, co
     // Loop
     unsigned NEntries(0);
     if( !COMBINE ) NEntries = event->GetPEvent()->GetNEntries();
-    while( event->Next() )
+    while( event->Next() && !COMBINE )
     {
         unsigned position = event->GetPEvent()->GetPosition()+1;
         TL1Progress::PrintProgressBar(position, NEntries);

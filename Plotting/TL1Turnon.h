@@ -90,12 +90,9 @@ void TL1Turnon::OverwritePlots()
 {
     fPlots.clear();
     TFile * rootFile = TFile::Open(this->GetOverwriteRootFilename().c_str(),"READ");
-    DebugHandler::CheckTFile(rootFile, __FILE__, __LINE__);
 
     fPlotsRoot = TFile::Open(Form("%s/dists_%s_overwrite.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
-    DebugHandler::CheckTFile(fPlotsRoot, __FILE__, __LINE__);
     fTurnonsRoot = TFile::Open(Form("%s/effs_%s_overwrite.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
-    DebugHandler::CheckTFile(fTurnonsRoot, __FILE__, __LINE__);
 
     for(unsigned i=0; i<fSeeds.size(); ++i)
     {
