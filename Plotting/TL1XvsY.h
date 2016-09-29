@@ -47,7 +47,6 @@ TL1XvsY::~TL1XvsY()
 void TL1XvsY::InitPlots()
 {
     fRootFile = TFile::Open(Form("%s/xy_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
-    DebugHandler::CheckTFile(fRootFile, __FILE__, __LINE__);
 
     fPlot.emplace_back(new TH2F(Form("xy_%s_vs_%s",fXName.c_str(),fYName.c_str()),"", fXBins.size()-1,&(fXBins)[0], fYBins.size()-1,&(fYBins)[0]));
     fPlot.back()->SetDirectory(0);
@@ -68,10 +67,7 @@ void TL1XvsY::OverwritePlots()
 {
     fPlot.clear();
     TFile * rootFile = TFile::Open(this->GetOverwriteRootFilename().c_str(),"READ");
-    DebugHandler::CheckTFile(rootFile, __FILE__, __LINE__);
-
     fRootFile = TFile::Open(Form("%s/xy_%s_overwrite.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
-    DebugHandler::CheckTFile(fRootFile, __FILE__, __LINE__);
 
     fPlot.push_back((TH2F*)rootFile->Get(this->GetOverwriteHistname().c_str()));
     fPlot.back()->SetDirectory(0);
@@ -80,7 +76,7 @@ void TL1XvsY::OverwritePlots()
 
     for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
     {
-        fPlot.push_back((TH2F*)rootFile->Get("%s_%s",this->GetOverwriteHistname().c_str(),this->GetPuType()[ipu].c_str()));
+        fPlot.push_back((TH2F*)rootFile->Get(Form("%s_%s",this->GetOverwriteHistname().c_str(),this->GetPuType()[ipu].c_str())));
         fPlot.back()->SetDirectory(0);
         fPlot.back()->GetXaxis()->SetTitle(fXTitle.c_str());
         fPlot.back()->GetYaxis()->SetTitle(fYTitle.c_str());
@@ -115,6 +111,7 @@ void TL1XvsY::DrawPlots()
 
     std::string outName = Form("%s/xy_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str());
     can->SaveAs(outName.c_str());
+    delete can;
 
     for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
     {
@@ -137,6 +134,7 @@ void TL1XvsY::DrawPlots()
 
         outName = Form("%s/xy_%s_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str(),this->GetPuType()[ipu].c_str());
         can2->SaveAs(outName.c_str());
+        delete can2;
     }
 }
 
