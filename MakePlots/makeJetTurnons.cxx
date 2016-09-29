@@ -33,15 +33,11 @@ void makeJetTurnons(const int & CHUNK, const int & NFILES, const int & NJOBS, co
     // n = nFilesPerJob
     // The final job is typically larger than the others (never smaller)
     std::vector<std::string> inDir;
-    std::string outDir( dataset->outDirBase+"/"+TL1DateTime::GetDate()+"_"+\
-        dataset->sampleName+"_"+"run-"+dataset->run+"_"+\
-        dataset->triggerName+"_hadd/TurnonsJets/" );
+    std::string outDir( dataset->outDir+"_hadd/TurnonsJets/" );
     if(!COMBINE)
     {
-        outDir = dataset->outDirBase+"/"+TL1DateTime::GetDate()+"_"+\
-            dataset->sampleName+"_"+"run-"+dataset->run+"_"+dataset->triggerName;
-        if( NJOBS > 1 )
-            outDir += Form("_CHUNK%i",CHUNK);
+        outDir = dataset->outDir;
+        if( NJOBS > 1 ) outDir += Form("_CHUNK%i",CHUNK);
         outDir += "/TurnonsJets/";
 
         int nFilesPerJob( NFILES / NJOBS );

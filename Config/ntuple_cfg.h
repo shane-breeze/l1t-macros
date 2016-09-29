@@ -14,6 +14,7 @@ struct ntuple_cfg {
     std::vector<int> puBins;
     std::string inFiles;
     std::string baseOWdir;
+    std::string outDir;
 };
 
 ntuple_cfg singleMuRun276243();
@@ -47,6 +48,8 @@ ntuple_cfg singleMuRun276243()
     config.baseOWdir    = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput"
         "/20160929_"+config.sampleName+"_run-"+config.run+"_"+\
         config.triggerName+"_hadd/";
+    config.outDir       = config.outDirBase+"/"+TL1DateTime::GetDate()+"_"+\
+        config.sampleName+"_run-"+config.run+"_"+config.triggerName;
     return config;
 }
 
