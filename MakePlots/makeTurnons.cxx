@@ -38,7 +38,7 @@ void makeTurnons(const int & CHUNK, const int & NFILES, const int & NJOBS, const
     {
         outDir = dataset->outDir;
         if( NJOBS > 1 ) outDir += Form("_CHUNK%i",CHUNK);
-        outDir += "/TurnonsJets/";
+        outDir += "/Turnons/";
 
         int nFilesPerJob( NFILES / NJOBS );
         int finalFile( nFilesPerJob*(1+CHUNK) );
