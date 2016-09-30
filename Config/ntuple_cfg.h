@@ -18,6 +18,7 @@ struct ntuple_cfg {
 };
 
 ntuple_cfg singleMuRun276243();
+ntuple_cfg zeroBiasRun276653();
 ntuple_cfg VBF_HInv();
 
 // The Ntuple cfg to use:
@@ -49,6 +50,29 @@ ntuple_cfg singleMuRun276243()
         "/20160930_"+config.sampleName+"_run-"+config.run+"_"+\
         config.triggerName+"_hadd/";
     config.outDir       = config.outDirBase+"/"+TL1DateTime::GetDate()+"_"+\
+        config.sampleName+"_run-"+config.run+"_"+config.triggerName;
+    return config;
+}
+
+// Zero Bias run 276653
+ntuple_cfg zeroBiasRun276653()
+{
+    ntuple_cfg config;
+    config.sampleName = "Data";
+    config.sampleTitle = "2016 Data";
+    config.triggerName = "ZeroBias";
+    config.triggerTitle = "Zero Bias";
+    config.puFilename = "";
+    config.run = "276653";
+    config.outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
+    config.doFit = false;
+    config.puType = {"0PU"};
+    config.puBins = {0,999};
+    config.inFiles = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums"
+        "/160717_r276653_ZeroBias_l1t-int-71p1/L1Ntuple_$i.root";
+    config.baseOWdir = config.outDirBase+"/20160930_"+config.sampleName+\
+        "_run-"+config.run+"_"+config.triggerName+"_hadd/";
+    config.outDir = config.outDirBase+"/"+TL1DateTime::GetDate()+"_"+\
         config.sampleName+"_run-"+config.run+"_"+config.triggerName;
     return config;
 }

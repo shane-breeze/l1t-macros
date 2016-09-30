@@ -41,6 +41,7 @@ class TL1XvsY : public TL1Plots
 
 TL1XvsY::~TL1XvsY()
 {
+    fRootFile->Close();
     delete fRootFile;
 }
 
@@ -81,6 +82,7 @@ void TL1XvsY::OverwritePlots()
         fPlot.back()->GetXaxis()->SetTitle(fXTitle.c_str());
         fPlot.back()->GetYaxis()->SetTitle(fYTitle.c_str());
     }
+    rootFile->Close();
     delete rootFile;
 }
 

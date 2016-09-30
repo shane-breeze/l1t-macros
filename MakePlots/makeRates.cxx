@@ -7,92 +7,80 @@
 #include "../Utilities/TL1DateTime.C"
 #include "../Plotting/TL1Rates.h"
 
-std::vector<double> metBins();
-void SetMyStyle(int palette, double rmarg, TStyle * myStyle);
+#include "../Config/ntuple_cfg.h"
+#include "../Config/sumRates_cfg.h"
 
-void makeRates()
+#include "../Debug/DebugHandler.h"
+
+// CHUNK = which chunk of root-files to run over
+// NFILES = numbers of root-files
+// NJOBS = number of jobs to submit
+void makeRates(const int & CHUNK, const int & NFILES, const int & NJOBS, const bool & COMBINE)
 {
+    // Check CHUNK < NJOBS
+    DebugHandler::ErrorCheck(CHUNK >= NJOBS, "The CHUNK number exceeds the number of jobs", __FILE__, __LINE__);
+
+    // Set ROOT style
     TStyle * myStyle(new TStyle(TDRStyle()));
     SetMyStyle(55, 0.08, myStyle);
 
-    // Basic
-    std::string sampleName = "Data";
-    std::string sampleTitle = "2016 Data";
-    //std::string triggerName = "SingleMu";
-    //std::string triggerTitle = "Single Muon";
-    std::string triggerName = "ZeroBias";
-    std::string triggerTitle = "Zero Bias";
-    std::string puFilename = "/afs/cern.ch/work/s/sbreeze/l1tClasses/PUWeights/20160719_Data-SingleMu-2016Bv1_VBFHinv/pu_mcReweightedToData.root";
+    // Get config objects
+    ntuple_cfg * dataset = new ntuple_cfg(GetNtuple_cfg());
+    std::map< std::string, TL1Rates* > rates = sumRates(dataset);
 
-    std::string run = "276653";
-    std::string outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
-    //std::vector<std::string> puType = {"0PU12","13PU19","20PU"};
-    //std::vector<int> puBins = {0,13,20,999};
-
+    // Split the files into CHUNKS:
+    // 1 to n; n+1 to 2n; 2n+1 to 3n ... NJOBS*n to NFILES
+    // n = nFilesPerJob
+    // The final job is typically larger than the others (never smaller)
     std::vector<std::string> inDir;
-    // inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160704_SingleMu2016Bv1_l1t-int-v67p0");
-    inDir.push_back("/afs/cern.ch/work/s/sbreeze/public/jets_and_sums/160717_r276653_ZeroBias_l1t-int-71p1");
+    std::string outDir( dataset->outDir+"_hadd/Rates/" );
+    if( !COMBINE )
+    {
+        outDir = dataset->outDir;
+        if( NJOBS > 1 ) outDir += Form("_CHUNK%i",CHUNK);
+        outDir += "/Rates/";
 
-    std::string outDir = outDirBase+"/"+TL1DateTime::GetDate()+"_"+sampleName+"_"+"run-"+run+"_"+triggerName+"/rates/";
+        int nFilesPerJob( NFILES / NJOBS );
+        int finalFile( nFilesPerJob*(1+CHUNK) );
+        if( CHUNK == NJOBS-1 ) finalFile = NFILES;
+
+        for(int i=1+(CHUNK*nFilesPerJob); i<=finalFile; ++i)
+            inDir.push_back(Form(dataset->inFiles.c_str(),i));
+    }
     TL1EventClass * event(new TL1EventClass(inDir));
-    std::vector<TL1Rates*> rates;
 
-    // l1 MET BE
-    rates.emplace_back(new TL1Rates());
-    rates[0]->SetX("l1EmuMetBE","L1 E_{T}^{miss} BE (GeV)");
-    rates[0]->SetXBins(metBins());
-    rates[0]->SetOutName(triggerName+"_l1EmuMetBE");
-
-    // l1 MET HF
-    rates.emplace_back(new TL1Rates());
-    rates[1]->SetX("l1EmuMetHF","L1 E_{T}^{miss} HF (GeV)");
-    rates[1]->SetXBins(metBins());
-    rates[1]->SetOutName(triggerName+"_l1EmuMetHF");
-
+    // Begin
     for(auto it=rates.begin(); it!=rates.end(); ++it)
     {
-        (*it)->SetSample(sampleName,sampleTitle);
-        (*it)->SetTrigger(triggerName,triggerTitle);
-        (*it)->SetRun(run);
-        (*it)->SetOutDir(outDir);
-        //(*it)->SetPuType(puType);
-        //(*it)->SetPuBins(puBins);
-        //(*it)->SetPuFile(puFilename);
-        (*it)->InitPlots();
+        it->second->SetSample(dataset->sampleName, dataset->sampleTitle);
+        it->second->SetTrigger(dataset->triggerName, dataset->triggerTitle);
+        it->second->SetRun(dataset->run);
+        it->second->SetOutDir(outDir);
+        if( !COMBINE ) it->second->InitPlots();
+        else it->second->OverwritePlots();
     }
 
-    unsigned NEntries = event->GetPEvent()->GetNEntries();
-    while( event->Next() )
+    // Loop
+    unsigned NEntries(0);
+    if( !COMBINE ) NEntries = event->GetPEvent()->GetNEntries();
+    while( event->Next() && !COMBINE )
     {
         unsigned position = event->GetPEvent()->GetPosition()+1;
         TL1Progress::PrintProgressBar(position, NEntries);
 
         //int pu = event->GetPEvent()->fVertex->nVtx;
 
-        double l1EmuMetBE = event->fL1EmuMet;
-        double l1EmuMetHF = event->fL1EmuMetHF;
+        // Get the relevant event parameters
+        double l1MetBE = event->fL1Met;
+        double l1MetHF = event->fL1MetHF;
 
-        rates[0]->Fill(l1EmuMetBE, 0.0);
-        rates[1]->Fill(l1EmuMetHF, 0.0);
+        if( rates.find("l1MetBE") != rates.end() )
+            rates["l1MetBE"]->Fill(l1MetBE, 0.);
+        if( rates.find("l1MetHF") != rates.end() )
+            rates["l1MetHF"]->Fill(l1MetHF, 0.);
     }
 
     for(auto it=rates.begin(); it!=rates.end(); ++it)
-        (*it)->DrawPlots();
-}
-
-std::vector<double> metBins()
-{
-    std::vector<double> temp;
-    for(double bin=0.0; bin<=200.0; bin+=5.0) temp.push_back(bin);
-    return temp;
-}
-
-void SetMyStyle(int palette, double rmarg, TStyle * myStyle)
-{
-    myStyle->SetCanvasDefW(800);
-    myStyle->SetCanvasDefH(600);
-    myStyle->SetNumberContours(255);
-    myStyle->SetPalette(palette);
-    myStyle->SetPadRightMargin(rmarg);
-    myStyle->cd();
+        it->second->DrawPlots();
+    std::cout << "Output saved in:\n\t" << outDir << std::endl;
 }
