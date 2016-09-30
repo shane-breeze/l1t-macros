@@ -12,6 +12,7 @@
 #include <TLatex.h>
 
 #include "TL1Plots.h"
+#include "../Debug/DebugHandler.h"
 
 class TL1Resolution : public TL1Plots
 {
@@ -19,6 +20,7 @@ class TL1Resolution : public TL1Plots
         ~TL1Resolution();
 
         virtual void InitPlots();
+        virtual void OverwritePlots();
         virtual void Fill(const double & xVal, const double & yVal, const int & pu=0);
         virtual void DrawPlots();
 
@@ -46,6 +48,8 @@ class TL1Resolution : public TL1Plots
 TL1Resolution::~TL1Resolution()
 {
     delete fRootFile;
+    for(auto it=fPlot.begin(); it!=fPlot.end(); ++it) delete *it;
+    fPlot.clear();
 }
 
 void TL1Resolution::InitPlots()
@@ -57,9 +61,9 @@ void TL1Resolution::InitPlots()
     fPlot.back()->Sumw2();
     fPlot.back()->GetXaxis()->SetTitle(GetXAxisTitle().c_str());
     fPlot.back()->GetYaxis()->SetTitle("a.u.");
-    for(int i=0; i<this->GetPuType().size(); ++i)
+    for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
     {
-        fPlot.emplace_back(new TH1F(Form("res_%s_%s__%s%s",fPlotType.c_str(),fXName.c_str(),fYName.c_str(),this->GetPuType()[i].c_str()),"", fBins.size()-1,&(fBins)[0]));
+        fPlot.emplace_back(new TH1F(Form("res_%s_%s_%s_%s",fPlotType.c_str(),fXName.c_str(),fYName.c_str(),this->GetPuType()[ipu].c_str()),"", fBins.size()-1,&(fBins)[0]));
         fPlot.back()->SetDirectory(0);
         fPlot.back()->Sumw2();
         fPlot.back()->GetXaxis()->SetTitle(GetXAxisTitle().c_str());
@@ -67,14 +71,42 @@ void TL1Resolution::InitPlots()
     }
 }
 
+void TL1Resolution::OverwritePlots()
+{
+    fPlot.clear();
+    TFile * rootFile = TFile::Open(this->GetOverwriteRootFilename().c_str(),"READ");
+    DebugHandler::CheckTFile(rootFile, __FILE__, __LINE__);
+
+    fRootFile = TFile::Open(Form("%s/res_%s_overwrite.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
+    DebugHandler::CheckTFile(fRootFile, __FILE__, __LINE__);
+
+    fPlot.push_back((TH1F*)rootFile->Get(this->GetOverwriteHistname().c_str()));
+    fPlot.back()->SetDirectory(0);
+    fPlot.back()->GetXaxis()->SetTitle(GetXAxisTitle().c_str());
+    fPlot.back()->GetYaxis()->SetTitle("a.u.");
+    double norm(fPlot.back()->Integral());
+    if( norm > 0.0 ) fPlot.back()->Scale(1./norm);
+
+    for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
+    {
+        fPlot.push_back((TH1F*)rootFile->Get(Form("%s_%s",this->GetOverwriteHistname().c_str(),this->GetPuType()[ipu].c_str())));
+        fPlot.back()->SetDirectory(0);
+        fPlot.back()->GetXaxis()->SetTitle(GetXAxisTitle().c_str());
+        fPlot.back()->GetYaxis()->SetTitle("a.u.");
+        norm = fPlot.back()->Integral();
+        if( norm > 0.0 ) fPlot.back()->Scale(1./norm);
+    }
+    delete rootFile;
+}
+
 void TL1Resolution::Fill(const double & xVal, const double & yVal, const int & pu=0)
 {
-    double div = GetFillVal(xVal, yVal);
+    double div(GetFillVal(xVal, yVal));
     fPlot[0]->Fill(div,this->GetPuWeight(pu));
-    for(int i=0; i<this->GetPuType().size(); ++i)
+    for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
     {
-        if( pu >= this->GetPuBins()[i] && pu < this->GetPuBins()[i+1] )
-            fPlot[i+1]->Fill(div,this->GetPuWeight(pu));
+        if( pu >= this->GetPuBins()[ipu] && pu < this->GetPuBins()[ipu+1] )
+            fPlot[ipu+1]->Fill(div,this->GetPuWeight(pu));
     }
 }
 
@@ -84,7 +116,6 @@ void TL1Resolution::DrawPlots()
 
     fPlot[0]->SetLineColor(kBlue-4);
     fPlot[0]->SetMarkerColor(kBlue-4);
-    fPlot[0]->Scale(1./fPlot[0]->Integral());
     fPlot[0]->SetMinimum(0.0);
     fPlot[0]->Draw("pe");
     fPlot[0]->Draw("histsame");
@@ -100,7 +131,7 @@ void TL1Resolution::DrawPlots()
     DrawCmsStamp();
     TLine * line(new TLine());
     line->SetLineStyle(7);
-    can->Update();
+    //can->Update();
     line->SetNDC();
     line->DrawLine(0.0,0.0,0.0,can->GetUymax());
 
@@ -109,19 +140,19 @@ void TL1Resolution::DrawPlots()
     delete can;
 
     THStack * stack(new THStack("hs",""));
-    for(int i=0; i<this->GetPuType().size(); ++i)
+    double norm(0.0);
+    for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
     {
-        this->SetColor(fPlot[i+1], i, this->GetPuType().size());
-        fPlot[i+1]->Scale(1./fPlot[i+1]->Integral());
-        fPlot[i+1]->SetMinimum(0.0);
+        this->SetColor(fPlot[ipu+1], ipu, this->GetPuType().size()); 
+        fPlot[ipu+1]->SetMinimum(0.0);
+        fRootFile->WriteTObject(fPlot[ipu+1]);
 
         std::string entryName("");
-        if( i < this->GetPuType().size()-1 ) entryName = Form("%i #leq PU < %i",this->GetPuBins()[i],this->GetPuBins()[i+1]);
-        else entryName = Form("%i #leq PU",this->GetPuBins()[i]);
-        fPlot[i+1]->SetName(entryName.c_str());
+        if( ipu < this->GetPuType().size()-1 ) entryName = Form("%i #leq PU < %i",this->GetPuBins()[ipu],this->GetPuBins()[ipu+1]);
+        else entryName = Form("%i #leq PU",this->GetPuBins()[ipu]);
+        fPlot[ipu+1]->SetName(entryName.c_str());
 
-        stack->Add(fPlot[i+1],"pe");
-        fRootFile->WriteTObject(fPlot[i+1]);
+        stack->Add(fPlot[ipu+1],"pe");
 
         //TF1 * fitFcn2(new TF1(Form("fit_%s",fPlot[i+1]->GetName()),"gaus(0)",-1,3));
         //fPlot[i+1]->Fit(fitFcn2,"E0");
@@ -139,11 +170,13 @@ void TL1Resolution::DrawPlots()
     leg->Draw();
     DrawCmsStamp();
 
-    can2->Update();
+    //can2->Update();
     line->DrawLine(0.0,0.0,0.0,can2->GetUymax());
     outName = Form("%s/res_%s_puBins.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str());
     can2->SaveAs(outName.c_str());
     delete can2;
+    delete leg;
+    delete stack;
 }
 
 void TL1Resolution::SetBins(const std::vector<double> & bins)
