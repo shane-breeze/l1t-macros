@@ -204,7 +204,7 @@ void TL1Rates::DrawCmsStamp()
         latex->DrawLatex(0.92,0.92,Form("%s (13 TeV)",this->GetSampleName().c_str()));
     }
     latex->SetTextAlign(32);
-    latex->DrawLatex(0.82,0.25,this->GetAddMark().c_str());
+    latex->DrawLatex(0.87,0.82,this->GetAddMark().c_str());
 }
 
 void TL1Rates::SetX(const std::string & xName, const std::string & xTitle)
