@@ -12,6 +12,7 @@
 #include <TLine.h>
 
 #include "TL1Plots.h"
+#include "../Debug/DebugHandler.h"
 
 class TL1XvsY : public TL1Plots
 {
@@ -19,6 +20,7 @@ class TL1XvsY : public TL1Plots
         ~TL1XvsY();
 
         virtual void InitPlots();
+        virtual void OverwritePlots();
         virtual void Fill(const double & xVal, const double & yVal, const int & pu=0);
         virtual void DrawPlots();
         void DrawCmsStamp();
@@ -37,9 +39,16 @@ class TL1XvsY : public TL1Plots
 
 };
 
+TL1XvsY::~TL1XvsY()
+{
+    fRootFile->Close();
+    delete fRootFile;
+}
+
 void TL1XvsY::InitPlots()
 {
     fRootFile = TFile::Open(Form("%s/xy_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
+
     fPlot.emplace_back(new TH2F(Form("xy_%s_vs_%s",fXName.c_str(),fYName.c_str()),"", fXBins.size()-1,&(fXBins)[0], fYBins.size()-1,&(fYBins)[0]));
     fPlot.back()->SetDirectory(0);
     fPlot.back()->Sumw2();
@@ -55,6 +64,28 @@ void TL1XvsY::InitPlots()
     }
 }
 
+void TL1XvsY::OverwritePlots()
+{
+    fPlot.clear();
+    TFile * rootFile = TFile::Open(this->GetOverwriteRootFilename().c_str(),"READ");
+    fRootFile = TFile::Open(Form("%s/xy_%s_overwrite.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
+
+    fPlot.push_back((TH2F*)rootFile->Get(this->GetOverwriteHistname().c_str()));
+    fPlot.back()->SetDirectory(0);
+    fPlot.back()->GetXaxis()->SetTitle(fXTitle.c_str());
+    fPlot.back()->GetYaxis()->SetTitle(fYTitle.c_str());
+
+    for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
+    {
+        fPlot.push_back((TH2F*)rootFile->Get(Form("%s_%s",this->GetOverwriteHistname().c_str(),this->GetPuType()[ipu].c_str())));
+        fPlot.back()->SetDirectory(0);
+        fPlot.back()->GetXaxis()->SetTitle(fXTitle.c_str());
+        fPlot.back()->GetYaxis()->SetTitle(fYTitle.c_str());
+    }
+    rootFile->Close();
+    delete rootFile;
+}
+
 void TL1XvsY::Fill(const double & xVal, const double & yVal, const int & pu=0)
 {
     fPlot[0]->Fill(xVal,yVal,this->GetPuWeight(pu));
@@ -67,7 +98,7 @@ void TL1XvsY::Fill(const double & xVal, const double & yVal, const int & pu=0)
 
 void TL1XvsY::DrawPlots()
 {
-    TCanvas * can(new TCanvas(Form("can_%d",this->GetRnd()),"")); 
+    TCanvas * can(new TCanvas(Form("can_%f",this->GetRnd()),"")); 
     fPlot[0]->SetMinimum(1);
     fPlot[0]->Draw("colz");
     fRootFile->WriteTObject(fPlot[0]);
@@ -82,10 +113,11 @@ void TL1XvsY::DrawPlots()
 
     std::string outName = Form("%s/xy_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str());
     can->SaveAs(outName.c_str());
+    delete can;
 
     for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
     {
-        TCanvas * can2(new TCanvas(Form("can_%d",this->GetRnd()),""));
+        TCanvas * can2(new TCanvas(Form("can_%f",this->GetRnd()),""));
         fPlot[ipu+1]->SetMinimum(1);
         fPlot[ipu+1]->Draw("colz");
         fRootFile->WriteTObject(fPlot[ipu+1]);
@@ -104,6 +136,7 @@ void TL1XvsY::DrawPlots()
 
         outName = Form("%s/xy_%s_%s.pdf",this->GetOutDir().c_str(),this->GetOutName().c_str(),this->GetPuType()[ipu].c_str());
         can2->SaveAs(outName.c_str());
+        delete can2;
     }
 }
 

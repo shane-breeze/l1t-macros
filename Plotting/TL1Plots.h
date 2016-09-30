@@ -8,6 +8,8 @@
 #include <TGraph.h>
 #include <TRandom3.h>
 
+#include "../Debug/DebugHandler.h"
+
 class TL1Plots
 {
     public:
@@ -15,9 +17,11 @@ class TL1Plots
         ~TL1Plots();
 
         virtual void InitPlots() = 0;
+        virtual void OverwritePlots() = 0;
         virtual void Fill(const double & xVal, const double & yVal, const int & pu=0) = 0;
         virtual void DrawPlots() = 0;
 
+        virtual void SetOverwriteNames(const std::string & owRootName, const std::string & owHistName);
         virtual void SetSample(const std::string & sampleName, const std::string & sampleTitle);
         virtual void SetTrigger(const std::string & triggerName, const std::string & triggerTitle);
         virtual void SetRun(const std::string & run);
@@ -27,12 +31,14 @@ class TL1Plots
         virtual void SetPuType(const std::vector<std::string> & puType);
         virtual void SetPuBins(const std::vector<int> & puBins);
         virtual void SetPuFile(const std::string & puFileName);
-        void SetColor(TH1 * plot, int pos, int max);
-        void SetColor(TGraph * graph, int pos, int max);
+        void SetColor(TH1 * obj, int pos, int max);
+        void SetColor(TGraph * obj, int pos, int max);
 
         double GetPuWeight(int pu);
 
     protected:
+        std::string GetOverwriteRootFilename() const;
+        std::string GetOverwriteHistname() const;
         std::string GetSampleName() const;
         std::string GetTriggerName() const;
         std::string GetRun() const;
@@ -50,6 +56,7 @@ class TL1Plots
         TH1F * fPuWeights;
         TRandom3 * fRnd;
 
+        std::string fOverwriteRootFilename, fOverwriteHistname;
         std::string fSampleName, fTriggerName, fRun;
         std::string fSampleTitle, fTriggerTitle;
         std::string fOutName, fOutDir;
@@ -68,6 +75,12 @@ TL1Plots::~TL1Plots()
 {
     delete fPuWeights;
     delete fRnd;
+}
+
+void TL1Plots::SetOverwriteNames(const std::string & owRootName, const std::string & owHistName)
+{
+    fOverwriteRootFilename = owRootName; 
+    fOverwriteHistname = owHistName;
 }
 
 void TL1Plots::SetSample(const std::string & sampleName, const std::string & sampleTitle)
@@ -116,12 +129,14 @@ void TL1Plots::SetPuBins(const std::vector<int> & puBins)
 void TL1Plots::SetPuFile(const std::string & puFileName)
 {
     TFile * fPuFile = TFile::Open(puFileName.c_str(),"READ");
+    DebugHandler::CheckTFile(fPuFile, __FILE__, __LINE__);
+
     fPuWeights = (TH1F*)fPuFile->Get("puRatio");
     fPuWeights->SetDirectory(0);
     delete fPuFile;
 }
 
-void TL1Plots::SetColor(TH1 * plot, int pos, int max)
+void TL1Plots::SetColor(TH1 * obj, int pos, int max)
 {
     double modifier(0.15), colorIndex;
     int colour(1);
@@ -133,11 +148,11 @@ void TL1Plots::SetColor(TH1 * plot, int pos, int max)
         colorIndex = (fraction * (1.0-2.0*modifier) + modifier) * gStyle->GetNumberOfColors();
         colour = gStyle->GetColorPalette(colorIndex);
     }
-    plot->SetLineColor(colour);
-    plot->SetMarkerColor(colour);
+    obj->SetLineColor(colour);
+    obj->SetMarkerColor(colour);
 }
 
-void TL1Plots::SetColor(TGraph * graph, int pos, int max)
+void TL1Plots::SetColor(TGraph * obj, int pos, int max)
 {
     double modifier(0.15), colorIndex;
     int colour(1);
@@ -149,9 +164,18 @@ void TL1Plots::SetColor(TGraph * graph, int pos, int max)
         colorIndex = (fraction * (1.0-2.0*modifier) + modifier) * gStyle->GetNumberOfColors();
         colour = gStyle->GetColorPalette(colorIndex);
     }
-    graph->SetLineColor(colour);
-    graph->SetMarkerColor(colour);
-    graph->SetFillColor(colour);
+    obj->SetLineColor(colour);
+    obj->SetMarkerColor(colour);
+}
+
+std::string TL1Plots::GetOverwriteRootFilename() const
+{
+    return fOverwriteRootFilename;
+}
+
+std::string TL1Plots::GetOverwriteHistname() const
+{
+    return fOverwriteHistname;
 }
 
 double TL1Plots::GetPuWeight(int pu)

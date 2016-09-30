@@ -11,6 +11,7 @@
 #include <TLine.h>
 
 #include "TL1Plots.h"
+#include "../Debug/DebugHandler.h"
 
 class TL1RateEfficiency : public TL1Plots
 {
@@ -45,6 +46,7 @@ TL1RateEfficiency::~TL1RateEfficiency()
 void TL1RateEfficiency::InitPlots()
 {
     fRootFile = TFile::Open(Form("%s/rateEff_%s.root",this->GetOutDir().c_str(),this->GetOutName().c_str()),"RECREATE");
+    DebugHandler::CheckTFile(fRootFile, __FILE__, __LINE__);
 
     fAbove.emplace_back(new TH1F(Form("nabove_%s",fXName.c_str()),"", fXBins.size()-1,&(fXBins)[0]));
     fAbove.back()->SetDirectory(0);
@@ -167,6 +169,8 @@ void TL1RateEfficiency::DrawCmsStamp()
 void TL1RateEfficiency::SetRatePlot(const std::string & filename, const std::string & plotname)
 {
     TFile * ratefile = TFile::Open(filename.c_str(),"READ");
+    DebugHandler::CheckTFile(ratefile, __FILE__, __LINE__);
+
     fRates = (TH1F*)ratefile->Get(plotname.c_str());
     fRates->SetDirectory(0);
     delete ratefile;

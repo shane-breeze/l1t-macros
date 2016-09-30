@@ -163,3 +163,13 @@ TStyle TDRStyle() {
   return tdrStyle;
 
 }
+
+void SetMyStyle(int palette, double rmarg, TStyle * myStyle)
+{
+    myStyle->SetCanvasDefW(800);
+    myStyle->SetCanvasDefH(600);
+    myStyle->SetNumberContours(255);
+    myStyle->SetPalette(palette);
+    myStyle->SetPadRightMargin(rmarg);
+    myStyle->cd();
+}
