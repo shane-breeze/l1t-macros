@@ -46,7 +46,7 @@ ntuple_cfg singleMuRun276243()
         "/crab_Collision2016-wRECO-l1t-integration-v71p1__278017_SingleMuon"
         "/160809_012632/0000/L1Ntuple_%i.root";
     config.baseOWdir    = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput"
-        "/20160929_"+config.sampleName+"_run-"+config.run+"_"+\
+        "/20160930_"+config.sampleName+"_run-"+config.run+"_"+\
         config.triggerName+"_hadd/";
     config.outDir       = config.outDirBase+"/"+TL1DateTime::GetDate()+"_"+\
         config.sampleName+"_run-"+config.run+"_"+config.triggerName;
