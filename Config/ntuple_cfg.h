@@ -18,13 +18,14 @@ struct ntuple_cfg {
 };
 
 ntuple_cfg singleMuRun276243();
+ntuple_cfg singleMuRun281693();
 ntuple_cfg zeroBiasRun276653();
 ntuple_cfg VBF_HInv();
 
 // The Ntuple cfg to use:
 ntuple_cfg GetNtuple_cfg()
 {
-    return singleMuRun276243();
+    return singleMuRun281693();
 }
 
 // Single Muon run 276243
@@ -48,6 +49,33 @@ ntuple_cfg singleMuRun276243()
         "/160809_012632/0000/L1Ntuple_%i.root";
     config.baseOWdir    = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput"
         "/20160930_"+config.sampleName+"_run-"+config.run+"_"+\
+        config.triggerName+"_hadd/";
+    config.outDir       = config.outDirBase+"/"+TL1DateTime::GetDate()+"_"+\
+        config.sampleName+"_run-"+config.run+"_"+config.triggerName;
+    return config;
+}
+
+// Single Muon run 281693
+ntuple_cfg  singleMuRun281693()
+{
+    ntuple_cfg config;
+    config.sampleName   = "Data";
+    config.sampleTitle  = "2016 Data";
+    config.triggerName  = "SingleMu";
+    config.triggerTitle = "Single Muon";
+    config.puFilename   = "";
+    config.run          = "281693";
+    config.outDirBase   = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
+    config.doFit        = false;
+    config.puType       = {"0PU12","13PU19","20PU"};
+    config.puBins       = {0,13,20,999};
+    config.inFiles      = "root://eoscms.cern.ch//eos/cms/store/group"
+        "/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2"
+        "/Collision2016-wRECO-l1t-integration-v86p4/SingleMuon"
+        "/crab_Collision2016-wRECO-l1t-integration-v86p4__281693_SingleMuon"
+        "/161005_194247/0000/L1Ntuple_%i.root";
+    config.baseOWdir    = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput"
+        "/20161010_"+config.sampleName+"_run-"+config.run+"_"+\
         config.triggerName+"_hadd/";
     config.outDir       = config.outDirBase+"/"+TL1DateTime::GetDate()+"_"+\
         config.sampleName+"_run-"+config.run+"_"+config.triggerName;
