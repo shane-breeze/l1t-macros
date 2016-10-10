@@ -102,6 +102,7 @@ directory. This will run over all root-files locally.
 You can also submit jobs to the CERN batch (simple to extend to other batch systems)
 using the following command:
 ```bash
+export L1T=/afs/cern.ch/work/s/sbreeze/l1tClasses # Make this point to your dir
 for i in {0..${NJOBSM1}}; do bsub -q 1nh "sh submitJetTurnons.sh $i $NFILES $NJOBS false"; done
 bjobs # check the status of your jobs
 ```
