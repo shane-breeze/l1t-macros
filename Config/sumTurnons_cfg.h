@@ -104,11 +104,12 @@ vector<double> ettBins()
 vector<double> httBins()
 {
     vector<double> temp;
-    for(double binLowerEdge=  0.0; binLowerEdge<100.0; binLowerEdge+=  5.0) temp.push_back(binLowerEdge);
-    for(double binLowerEdge=100.0; binLowerEdge<200.0; binLowerEdge+= 10.0) temp.push_back(binLowerEdge);
-    for(double binLowerEdge=200.0; binLowerEdge<400.0; binLowerEdge+= 20.0) temp.push_back(binLowerEdge);
-    for(double binLowerEdge=400.0; binLowerEdge<500.0; binLowerEdge+= 50.0) temp.push_back(binLowerEdge);
-    for(double binLowerEdge=500.0; binLowerEdge<600.1; binLowerEdge+=100.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge=  0.0; binLowerEdge< 100.0; binLowerEdge+=  2.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge=100.0; binLowerEdge< 200.0; binLowerEdge+=  5.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge=200.0; binLowerEdge< 400.0; binLowerEdge+= 10.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge=400.0; binLowerEdge< 500.0; binLowerEdge+= 25.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge=500.0; binLowerEdge< 600.0; binLowerEdge+= 50.0) temp.push_back(binLowerEdge);
+    for(double binLowerEdge=600.0; binLowerEdge<1000.1; binLowerEdge+=100.0) temp.push_back(binLowerEdge);
 
     return temp;
 
