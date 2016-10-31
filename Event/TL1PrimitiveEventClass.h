@@ -141,8 +141,8 @@ void TL1PrimitiveEventClass::GetEntry(int i)
 
 unsigned TL1PrimitiveEventClass::GetNEntries() const
 {
-    if( fIsEmuUpgrade ) return emuUpgrade->GetEntries();
     if( fIsUpgrade ) return upgrade->GetEntries();
+    if( fIsEmuUpgrade ) return emuUpgrade->GetEntries();
     if( fIsCaloTower ) return caloTower->GetEntries();
     if( fIsEmuCaloTower ) return emuCaloTower->GetEntries();
     if( fIsJetReco ) return jetReco->GetEntries();

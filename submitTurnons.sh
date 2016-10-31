@@ -12,4 +12,4 @@ cd $CMSSW_BASE/src
 eval `scramv1 runtime -sh`
 cd -
 
-root -q -b -l "MakePlots/makeTurnons.cxx($1,$2,$3,$4)"
+root -q -b -l "MakePlots/makeTurnons.cxx($1,$2,$3)"

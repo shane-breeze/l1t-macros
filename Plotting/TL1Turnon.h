@@ -213,6 +213,7 @@ void TL1Turnon::DrawTurnons()
         temp[0]->SetMinimum(0.0);
         temp[0]->SetMaximum(1.1);
         nomCan->cd();
+        temp[0]->GetXaxis()->SetRangeUser(100,3500);
         if( i == 1 ) temp[0]->Draw("ap");
         else temp[0]->Draw("psame");
         arrow->DrawArrow(temp[0]->GetX()[temp[0]->GetN()-1]+0.89*temp[0]->GetErrorXhigh(temp[0]->GetN()-1),
@@ -294,6 +295,7 @@ void TL1Turnon::DrawCmsStampTurnon()
     TLatex * latex(new TLatex());
     latex->SetNDC();
     latex->SetTextFont(42);
+    latex->SetTextSize(0.035);
     if( this->GetSampleName() == "Data" )
         latex->DrawLatex(0.15,0.92,Form("#bf{CMS} #it{Preliminary} %s",this->GetSampleTitle().c_str()));
     else

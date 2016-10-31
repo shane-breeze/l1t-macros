@@ -145,6 +145,7 @@ void TL1XvsY::DrawCmsStamp()
     TLatex * latex(new TLatex());
     latex->SetNDC();
     latex->SetTextFont(42);
+    latex->SetTextSize(0.035);
     //latex->SetTextAlign(11);
     if( this->GetSampleName() == "Data" )
         latex->DrawLatex(0.15,0.92,Form("#bf{CMS} #it{Preliminary} %s",this->GetSampleTitle().c_str()));
