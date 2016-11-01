@@ -5,7 +5,6 @@
 #include "../Plotting/tdrstyle.C"
 #include "../Event/TL1EventClass.h"
 #include "../Utilities/TL1Progress.C"
-#include "../Utilities/TL1DateTime.C"
 #include "../Plotting/TL1XvsY.h"
 
 #include "../Config/ntuple_cfg.h"
@@ -16,9 +15,8 @@
 double FoldPhi(double phi);
 
 // CHUNK = which chunk of root-files to run over
-// NFILES = numbers of root-files
 // NJOBS = number of jobs to submit
-void makeXvsY(const int & CHUNK, const int & NFILES, const int & NJOBS, const int & COMBINE)
+void makeXvsY(const int & CHUNK, const int & NJOBS, const int & NENT, const int & COMBINE)
 {
     // Check CHUNK < NJOBS
     DebugHandler::ErrorCheck(CHUNK >= NJOBS, "The CHUNK number exceeds the number of jobs", __FILE__, __LINE__);
@@ -31,25 +29,10 @@ void makeXvsY(const int & CHUNK, const int & NFILES, const int & NJOBS, const in
     ntuple_cfg * dataset = new ntuple_cfg(GetNtuple_cfg());
     std::map< std::string, TL1XvsY* > xvsys = sumXvsYs(dataset);
 
-    // Split the files into CHUNKS:
-    // 1 to n; n+1 to 2n; 2n+1 to 3n ... NJOBS*n to NFILES
-    // n = nFilesPerJob
-    // The final job is typically larger than the others (never smaller)
-    std::vector<std::string> inDir;
+    std::vector<std::string> inDir = dataset->inFiles;
     std::string outDir( dataset->outDir+"_hadd/XvsY/" );
-    if( !COMBINE )
-    {
-        outDir = dataset->outDir;
-        if( NJOBS > 1 ) outDir += Form("_CHUNK%i",CHUNK);
-        outDir += "/XvsY/";
-
-        int nFilesPerJob( NFILES / NJOBS );
-        int finalFile( nFilesPerJob*(1+CHUNK) );
-        if( CHUNK == NJOBS-1 ) finalFile = NFILES;
-
-        for(int i=1+(CHUNK*nFilesPerJob); i<=finalFile; ++i)
-            inDir.push_back(Form(dataset->inFiles.c_str(),i));
-    }
+    if( !COMBINE ) outDir = dataset->outDir + Form("_CHUNK%i/XvsY/",CHUNK);
+    else inDir.clear();
     TL1EventClass * event(new TL1EventClass(inDir));
 
     // Begin
@@ -61,18 +44,25 @@ void makeXvsY(const int & CHUNK, const int & NFILES, const int & NJOBS, const in
         it->second->SetOutDir(outDir);
         it->second->SetPuType(dataset->puType);
         it->second->SetPuBins(dataset->puBins);
-        if( dataset->sampleName != "Data" ) it->second->SetPuFile(dataset->puFilename);
+        //if( dataset->sampleName != "Data" ) it->second->SetPuFile(dataset->puFilename);
         if( !COMBINE ) it->second->InitPlots();
         else it->second->OverwritePlots();
     }
 
-    // Loop
-    unsigned NEntries(0);
-    if( !COMBINE ) NEntries = event->GetPEvent()->GetNEntries();
-    while( event->Next() && !COMBINE )
+    unsigned start(0), end(0);
+    if( !COMBINE )
     {
-        unsigned position = event->GetPEvent()->GetPosition()+1;
-        TL1Progress::PrintProgressBar(position, NEntries);
+        unsigned NEvents(NENT / NJOBS);
+        start = CHUNK * NEvents;
+        end   = (CHUNK+1) * NEvents;
+        if( CHUNK == NJOBS-1 ) end = NENT;
+    }
+
+    // Loop
+    for(int i=start; i<end && !COMBINE; ++i)
+    {
+        event->GetEntry(i);
+        TL1Progress::PrintProgressBar(i-start, end-start);
 
         // Skip events that don't meet the selection criteria
         if( dataset->triggerName == "SingleMu" )
@@ -80,7 +70,7 @@ void makeXvsY(const int & CHUNK, const int & NFILES, const int & NJOBS, const in
                 continue;
 
         // Get the relevant event parameters
-        int pu = event->GetPEvent()->fVertex->nVtx;
+        int pu = 0;//event->GetPEvent()->fVertex->nVtx;
         auto sums = event->GetPEvent()->fSums;
 
         double l1MetBE = event->fL1Met;
@@ -99,6 +89,13 @@ void makeXvsY(const int & CHUNK, const int & NFILES, const int & NJOBS, const in
         double l1MeyBE = event->fL1Mey;
         double recoMexBE = l1MetBE * TMath::Cos(l1MetPhiBE);
         double recoMeyBE = l1MetBE * TMath::Sin(l1MetPhiBE);
+
+        double l1Htt = event->fL1Htt;
+        double recoHtt = sums->Ht;
+
+        //----- HTT -----//
+        if( xvsys.find("recoHtt_l1Htt") != xvsys.end() )
+            xvsys["recoHtt_l1Htt"]->Fill(recoHtt, l1Htt, pu);
 
         // Fill xvsy with event parameters
         //----- MET -----//

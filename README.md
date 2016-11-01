@@ -22,7 +22,7 @@ add a dataset simply:
     - `puType` is a vector of strings in the format of `{"0PU20","20PU40","40PU"}`
     - `puBins` is a vector of ints and should match `puType`, e.g. `{0,20,40,999}`.
       The final bin is significantly large to be effectively inifinite
-    - `inFiles` is a string for the location of the ntuples. I tend to use the
+    - `inFiles` is a vector of strings for the location of the ntuples. I tend to use the
       EOS locations (examples are shown in `ntuple_cfg.h`). Also replace the
       ntuple number with a wildcard, e.g. `"L1Ntuple_*.root"`
     - `baseOWdir` is the directory inside `outDirBase` that contains all the hadded
@@ -84,30 +84,15 @@ xparam is the value of the x-axis parameter, seed is the value of the seed for
 that particular event and `pu` is the number of PU vertices (the default value
 for `pu` is zero which is understood as the PU is not give).
 
-### 3. Run the submission script locally
-In this case I will continue using jet turnons as an example.
-
-Run `cmsenv` from inside the relevant version of CMSSW with the relevant L1T
-integration code. Move to the top directory of the github repository.
-
-The scripts can be run locally using the following command:
-```bash
-export NFILES=123
-sh submitJetTurnons.sh 0 $NFILES 1 false
-```
-where `NFILES` is the number on the final `L1Ntuple_*.root` in the `inFiles`
-directory. This will run over all root-files locally.
-
-### 4. Run the submission script on a batch system
-You can also submit jobs to the CERN batch (simple to extend to other batch systems)
+### 3. Run the submission script on a batch system
+To submit jobs to the CERN batch (simple to extend to other batch systems)
 using the following command:
 ```bash
 export L1T=/afs/cern.ch/work/s/sbreeze/l1tClasses # Make this point to your dir
-for i in {0..${NJOBSM1}}; do bsub -q 1nh "sh submitJetTurnons.sh $i $NFILES $NJOBS false"; done
+./batchSubmit.sh submitJetTurnons.sh $NJOBS
 bjobs # check the status of your jobs
 ```
-where `${NJOBSM1}` is the number of jobs to submit minus one, `$NFILES` is the
-number of root-files and `$NJOBS` is the number of jobs to submit.
+where `$NJOBS` is the number of jobs to submit.
 
 Now the histograms must be hadded together using the script `Scripts/haddBatchFiles.py`
 like so:
@@ -123,11 +108,9 @@ Now we create the plots from the hadded root-files. Double-check the config file
 `Config/jetTurnons_cfg.h" and make sure that the `SetOverwriteNames` takes the
 correct arguments. Once certain that they do run the following:
 ```bash
-sh submitJetTurnons.sh 0 $NFILES $NJOBS true
+./endJob.sh submitJetTurnons.sh
 ```
-where `NFILES` is the number of input root-files and `NJOBS` is the number of
-jobs that were run over. Now the hadded output directory should contain all
-turnon plots and root-files.
+Now the hadded output directory should contain all turnon plots and root-files.
 
 You can create scripts to mix and match histograms from the root-files.
 

@@ -1,3 +1,6 @@
+#ifndef TL1DATETIME_H
+#define TL1DATETIME_H
+
 #include <string>
 
 #include <TDatime.h>
@@ -10,3 +13,5 @@ namespace TL1DateTime
         return std::to_string(date->GetDate());
     }
 }
+
+#endif

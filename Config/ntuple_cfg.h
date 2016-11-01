@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "../Utilities/TL1DateTime.h"
+
 struct ntuple_cfg {
     std::string sampleName, sampleTitle;
     std::string triggerName, triggerTitle;
@@ -12,7 +14,7 @@ struct ntuple_cfg {
     bool doFit;
     std::vector<std::string> puType;
     std::vector<int> puBins;
-    std::string inFiles;
+    std::vector<std::string> inFiles;
     std::string baseOWdir;
     std::string outDir;
 };
@@ -25,7 +27,7 @@ ntuple_cfg VBF_HInv();
 // The Ntuple cfg to use:
 ntuple_cfg GetNtuple_cfg()
 {
-    return singleMuRun281693();
+    return singleMuRun276243();
 }
 
 // Single Muon run 276243
@@ -42,13 +44,13 @@ ntuple_cfg singleMuRun276243()
     config.doFit        = false;
     config.puType       = {"0PU12","13PU19","20PU"};
     config.puBins       = {0,13,20,999};
-    config.inFiles      = "root://eoscms.cern.ch//eos/cms/store/group"
+    config.inFiles      = {"root://eoscms.cern.ch//eos/cms/store/group"
         "/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2"
         "/Collision2016-wRECO-l1t-integration-v71p1/SingleMuon"
         "/crab_Collision2016-wRECO-l1t-integration-v71p1__278017_SingleMuon"
-        "/160809_012632/0000/L1Ntuple_%i.root";
+        "/160809_012632/0000/L1Ntuple_*.root"};
     config.baseOWdir    = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput"
-        "/20160930_"+config.sampleName+"_run-"+config.run+"_"+\
+        "/20161101_"+config.sampleName+"_run-"+config.run+"_"+\
         config.triggerName+"_hadd/";
     config.outDir       = config.outDirBase+"/"+TL1DateTime::GetDate()+"_"+\
         config.sampleName+"_run-"+config.run+"_"+config.triggerName;
@@ -69,13 +71,13 @@ ntuple_cfg  singleMuRun281693()
     config.doFit        = false;
     config.puType       = {"0PU12","13PU19","20PU"};
     config.puBins       = {0,13,20,999};
-    config.inFiles      = "root://eoscms.cern.ch//eos/cms/store/group"
+    config.inFiles      = {"root://eoscms.cern.ch//eos/cms/store/group"
         "/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2"
         "/Collision2016-wRECO-l1t-integration-v86p4/SingleMuon"
         "/crab_Collision2016-wRECO-l1t-integration-v86p4__281693_SingleMuon"
-        "/161005_194247/0000/L1Ntuple_%i.root";
+        "/161005_194247/0000/L1Ntuple_*.root"};
     config.baseOWdir    = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput"
-        "/20161010_"+config.sampleName+"_run-"+config.run+"_"+\
+        "/20161101_"+config.sampleName+"_run-"+config.run+"_"+\
         config.triggerName+"_hadd/";
     config.outDir       = config.outDirBase+"/"+TL1DateTime::GetDate()+"_"+\
         config.sampleName+"_run-"+config.run+"_"+config.triggerName;
@@ -96,9 +98,9 @@ ntuple_cfg zeroBiasRun276653()
     config.doFit = false;
     config.puType = {"0PU"};
     config.puBins = {0,999};
-    config.inFiles = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums"
-        "/160717_r276653_ZeroBias_l1t-int-71p1/L1Ntuple_$i.root";
-    config.baseOWdir = config.outDirBase+"/20160930_"+config.sampleName+\
+    config.inFiles = {"/afs/cern.ch/work/s/sbreeze/public/jets_and_sums"
+        "/160717_r276653_ZeroBias_l1t-int-71p1/L1Ntuple_*.root"};
+    config.baseOWdir = config.outDirBase+"/20161101_"+config.sampleName+\
         "_run-"+config.run+"_"+config.triggerName+"_hadd/";
     config.outDir = config.outDirBase+"/"+TL1DateTime::GetDate()+"_"+\
         config.sampleName+"_run-"+config.run+"_"+config.triggerName;
@@ -120,10 +122,10 @@ ntuple_cfg VBF_HInv()
     config.doFit        = false;
     config.puType       = {"0PU12","13PU19","20PU"};
     config.puBins       = {0,13,20,999};
-    config.inFiles      = "/afs/cern.ch/work/s/sbreeze/public/jets_and_sums"
-        "/160718_MC_VBFHinv125GeV_l1t-int-70p2/L1Ntuple_%i.root";
+    config.inFiles      = {"/afs/cern.ch/work/s/sbreeze/public/jets_and_sums"
+        "/160718_MC_VBFHinv125GeV_l1t-int-70p2/L1Ntuple_*.root"};
     config.baseOWdir    = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput"
-        "/20160728_MC_HInv_highMET/";
+        "/20161102_MC_HInv_highMET/";
     return config;
 }
 
