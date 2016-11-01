@@ -4,7 +4,6 @@
 #include "../Plotting/tdrstyle.C"
 #include "../Event/TL1EventClass.h"
 #include "../Utilities/TL1Progress.C"
-#include "../Utilities/TL1DateTime.C"
 #include "../Plotting/TL1Rates.h"
 
 #include "../Config/ntuple_cfg.h"
@@ -13,9 +12,8 @@
 #include "../Debug/DebugHandler.h"
 
 // CHUNK = which chunk of root-files to run over
-// NFILES = numbers of root-files
 // NJOBS = number of jobs to submit
-void makeRates(const int & CHUNK, const int & NFILES, const int & NJOBS, const bool & COMBINE)
+void makeRates(const int & CHUNK, const int & NJOBS, const int & NENT, const bool & COMBINE)
 {
     // Check CHUNK < NJOBS
     DebugHandler::ErrorCheck(CHUNK >= NJOBS, "The CHUNK number exceeds the number of jobs", __FILE__, __LINE__);
@@ -28,25 +26,10 @@ void makeRates(const int & CHUNK, const int & NFILES, const int & NJOBS, const b
     ntuple_cfg * dataset = new ntuple_cfg(GetNtuple_cfg());
     std::map< std::string, TL1Rates* > rates = sumRates(dataset);
 
-    // Split the files into CHUNKS:
-    // 1 to n; n+1 to 2n; 2n+1 to 3n ... NJOBS*n to NFILES
-    // n = nFilesPerJob
-    // The final job is typically larger than the others (never smaller)
-    std::vector<std::string> inDir;
-    std::string outDir( dataset->outDir+"_hadd/Rates/" );
-    if( !COMBINE )
-    {
-        outDir = dataset->outDir;
-        if( NJOBS > 1 ) outDir += Form("_CHUNK%i",CHUNK);
-        outDir += "/Rates/";
-
-        int nFilesPerJob( NFILES / NJOBS );
-        int finalFile( nFilesPerJob*(1+CHUNK) );
-        if( CHUNK == NJOBS-1 ) finalFile = NFILES;
-
-        for(int i=1+(CHUNK*nFilesPerJob); i<=finalFile; ++i)
-            inDir.push_back(Form(dataset->inFiles.c_str(),i));
-    }
+    std::vector<std::string> inDir = dataset->inFiles;
+    std::string outDir( dataset->outDir+"_hadd/Turnons/" );
+    if(!COMBINE) outDir = dataset->outDir + Form("_CHUNK%i/Turnons/",CHUNK);
+    else inDir.clear();
     TL1EventClass * event(new TL1EventClass(inDir));
 
     // Begin
@@ -60,13 +43,20 @@ void makeRates(const int & CHUNK, const int & NFILES, const int & NJOBS, const b
         else it->second->OverwritePlots();
     }
 
-    // Loop
-    unsigned NEntries(0);
-    if( !COMBINE ) NEntries = event->GetPEvent()->GetNEntries();
-    while( event->Next() && !COMBINE )
+    unsigned start(0), end(0);
+    if( !COMBINE )
     {
-        unsigned position = event->GetPEvent()->GetPosition()+1;
-        TL1Progress::PrintProgressBar(position, NEntries);
+        unsigned NEvents(NENT / NJOBS);
+        start = CHUNK * NEvents;
+        end   = (CHUNK+1) * NEvents;
+        if( CHUNK == NJOBS-1 ) end = NENT;
+    }
+
+    // Loop
+    for(int i=start; i<end && !COMBINE; ++i)
+    {
+        event->GetEntry(i);
+        TL1Progress::PrintProgressBar(i-start, end-start);
 
         //int pu = event->GetPEvent()->fVertex->nVtx;
 

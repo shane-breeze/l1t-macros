@@ -4,7 +4,6 @@
 #include "../Plotting/tdrstyle.C"
 #include "../Event/TL1EventClass.h"
 #include "../Utilities/TL1Progress.C"
-#include "../Utilities/TL1DateTime.C"
 #include "../Plotting/TL1Turnon.h"
 
 #include "../Config/ntuple_cfg.h"
@@ -13,9 +12,8 @@
 #include "../Debug/DebugHandler.h"
 
 // CHUNK = which chunk of root-files to run over
-// NFILES = numbers of root-files
 // NJOBS = number of jobs to submit
-void makeTurnons(const int & CHUNK, const int & NJOBS, const bool & COMBINE)
+void makeTurnons(const int & CHUNK, const int & NJOBS, const int & NENT, const bool & COMBINE)
 {
     // Check CHUNK < NJOBS
     DebugHandler::ErrorCheck(CHUNK >= NJOBS, "The CHUNK number exceeds the number of jobs", __FILE__, __LINE__);
@@ -48,16 +46,14 @@ void makeTurnons(const int & CHUNK, const int & NJOBS, const bool & COMBINE)
         else it->second->OverwritePlots();
     }
 
-    unsigned NEntries(0), start(0), end(0);
+    unsigned start(0), end(0);
     if( !COMBINE )
     {
-        NEntries = event->GetPEvent()->GetNEntries();
-        unsigned NEvents(NEntries / NJOBS);
+        unsigned NEvents(NENT / NJOBS);
         start = CHUNK * NEvents;
         end   = (CHUNK+1) * NEvents;
-        if( CHUNK == NJOBS-1 ) end = NEntries;
+        if( CHUNK == NJOBS-1 ) end = NENT;
     }
-    cout << "NEntries = " << NEntries << endl;
 
     // Loop
     for(int i=start; i<end && !COMBINE; ++i)

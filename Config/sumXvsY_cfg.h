@@ -17,7 +17,6 @@ TL1XvsY caloMetPhiHF_l1MetPhiBE(ntuple_cfg const * dataset);
 TL1XvsY caloMetPhiHF_l1MetPhiHF(ntuple_cfg const * dataset);
 TL1XvsY caloMetXBE_l1MetXBE(ntuple_cfg const * dataset);
 TL1XvsY caloMetYBE_l1MetYBE(ntuple_cfg const * dataset);
-TL1XvsY recoHtt_l1Htt(ntuple_cfg const * dataset);
 std::vector<double> bins(const double & min, const double & max, const double & width);
 std::vector<double> phiBins();
 
@@ -25,33 +24,16 @@ std::vector<double> phiBins();
 std::map< std::string, TL1XvsY* > sumXvsYs(ntuple_cfg const * dataset)
 {
     std::map< std::string, TL1XvsY* > xvsys;
-    xvsys.emplace("recoHtt_l1Htt", new TL1XvsY(recoHtt_l1Htt(dataset)));
-//    xvsys.emplace("caloMetBE_l1MetBE", new TL1XvsY(caloMetBE_l1MetBE(dataset)));
-//    xvsys.emplace("caloMetHF_l1MetBE", new TL1XvsY(caloMetHF_l1MetBE(dataset)));
-//    xvsys.emplace("caloMetHF_l1MetHF", new TL1XvsY(caloMetHF_l1MetHF(dataset)));
-//    xvsys.emplace("l1MetBE_recalcL1MetBE", new TL1XvsY(l1MetBE_recalcL1MetBE(dataset)));
-//    xvsys.emplace("caloMetPhiBE_l1MetPhiBE", new TL1XvsY(caloMetPhiBE_l1MetPhiBE(dataset)));
-//    xvsys.emplace("caloMetPhiHF_l1MetPhiBE", new TL1XvsY(caloMetPhiHF_l1MetPhiBE(dataset)));
-//    xvsys.emplace("caloMetPhiHF_l1MetPhiHF", new TL1XvsY(caloMetPhiHF_l1MetPhiHF(dataset)));
-//    xvsys.emplace("caloMetXBE_l1MetXBE", new TL1XvsY(caloMetXBE_l1MetXBE(dataset)));
-//    xvsys.emplace("caloMetYBE_l1MetYBE", new TL1XvsY(caloMetYBE_l1MetYBE(dataset)));
+    xvsys.emplace("caloMetBE_l1MetBE", new TL1XvsY(caloMetBE_l1MetBE(dataset)));
+    xvsys.emplace("caloMetHF_l1MetBE", new TL1XvsY(caloMetHF_l1MetBE(dataset)));
+    xvsys.emplace("caloMetHF_l1MetHF", new TL1XvsY(caloMetHF_l1MetHF(dataset)));
+    xvsys.emplace("l1MetBE_recalcL1MetBE", new TL1XvsY(l1MetBE_recalcL1MetBE(dataset)));
+    xvsys.emplace("caloMetPhiBE_l1MetPhiBE", new TL1XvsY(caloMetPhiBE_l1MetPhiBE(dataset)));
+    xvsys.emplace("caloMetPhiHF_l1MetPhiBE", new TL1XvsY(caloMetPhiHF_l1MetPhiBE(dataset)));
+    xvsys.emplace("caloMetPhiHF_l1MetPhiHF", new TL1XvsY(caloMetPhiHF_l1MetPhiHF(dataset)));
+    xvsys.emplace("caloMetXBE_l1MetXBE", new TL1XvsY(caloMetXBE_l1MetXBE(dataset)));
+    xvsys.emplace("caloMetYBE_l1MetYBE", new TL1XvsY(caloMetYBE_l1MetYBE(dataset)));
     return xvsys;
-}
-
-// reco HTT vs. l1 HTT
-TL1XvsY recoHtt_l1Htt(ntuple_cfg const * dataset)
-{
-    TL1XvsY xvsy;
-    std::string xparam = "recoHtt";
-    std::string yparam = "l1Htt";
-    std::string outName = dataset->triggerName+"_"+xparam+"_vs_"+yparam;
-    xvsy.SetOverwriteNames(dataset->baseOWdir+"/XvsY/xy_"+outName+".root", "xy_"+xparam+"_vs_"+yparam);
-    xvsy.SetX(xparam, "Offline Total H_{T} (GeV)");
-    xvsy.SetXBins(bins(0.0, 5000.0, 50.0));
-    xvsy.SetY(yparam, "L1 Total H_{T} (GeV)");
-    xvsy.SetYBins(bins(0.0, 5000.0, 50.0));
-    xvsy.SetOutName(outName);
-    return xvsy;
 }
 
 // calo Met BE vs. l1 Met BE

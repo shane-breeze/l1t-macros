@@ -5,7 +5,6 @@
 #include "../Plotting/tdrstyle.C"
 #include "../Event/TL1EventClass.h"
 #include "../Utilities/TL1Progress.C"
-#include "../Utilities/TL1DateTime.C"
 #include "../Plotting/TL1XvsY.h"
 
 #include "../Config/ntuple_cfg.h"
@@ -16,9 +15,8 @@
 double FoldPhi(double phi);
 
 // CHUNK = which chunk of root-files to run over
-// NFILES = numbers of root-files
 // NJOBS = number of jobs to submit
-void makeXvsY(const int & CHUNK, const int & NJOBS, const int & COMBINE)
+void makeXvsY(const int & CHUNK, const int & NJOBS, const int & NENT, const int & COMBINE)
 {
     // Check CHUNK < NJOBS
     DebugHandler::ErrorCheck(CHUNK >= NJOBS, "The CHUNK number exceeds the number of jobs", __FILE__, __LINE__);
@@ -51,14 +49,13 @@ void makeXvsY(const int & CHUNK, const int & NJOBS, const int & COMBINE)
         else it->second->OverwritePlots();
     }
 
-    unsigned NEntries(0), start(0), end(0);
+    unsigned start(0), end(0);
     if( !COMBINE )
     {
-        NEntries = event->GetPEvent()->GetNEntries();
-        unsigned NEvents(NEntries / NJOBS);
+        unsigned NEvents(NENT / NJOBS);
         start = CHUNK * NEvents;
         end   = (CHUNK+1) * NEvents;
-        if( CHUNK == NJOBS-1 ) end = NEntries;
+        if( CHUNK == NJOBS-1 ) end = NENT;
     }
 
     // Loop

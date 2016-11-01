@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "../Utilities/TL1DateTime.h"
+
 struct ntuple_cfg {
     std::string sampleName, sampleTitle;
     std::string triggerName, triggerTitle;
@@ -17,73 +19,113 @@ struct ntuple_cfg {
     std::string outDir;
 };
 
-ntuple_cfg singleMuRun281693_281797_281976();
-ntuple_cfg TTbarMC_13TeV_powheg_pythia8();
+ntuple_cfg singleMuRun276243();
+ntuple_cfg singleMuRun281693();
+ntuple_cfg zeroBiasRun276653();
+ntuple_cfg VBF_HInv();
 
 // The Ntuple cfg to use:
 ntuple_cfg GetNtuple_cfg()
 {
-    return TTbarMC_13TeV_powheg_pythia8();
+    return singleMuRun276243();
 }
 
-// Single Muon run 281693+281797+281976
-ntuple_cfg singleMuRun281693_281797_281976()
+// Single Muon run 276243
+ntuple_cfg singleMuRun276243()
 {
     ntuple_cfg config;
-    string basedir      = "root://eoscms.cern.ch//eos/cms/store/group"
-        "/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2"
-        "/Collision2016-wRECO-l1t-integration-v87p1/SingleMuon";
     config.sampleName   = "Data";
     config.sampleTitle  = "2016 Data";
     config.triggerName  = "SingleMu";
     config.triggerTitle = "Single Muon";
     config.puFilename   = "";
-    config.run          = "281693_281797_281976";
+    config.run          = "276243";
     config.outDirBase   = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
     config.doFit        = false;
     config.puType       = {"0PU12","13PU19","20PU"};
     config.puBins       = {0,13,20,999};
-    config.inFiles      = {
-        basedir+"/crab_Collision2016-wRECO-l1t-integration-v87p1__281693_SingleMuon/161006_170018/0000/L1Ntuple_*.root",
-        basedir+"/crab_Collision2016-wRECO-l1t-integration-v87p1__281693_SingleMuon/161006_170018/0001/L1Ntuple_*.root",
-        basedir+"/crab_Collision2016-wRECO-l1t-integration-v87p1__281797_SingleMuon/161006_165951/0000/L1Ntuple_*.root",
-        basedir+"/crab_Collision2016-wRECO-l1t-integration-v87p1__281797_SingleMuon/161006_165951/0001/L1Ntuple_*.root",
-        basedir+"/crab_Collision2016-wRECO-l1t-integration-v87p1__281976_SingleMuon/161006_165426/0000/L1Ntuple_*.root",
-        basedir+"/crab_Collision2016-wRECO-l1t-integration-v87p1__281976_SingleMuon/161006_165426/0001/L1Ntuple_*.root"
-    };
+    config.inFiles      = {"root://eoscms.cern.ch//eos/cms/store/group"
+        "/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2"
+        "/Collision2016-wRECO-l1t-integration-v71p1/SingleMuon"
+        "/crab_Collision2016-wRECO-l1t-integration-v71p1__278017_SingleMuon"
+        "/160809_012632/0000/L1Ntuple_*.root"};
     config.baseOWdir    = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput"
-        "/20161029_"+config.sampleName+"_run-"+config.run+"_"+\
+        "/20161101_"+config.sampleName+"_run-"+config.run+"_"+\
         config.triggerName+"_hadd/";
     config.outDir       = config.outDirBase+"/"+TL1DateTime::GetDate()+"_"+\
         config.sampleName+"_run-"+config.run+"_"+config.triggerName;
     return config;
 }
 
-// TTbar MC
-ntuple_cfg TTbarMC_13TeV_powheg_pythia8()
+// Single Muon run 281693
+ntuple_cfg  singleMuRun281693()
 {
     ntuple_cfg config;
-    config.sampleName   = "TTbar";
-    config.sampleTitle  = "TTbar";
-    config.triggerName  = "";
-    config.triggerTitle = "";
+    config.sampleName   = "Data";
+    config.sampleTitle  = "2016 Data";
+    config.triggerName  = "SingleMu";
+    config.triggerTitle = "Single Muon";
     config.puFilename   = "";
-    config.run          = "";
+    config.run          = "281693";
     config.outDirBase   = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
     config.doFit        = false;
-    config.puType       = {};
-    config.puBins       = {};
-    config.inFiles      = {
-        "root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/"
-        "L1Trigger/L1Menu2016/Stage2/l1t-integration-v86p4-CMSSW-8019/"
-        "TT_TuneCUETP8M1_13TeV-powheg-pythia8/"
-        "crab_l1t-integration-v86p4-CMSSW-8019__TT_FlatPU20To70_13TeV/"
-        "160927_211602/0000/L1Ntuple_*.root"
-    };
+    config.puType       = {"0PU12","13PU19","20PU"};
+    config.puBins       = {0,13,20,999};
+    config.inFiles      = {"root://eoscms.cern.ch//eos/cms/store/group"
+        "/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2"
+        "/Collision2016-wRECO-l1t-integration-v86p4/SingleMuon"
+        "/crab_Collision2016-wRECO-l1t-integration-v86p4__281693_SingleMuon"
+        "/161005_194247/0000/L1Ntuple_*.root"};
     config.baseOWdir    = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput"
-        "/20161031_"+config.sampleName+"_MC_hadd/";
+        "/20161101_"+config.sampleName+"_run-"+config.run+"_"+\
+        config.triggerName+"_hadd/";
     config.outDir       = config.outDirBase+"/"+TL1DateTime::GetDate()+"_"+\
-        config.sampleName+"_MC";
+        config.sampleName+"_run-"+config.run+"_"+config.triggerName;
+    return config;
+}
+
+// Zero Bias run 276653
+ntuple_cfg zeroBiasRun276653()
+{
+    ntuple_cfg config;
+    config.sampleName = "Data";
+    config.sampleTitle = "2016 Data";
+    config.triggerName = "ZeroBias";
+    config.triggerTitle = "Zero Bias";
+    config.puFilename = "";
+    config.run = "276653";
+    config.outDirBase = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
+    config.doFit = false;
+    config.puType = {"0PU"};
+    config.puBins = {0,999};
+    config.inFiles = {"/afs/cern.ch/work/s/sbreeze/public/jets_and_sums"
+        "/160717_r276653_ZeroBias_l1t-int-71p1/L1Ntuple_*.root"};
+    config.baseOWdir = config.outDirBase+"/20161101_"+config.sampleName+\
+        "_run-"+config.run+"_"+config.triggerName+"_hadd/";
+    config.outDir = config.outDirBase+"/"+TL1DateTime::GetDate()+"_"+\
+        config.sampleName+"_run-"+config.run+"_"+config.triggerName;
+    return config;
+}
+
+// VBF H -> Inv
+ntuple_cfg VBF_HInv()
+{
+    ntuple_cfg config;
+    config.sampleName = "HInv";
+    config.sampleTitle = "VBF H #rightarrow Inv";
+    config.triggerName = "";
+    config.triggerTitle = "";
+    config.puFilename = "/afs/cern.ch/work/s/sbreeze/l1tClasses/PUWeights"
+        "/20160719_Data-SingleMu-2016Bv1_VBFHinv/pu_mcReweightedToData.root";
+    config.run = "";
+    config.outDirBase   = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput";
+    config.doFit        = false;
+    config.puType       = {"0PU12","13PU19","20PU"};
+    config.puBins       = {0,13,20,999};
+    config.inFiles      = {"/afs/cern.ch/work/s/sbreeze/public/jets_and_sums"
+        "/160718_MC_VBFHinv125GeV_l1t-int-70p2/L1Ntuple_*.root"};
+    config.baseOWdir    = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput"
+        "/20161102_MC_HInv_highMET/";
     return config;
 }
 
