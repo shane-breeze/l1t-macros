@@ -29,7 +29,7 @@ class TL1Turnon : public TL1Plots
         virtual void DrawPlots();
         void DrawCmsStamp(std::string stampPos="Left");
         void DrawTurnons();
-        void DrawCmsStampTurnon();
+        void DrawCmsStampTurnon(const double & max);
         TF1 fit(TGraphAsymmErrors * eff, int p50);
 
         void SetSeeds(const vector<double> & seeds);
@@ -198,6 +198,7 @@ void TL1Turnon::DrawTurnons()
     TCanvas * nomCan(new TCanvas(Form("can_%f",this->GetRnd()),"c1"));
     TLegend * nomLeg(new TLegend(0.58,0.15,0.83,0.15+0.16*(2+fSeeds.size())/5.0,this->GetAddMark().c_str()));
     TArrow * arrow = new TArrow();
+    double max(0.0);
     for(int i=1; i<fSeeds.size(); ++i)
     {
         std::vector<TGraphAsymmErrors*> temp;
@@ -208,7 +209,8 @@ void TL1Turnon::DrawTurnons()
         temp[0]->SetMarkerColor(fPlots[i][0]->GetMarkerColor());
         temp[0]->SetFillColor(0);
         temp[0]->GetXaxis()->SetTitle(fPlots[i][0]->GetXaxis()->GetTitle());
-        temp[0]->GetXaxis()->SetLimits(temp[0]->GetX()[0]-temp[0]->GetErrorXlow(0), temp[0]->GetX()[temp[0]->GetN()-1]+0.9*temp[0]->GetErrorXhigh(temp[0]->GetN()-1));
+        max = temp[0]->GetX()[temp[0]->GetN()-1]+0.9*temp[0]->GetErrorXhigh(temp[0]->GetN()-1);
+        temp[0]->GetXaxis()->SetLimits(temp[0]->GetX()[0]-temp[0]->GetErrorXlow(0), max);
         temp[0]->GetYaxis()->SetTitle("Efficiency");
         temp[0]->SetMinimum(0.0);
         temp[0]->SetMaximum(1.1);
@@ -217,8 +219,7 @@ void TL1Turnon::DrawTurnons()
         if( i == 1 ) temp[0]->Draw("ap");
         else temp[0]->Draw("psame");
         arrow->DrawArrow(temp[0]->GetX()[temp[0]->GetN()-1]+0.89*temp[0]->GetErrorXhigh(temp[0]->GetN()-1),
-                temp[0]->GetY()[temp[0]->GetN()-1],
-                temp[0]->GetX()[temp[0]->GetN()-1]+0.9*temp[0]->GetErrorXhigh(temp[0]->GetN()-1),
+                temp[0]->GetY()[temp[0]->GetN()-1], max,
                 temp[0]->GetY()[temp[0]->GetN()-1],
                 0.013);
         fTurnonsRoot->WriteTObject(temp[0]);
@@ -231,6 +232,7 @@ void TL1Turnon::DrawTurnons()
 
         TCanvas * puCan(new TCanvas(Form("puCan_%f",this->GetRnd()),""));
         TLegend * puLeg(new TLegend(0.65,0.15,0.9,0.15+0.08*this->GetPuType().size(),Form("%s > %g",fSeedTitle.c_str(),fSeeds[i])));
+        double puMax(0.0);
         for(int ipu=0; ipu<GetPuType().size(); ++ipu)
         {
             temp.emplace_back(new TGraphAsymmErrors(GetEfficiency(fPlots[0][ipu+1], fPlots[i][ipu+1])));
@@ -240,7 +242,8 @@ void TL1Turnon::DrawTurnons()
             temp[ipu+1]->SetMarkerColor(fPlots[i][ipu+1]->GetMarkerColor());
             temp[ipu+1]->SetFillColor(0);
             temp[ipu+1]->GetXaxis()->SetTitle(fPlots[i][ipu+1]->GetXaxis()->GetTitle());
-            temp[ipu+1]->GetXaxis()->SetLimits(temp[ipu+1]->GetX()[0]-temp[ipu+1]->GetErrorXlow(0), temp[ipu+1]->GetX()[temp[ipu+1]->GetN()-1]+0.9*temp[ipu+1]->GetErrorXhigh(temp[ipu+1]->GetN()-1));
+            puMax = temp[ipu+1]->GetX()[temp[ipu+1]->GetN()-1]+0.9*temp[ipu+1]->GetErrorXhigh(temp[ipu+1]->GetN()-1);
+            temp[ipu+1]->GetXaxis()->SetLimits(temp[ipu+1]->GetX()[0]-temp[ipu+1]->GetErrorXlow(0), puMax);
             temp[ipu+1]->GetYaxis()->SetTitle("Efficiency");
             temp[ipu+1]->SetMinimum(0.0);
             temp[ipu+1]->SetMaximum(1.1);
@@ -248,8 +251,7 @@ void TL1Turnon::DrawTurnons()
             if( ipu == 0 ) temp[ipu+1]->Draw("ap");
             else temp[ipu+1]->Draw("psame");
             arrow->DrawArrow(temp[ipu]->GetX()[temp[ipu]->GetN()-1]+0.89*temp[ipu]->GetErrorXhigh(temp[ipu]->GetN()-1),
-                    temp[ipu]->GetY()[temp[ipu]->GetN()-1],
-                    temp[ipu]->GetX()[temp[ipu]->GetN()-1]+0.9*temp[ipu]->GetErrorXhigh(temp[ipu]->GetN()-1),
+                    temp[ipu]->GetY()[temp[ipu]->GetN()-1], puMax,
                     temp[ipu]->GetY()[temp[ipu]->GetN()-1],
                     0.013);
             fTurnonsRoot->WriteTObject(temp[ipu+1]);
@@ -265,7 +267,7 @@ void TL1Turnon::DrawTurnons()
             entryName.str("");
         }
         puLeg->Draw();
-        DrawCmsStampTurnon();
+        DrawCmsStampTurnon(puMax);
         TLatex * latex = new TLatex();
         latex->SetNDC();
         //latex->SetTextFont(42);
@@ -277,7 +279,7 @@ void TL1Turnon::DrawTurnons()
     }
     nomCan->cd();
     nomLeg->Draw();
-    DrawCmsStampTurnon();
+    DrawCmsStampTurnon(max);
 
     TLatex * nomlatex = new TLatex();
     nomlatex->SetNDC();
@@ -290,7 +292,7 @@ void TL1Turnon::DrawTurnons()
     delete nomCan;
 }
 
-void TL1Turnon::DrawCmsStampTurnon()
+void TL1Turnon::DrawCmsStampTurnon(const double & max)
 {
     TLatex * latex(new TLatex());
     latex->SetNDC();
@@ -305,7 +307,7 @@ void TL1Turnon::DrawCmsStampTurnon()
     //latex->DrawLatex(0.82,0.25,this->GetAddMark().c_str());
 
     double min = fXBins.front();
-    double max = fXBins.back();
+    //double max = fXBins.back();
     TLine * line(new TLine(min,1.,max,1.));
     line->SetLineStyle(7);
     line->DrawClone();
