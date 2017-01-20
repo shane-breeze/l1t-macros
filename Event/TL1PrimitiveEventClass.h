@@ -29,6 +29,7 @@
 #include "L1Trigger/L1TNtuples/interface/L1AnalysisL1CaloTowerDataFormat.h"
 #include "L1Trigger/L1TNtuples/interface/L1AnalysisCaloTPDataFormat.h"
 #include "L1Trigger/L1TNtuples/interface/L1AnalysisRecoMetFilterDataFormat.h"
+#include "L1Trigger/L1TNtuples/interface/L1AnalysisRecoMuon2DataFormat.h"
 
 
 class TL1PrimitiveEventClass
