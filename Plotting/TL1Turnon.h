@@ -12,6 +12,7 @@
 #include <TLegend.h>
 #include <TLatex.h>
 #include <TLine.h>
+#include <TArrow.h>
 
 #include "TL1Plots.h"
 #include "../Debug/DebugHandler.h"
@@ -118,7 +119,7 @@ void TL1Turnon::OverwritePlots()
     delete rootFile;
 }
 
-void TL1Turnon::Fill(const double & xVal, const double & seedVal, const int & pu=0)
+void TL1Turnon::Fill(const double & xVal, const double & seedVal, const int & pu)
 {
     for(unsigned i=0; i<fSeeds.size(); ++i)
     {
@@ -166,7 +167,7 @@ void TL1Turnon::DrawPlots()
     delete can;
 }
 
-void TL1Turnon::DrawCmsStamp(std::string stampPos="Left")
+void TL1Turnon::DrawCmsStamp(std::string stampPos)
 {
     TLatex * latex(new TLatex());
     latex->SetNDC();
