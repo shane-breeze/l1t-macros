@@ -1,2 +1,5 @@
 *.pdf
 *.root
+.*.swp
+.*.swo
+~*

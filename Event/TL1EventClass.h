@@ -7,6 +7,10 @@
 #include <TMath.h>
 #include <TVector2.h>
 
+#ifndef __CINT__
+#include "DataFormats/L1Trigger/interface/EtSum.h"
+#endif // __CINT__
+#include "L1Trigger/L1TNtuples/interface/L1AnalysisL1UpgradeDataFormat.h"
 #include "TL1PrimitiveEventClass.h"
 
 class TL1EventClass

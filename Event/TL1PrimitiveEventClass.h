@@ -29,6 +29,7 @@
 #include "L1Trigger/L1TNtuples/interface/L1AnalysisL1CaloTowerDataFormat.h"
 #include "L1Trigger/L1TNtuples/interface/L1AnalysisCaloTPDataFormat.h"
 #include "L1Trigger/L1TNtuples/interface/L1AnalysisRecoMetFilterDataFormat.h"
+#include "L1Trigger/L1TNtuples/interface/L1AnalysisRecoMuon2DataFormat.h"
 
 
 class TL1PrimitiveEventClass
@@ -82,7 +83,7 @@ TL1PrimitiveEventClass::TL1PrimitiveEventClass(std::vector<std::string> inDir) :
     fPos(0)
 {
     if( caloTower->SetBranchAddress("L1CaloTower", &fCaloTowers) < 0 ) fIsCaloTower = false;
-    if( emuCaloTower->SetBranchAddress("L1CaloTower", &fEmuCaloTowers) < 0 ) fIsEmuCaloTowre = false;
+    if( emuCaloTower->SetBranchAddress("L1CaloTower", &fEmuCaloTowers) < 0 ) fIsEmuCaloTower = false;
     if( jetReco->SetBranchAddress("Jet", &fJets) < 0 ) fIsJetReco = false;
     if( jetReco->SetBranchAddress("Sums", &fSums) < 0 ) fIsJetReco = false;
     if( metFilterReco->SetBranchAddress("MetFilters", &fMetFilters) < 0 ) fIsMetFilterReco = false;

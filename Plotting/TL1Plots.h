@@ -36,7 +36,7 @@ class TL1Plots
 
         double GetPuWeight(int pu);
 
-    protected:
+    public:
         std::string GetOverwriteRootFilename() const;
         std::string GetOverwriteHistname() const;
         std::string GetSampleName() const;
@@ -107,7 +107,7 @@ void TL1Plots::SetOutName(const std::string & outName)
 
 void TL1Plots::SetOutDir(const std::string & outDir)
 {
-    std::system(Form("mkdir -p %s",outDir.c_str()));
+    std::system(Form("mkdir -p \"%s\"",outDir.c_str()));
     fOutDir = outDir;
 }
 
