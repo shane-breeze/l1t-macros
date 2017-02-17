@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "../Plotting/tdrstyle.C"
 #include "../Event/TL1EventClass.h"
@@ -10,6 +11,7 @@
 #include "../Config/jetResolutions_cfg.h"
 
 #include "../Debug/DebugHandler.h"
+
 
 double FoldPhi(double phi);
 
@@ -57,9 +59,9 @@ void makeJetResolutions(const int & CHUNK, const int & NJOBS, const int & NENT, 
         end   = (CHUNK+1) * NEvents;
         if( CHUNK == NJOBS-1 ) end = NENT;
     }
-    
+
     // Loop
-    for(int i=start; i<end && !COMBINE; ++i)
+    for(auto i=start; i<end && !COMBINE; ++i)
     {
         event->GetEntry(i);
         TL1Progress::PrintProgressBar(i-start, end-start);
