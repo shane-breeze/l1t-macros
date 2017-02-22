@@ -10,6 +10,8 @@
 #include <TCanvas.h>
 #include <TLegend.h>
 #include <TLatex.h>
+#include "THStack.h"
+#include "TLine.h"
 
 #include "TL1Plots.h"
 #include "../Debug/DebugHandler.h"
@@ -61,7 +63,7 @@ void TL1Resolution::InitPlots()
     fPlot.back()->Sumw2();
     fPlot.back()->GetXaxis()->SetTitle(GetXAxisTitle().c_str());
     fPlot.back()->GetYaxis()->SetTitle("a.u.");
-    for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
+    for(unsigned int ipu=0; ipu<this->GetPuType().size(); ++ipu)
     {
         fPlot.emplace_back(new TH1F(Form("res_%s_%s_%s_%s",fPlotType.c_str(),fXName.c_str(),fYName.c_str(),this->GetPuType()[ipu].c_str()),"", fBins.size()-1,&(fBins)[0]));
         fPlot.back()->SetDirectory(0);
@@ -87,7 +89,7 @@ void TL1Resolution::OverwritePlots()
     double norm(fPlot.back()->Integral());
     if( norm > 0.0 ) fPlot.back()->Scale(1./norm);
 
-    for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
+    for(unsigned int ipu=0; ipu<this->GetPuType().size(); ++ipu)
     {
         fPlot.push_back((TH1F*)rootFile->Get(Form("%s_%s",this->GetOverwriteHistname().c_str(),this->GetPuType()[ipu].c_str())));
         fPlot.back()->SetDirectory(0);
@@ -99,11 +101,11 @@ void TL1Resolution::OverwritePlots()
     delete rootFile;
 }
 
-void TL1Resolution::Fill(const double & xVal, const double & yVal, const int & pu=0)
+void TL1Resolution::Fill(const double & xVal, const double & yVal, const int & pu)
 {
     double div(GetFillVal(xVal, yVal));
     fPlot[0]->Fill(div,this->GetPuWeight(pu));
-    for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
+    for(unsigned int ipu=0; ipu<this->GetPuType().size(); ++ipu)
     {
         if( pu >= this->GetPuBins()[ipu] && pu < this->GetPuBins()[ipu+1] )
             fPlot[ipu+1]->Fill(div,this->GetPuWeight(pu));
@@ -112,7 +114,7 @@ void TL1Resolution::Fill(const double & xVal, const double & yVal, const int & p
 
 void TL1Resolution::DrawPlots()
 {
-    TCanvas * can(new TCanvas(Form("can_%f",this->GetRnd()),"")); 
+    TCanvas * can(new TCanvas(Form("can_%f",this->GetRnd()),""));
 
     fPlot[0]->SetLineColor(kBlue-4);
     fPlot[0]->SetMarkerColor(kBlue-4);
@@ -141,9 +143,9 @@ void TL1Resolution::DrawPlots()
 
     THStack * stack(new THStack("hs",""));
     double norm(0.0);
-    for(int ipu=0; ipu<this->GetPuType().size(); ++ipu)
+    for(unsigned int ipu=0; ipu<this->GetPuType().size(); ++ipu)
     {
-        this->SetColor(fPlot[ipu+1], ipu, this->GetPuType().size()); 
+        this->SetColor(fPlot[ipu+1], ipu, this->GetPuType().size());
         fPlot[ipu+1]->SetMinimum(0.0);
         fRootFile->WriteTObject(fPlot[ipu+1]);
 
@@ -162,7 +164,7 @@ void TL1Resolution::DrawPlots()
         //fRootFile->WriteTObject(fitFcn2);
     }
 
-    TCanvas * can2(new TCanvas(Form("can_%f",this->GetRnd()),"")); 
+    TCanvas * can2(new TCanvas(Form("can_%f",this->GetRnd()),""));
     TLegend * leg(new TLegend(0.65,0.55,0.88,0.55+0.05*this->GetPuType().size()));
     leg->AddEntry(stack);
 

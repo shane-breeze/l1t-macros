@@ -37,7 +37,7 @@ class TL1EventClass
         // Filter flags
         bool fMuonFilterPassFlag, fMetFilterPassFlag;
         std::vector<bool> fJetFilterPassFlags;
-        
+
         // Recalc L1 MET sums
         double fRecalcL1Met, fRecalcL1MetPhi;
         double fRecalcL1MetHF, fRecalcL1MetPhiHF;
@@ -134,7 +134,7 @@ void TL1EventClass::GetDerivatives()
     if( fPrimitiveEvent->fIsEmuCaloTower ) this->GetRecalcL1EmuMet();
     //this->GetRecalcL1Mht();
     //this->GetRecalcL1Ett();
-    
+
     //this->GetRecalcRecoHtSums();
     //this->GetRecalcRecoEtt();
 
@@ -445,7 +445,7 @@ void TL1EventClass::GetRecalcRecoEtt()
 {
     double jetEt(0.0);
     int jetCount = 0;
-    for(int iJet=0; iJet<fPrimitiveEvent->fJets->nJets; ++iJet)
+    for(auto iJet=0; iJet<fPrimitiveEvent->fJets->nJets; ++iJet)
     {
         if( fPrimitiveEvent->fJets->etCorr[iJet] >= 30.0 )
         {
@@ -462,7 +462,7 @@ void TL1EventClass::GetLeadingRecoJet()
     int iLeadingReco = 0;
     double leadingRecoEt = 10.0;
     fIsLeadingRecoJet = false;
-    for(int iReco=0; iReco<fJetFilterPassFlags.size(); ++iReco)
+    for(unsigned int iReco=0; iReco<fJetFilterPassFlags.size(); ++iReco)
     {
         // If central jet, require tightLepVeto and muMult==0
         auto recoJet = fPrimitiveEvent->fJets;
@@ -494,7 +494,7 @@ void TL1EventClass::GetMatchedL1Jet(const std::string & l1Type)
 
     // Get Leading jet parameters
     auto recoJet = fPrimitiveEvent->fJets;
-    double leadingRecoJetEta = recoJet->eta[fLeadingRecoJetIndex]; 
+    double leadingRecoJetEta = recoJet->eta[fLeadingRecoJetIndex];
     double leadingRecoJetPhi = recoJet->phi[fLeadingRecoJetIndex];
 
     std::vector<double> l1JetEts, l1JetEtas, l1JetPhis;
@@ -510,7 +510,7 @@ void TL1EventClass::GetMatchedL1Jet(const std::string & l1Type)
         l1JetEtas = fL1EmuJetEta;
         l1JetPhis = fL1EmuJetPhi;
     }
-    for(int iL1=0; iL1<l1JetEts.size(); ++iL1)
+    for(unsigned int iL1=0; iL1<l1JetEts.size(); ++iL1)
     {
         // Get l1 jet parameters
         double l1JetEta = l1JetEtas[iL1];
@@ -519,7 +519,7 @@ void TL1EventClass::GetMatchedL1Jet(const std::string & l1Type)
         // Check dEta > dR
         double dEta = leadingRecoJetEta - l1JetEta;
         if( dEta > minDeltaR ) continue;
-        
+
         // Check dPhi > dR
         double dPhi = leadingRecoJetPhi - l1JetPhi;
         if( dPhi > minDeltaR ) continue;

@@ -8,7 +8,7 @@
 struct ntuple_cfg {
     std::string sampleName, sampleTitle;
     std::string triggerName, triggerTitle;
-    std::string puFilename;     
+    std::string puFilename;
     std::string run;
     std::string outDirBase;
     bool doFit;
@@ -23,12 +23,14 @@ ntuple_cfg singleMuRun276243();
 ntuple_cfg singleMuRun281693();
 ntuple_cfg zeroBiasRun276653();
 ntuple_cfg VBF_HInv();
+ntuple_cfg benchmark_cfg();
 
 // The Ntuple cfg to use:
 ntuple_cfg GetNtuple_cfg()
 {
     return singleMuRun276243();
 }
+
 
 // Single Muon run 276243
 ntuple_cfg singleMuRun276243()
@@ -127,6 +129,29 @@ ntuple_cfg VBF_HInv()
     config.baseOWdir    = "/afs/cern.ch/work/s/sbreeze/L1TriggerStudiesOutput"
         "/20161102_MC_HInv_highMET/";
     return config;
+}
+
+
+ntuple_cfg benchmark_cfg()
+{
+  ntuple_cfg config;
+  config.sampleName   = "Data";
+  config.sampleTitle  = "2016 Data";
+  config.triggerName  = "SingleMu";
+  config.triggerTitle = "Single Muon";
+  config.puFilename   = "";
+  config.run          = "276243";
+  config.outDirBase   = "/vagrant/benchmark/legacy";
+  config.doFit        = false;
+  config.puType       = {"0PU12","13PU19","20PU"};
+  config.puBins       = {0,13,20,999};
+  config.inFiles      = {"file:///vagrant/data/*.root"};
+  config.baseOWdir    = config.outDirBase +
+      "/20161101_"+config.sampleName+"_run-"+config.run+"_"+\
+      config.triggerName+"_hadd/";
+  config.outDir       = config.outDirBase+"/"+TL1DateTime::GetDate()+"_"+\
+  config.sampleName+"_run-"+config.run+"_"+config.triggerName;
+  return config;
 }
 
 #endif
