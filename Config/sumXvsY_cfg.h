@@ -11,12 +11,28 @@
 TL1XvsY caloMetBE_l1MetBE(ntuple_cfg const * dataset);
 TL1XvsY caloMetHF_l1MetBE(ntuple_cfg const * dataset);
 TL1XvsY caloMetHF_l1MetHF(ntuple_cfg const * dataset);
+TL1XvsY caloMetBE_l1EmuMetBE(ntuple_cfg const * dataset);
+TL1XvsY caloMetHF_l1EmuMetBE(ntuple_cfg const * dataset);
+TL1XvsY caloMetHF_l1EmuMetHF(ntuple_cfg const * dataset);
+
 TL1XvsY l1MetBE_recalcL1MetBE(ntuple_cfg const * dataset);
 TL1XvsY caloMetPhiBE_l1MetPhiBE(ntuple_cfg const * dataset);
 TL1XvsY caloMetPhiHF_l1MetPhiBE(ntuple_cfg const * dataset);
 TL1XvsY caloMetPhiHF_l1MetPhiHF(ntuple_cfg const * dataset);
 TL1XvsY caloMetXBE_l1MetXBE(ntuple_cfg const * dataset);
 TL1XvsY caloMetYBE_l1MetYBE(ntuple_cfg const * dataset);
+
+TL1XvsY recoHtt_l1Htt(ntuple_cfg const * dataset);
+TL1XvsY recoHtt_l1EmuHtt(ntuple_cfg const * dataset);
+TL1XvsY recalcRecoHtt_l1Htt(ntuple_cfg const * dataset);
+TL1XvsY recalcRecoHtt_l1EmuHtt(ntuple_cfg const * dataset);
+TL1XvsY recalcRecoHttNoMEF_l1Htt(ntuple_cfg const * dataset);
+TL1XvsY recalcRecoHttNoMEF_l1EmuHtt(ntuple_cfg const * dataset);
+
+TL1XvsY l1Htt_recalcL1Htt(ntuple_cfg const * dataset);
+TL1XvsY recoHtt_recalcL1Htt(ntuple_cfg const * dataset);
+TL1XvsY recalcRecoHtt_recoHtt(ntuple_cfg const * dataset);
+
 std::vector<double> bins(const double & min, const double & max, const double & width);
 std::vector<double> phiBins();
 
@@ -25,14 +41,16 @@ std::map< std::string, TL1XvsY* > sumXvsYs(ntuple_cfg const * dataset)
 {
     std::map< std::string, TL1XvsY* > xvsys;
     xvsys.emplace("caloMetBE_l1MetBE", new TL1XvsY(caloMetBE_l1MetBE(dataset)));
-    xvsys.emplace("caloMetHF_l1MetBE", new TL1XvsY(caloMetHF_l1MetBE(dataset)));
+    xvsys.emplace("caloMetBE_l1EmuMetBE", new TL1XvsY(caloMetBE_l1EmuMetBE(dataset)));
     xvsys.emplace("caloMetHF_l1MetHF", new TL1XvsY(caloMetHF_l1MetHF(dataset)));
-    xvsys.emplace("l1MetBE_recalcL1MetBE", new TL1XvsY(l1MetBE_recalcL1MetBE(dataset)));
-    xvsys.emplace("caloMetPhiBE_l1MetPhiBE", new TL1XvsY(caloMetPhiBE_l1MetPhiBE(dataset)));
-    xvsys.emplace("caloMetPhiHF_l1MetPhiBE", new TL1XvsY(caloMetPhiHF_l1MetPhiBE(dataset)));
-    xvsys.emplace("caloMetPhiHF_l1MetPhiHF", new TL1XvsY(caloMetPhiHF_l1MetPhiHF(dataset)));
-    xvsys.emplace("caloMetXBE_l1MetXBE", new TL1XvsY(caloMetXBE_l1MetXBE(dataset)));
-    xvsys.emplace("caloMetYBE_l1MetYBE", new TL1XvsY(caloMetYBE_l1MetYBE(dataset)));
+    xvsys.emplace("caloMetHF_l1EmuMetHF", new TL1XvsY(caloMetHF_l1EmuMetHF(dataset)));
+
+    xvsys.emplace("recoHtt_l1Htt", new TL1XvsY(recoHtt_l1Htt(dataset)));
+    xvsys.emplace("recoHtt_l1EmuHtt", new TL1XvsY(recoHtt_l1EmuHtt(dataset)));
+    xvsys.emplace("recalcRecoHtt_l1Htt", new TL1XvsY(recalcRecoHtt_l1Htt(dataset)));
+    xvsys.emplace("recalcRecoHtt_l1EmuHtt", new TL1XvsY(recalcRecoHtt_l1EmuHtt(dataset)));
+    xvsys.emplace("recalcRecoHttNoMEF_l1Htt", new TL1XvsY(recalcRecoHttNoMEF_l1Htt(dataset)));
+    xvsys.emplace("recalcRecoHttNoMEF_l1EmuHtt", new TL1XvsY(recalcRecoHttNoMEF_l1EmuHtt(dataset)));
     return xvsys;
 }
 
@@ -79,6 +97,54 @@ TL1XvsY caloMetHF_l1MetHF(ntuple_cfg const * dataset)
     xvsy.SetX(xparam, "Offline E_{T}^{miss} HF (GeV)");
     xvsy.SetXBins(bins(0.0, 800.0, 10.0));
     xvsy.SetY(yparam, "L1 E_{T}^{miss} HF (GeV)");
+    xvsy.SetYBins(bins(0.0, 800.0, 10.0));
+    xvsy.SetOutName(outName);
+    return xvsy;
+}
+
+// calo Met BE vs. l1 Met BE
+TL1XvsY caloMetBE_l1EmuMetBE(ntuple_cfg const * dataset)
+{
+    TL1XvsY xvsy;
+    std::string xparam = "caloMetBE";
+    std::string yparam = "l1EmuMetBE";
+    std::string outName = dataset->triggerName+"_"+xparam+"_vs_"+yparam;
+    xvsy.SetOverwriteNames(dataset->baseOWdir+"/XvsY/xy_"+outName+".root", "xy_"+xparam+"_vs_"+yparam);
+    xvsy.SetX(xparam, "Offline E_{T}^{miss} BE (GeV)");
+    xvsy.SetXBins(bins(0.0, 800.0, 10.0));
+    xvsy.SetY(yparam, "Emualted L1 E_{T}^{miss} BE (GeV)");
+    xvsy.SetYBins(bins(0.0, 800.0, 10.0));
+    xvsy.SetOutName(outName);
+    return xvsy;
+}
+
+// calo Met HF vs. l1 Met BE
+TL1XvsY caloMetHF_l1EmuMetBE(ntuple_cfg const * dataset)
+{
+    TL1XvsY xvsy;
+    std::string xparam = "caloMetHF";
+    std::string yparam = "l1EmuMetBE";
+    std::string outName = dataset->triggerName+"_"+xparam+"_vs_"+yparam;
+    xvsy.SetOverwriteNames(dataset->baseOWdir+"/XvsY/xy_"+outName+".root", "xy_"+xparam+"_vs_"+yparam);
+    xvsy.SetX(xparam, "Offline E_{T}^{miss} HF (GeV)");
+    xvsy.SetXBins(bins(0.0, 800.0, 10.0));
+    xvsy.SetY(yparam, "Emulated L1 E_{T}^{miss} BE (GeV)");
+    xvsy.SetYBins(bins(0.0, 800.0, 10.0));
+    xvsy.SetOutName(outName);
+    return xvsy;
+}
+
+// calo Met HF vs. l1 Met HF
+TL1XvsY caloMetHF_l1EmuMetHF(ntuple_cfg const * dataset)
+{
+    TL1XvsY xvsy;
+    std::string xparam = "caloMetHF";
+    std::string yparam = "l1EmuMetHF";
+    std::string outName = dataset->triggerName+"_"+xparam+"_vs_"+yparam;
+    xvsy.SetOverwriteNames(dataset->baseOWdir+"/XvsY/xy_"+outName+".root", "xy_"+xparam+"_vs_"+yparam);
+    xvsy.SetX(xparam, "Offline E_{T}^{miss} HF (GeV)");
+    xvsy.SetXBins(bins(0.0, 800.0, 10.0));
+    xvsy.SetY(yparam, "Emulated L1 E_{T}^{miss} HF (GeV)");
     xvsy.SetYBins(bins(0.0, 800.0, 10.0));
     xvsy.SetOutName(outName);
     return xvsy;
@@ -176,6 +242,141 @@ TL1XvsY caloMetYBE_l1MetYBE(ntuple_cfg const * dataset)
     xvsy.SetXBins(bins(-400.0, 400.0, 10.0));
     xvsy.SetY(yparam, "L1 E_{y}^{miss} BE (GeV)");
     xvsy.SetYBins(bins(-400.0, 400.0, 10.0));
+    xvsy.SetOutName(outName);
+    return xvsy;
+}
+
+TL1XvsY l1Htt_recalcL1Htt(ntuple_cfg const * dataset)
+{
+    TL1XvsY xvsy;
+    std::string xparam = "l1Htt";
+    std::string yparam = "recalcL1Htt";
+    std::string outName = dataset->triggerName+"_"+xparam+"_vs_"+yparam;
+    xvsy.SetOverwriteNames(dataset->baseOWdir+"/XvsY/xy_"+outName+".root", "xy_"+xparam+"_vs_"+yparam);
+    xvsy.SetX(xparam, "L1 HTT (GeV)");
+    xvsy.SetXBins(bins(0.0, 3000.0, 100.0));
+    xvsy.SetY(yparam, "Recalc L1 HTT (GeV)");
+    xvsy.SetYBins(bins(0.0, 3000.0, 100.0));
+    xvsy.SetOutName(outName);
+    return xvsy;
+}
+
+TL1XvsY recoHtt_l1Htt(ntuple_cfg const * dataset)
+{
+    TL1XvsY xvsy;
+    std::string xparam = "recoHtt";
+    std::string yparam = "l1Htt";
+    std::string outName = dataset->triggerName+"_"+xparam+"_vs_"+yparam;
+    xvsy.SetOverwriteNames(dataset->baseOWdir+"/XvsY/xy_"+outName+".root", "xy_"+xparam+"_vs_"+yparam);
+    xvsy.SetX(xparam, "Offline HTT (GeV)");
+    xvsy.SetXBins(bins(0.0, 3000.0, 100.0));
+    xvsy.SetY(yparam, "L1 HTT (GeV)");
+    xvsy.SetYBins(bins(0.0, 3000.0, 100.0));
+    xvsy.SetOutName(outName);
+    return xvsy;
+}
+
+TL1XvsY recoHtt_l1EmuHtt(ntuple_cfg const * dataset)
+{
+    TL1XvsY xvsy;
+    std::string xparam = "recoHtt";
+    std::string yparam = "l1EmuHtt";
+    std::string outName = dataset->triggerName+"_"+xparam+"_vs_"+yparam;
+    xvsy.SetOverwriteNames(dataset->baseOWdir+"/XvsY/xy_"+outName+".root", "xy_"+xparam+"_vs_"+yparam);
+    xvsy.SetX(xparam, "Offline HTT (GeV)");
+    xvsy.SetXBins(bins(0.0, 3000.0, 100.0));
+    xvsy.SetY(yparam, "Emulated L1 HTT (GeV)");
+    xvsy.SetYBins(bins(0.0, 3000.0, 100.0));
+    xvsy.SetOutName(outName);
+    return xvsy;
+}
+
+TL1XvsY recoHtt_recalcL1Htt(ntuple_cfg const * dataset)
+{
+    TL1XvsY xvsy;
+    std::string xparam = "recoHtt";
+    std::string yparam = "recalcL1Htt";
+    std::string outName = dataset->triggerName+"_"+xparam+"_vs_"+yparam;
+    xvsy.SetOverwriteNames(dataset->baseOWdir+"/XvsY/xy_"+outName+".root", "xy_"+xparam+"_vs_"+yparam);
+    xvsy.SetX(xparam, "Offline HTT (GeV)");
+    xvsy.SetXBins(bins(0.0, 3000.0, 100.0));
+    xvsy.SetY(yparam, "Recalc L1 HTT (GeV)");
+    xvsy.SetYBins(bins(0.0, 3000.0, 100.0));
+    xvsy.SetOutName(outName);
+    return xvsy;
+}
+
+TL1XvsY recalcRecoHtt_l1Htt(ntuple_cfg const * dataset)
+{
+    TL1XvsY xvsy;
+    std::string xparam = "recalcRecoHtt";
+    std::string yparam = "l1Htt";
+    std::string outName = dataset->triggerName+"_"+xparam+"_vs_"+yparam;
+    xvsy.SetOverwriteNames(dataset->baseOWdir+"/XvsY/xy_"+outName+".root", "xy_"+xparam+"_vs_"+yparam);
+    xvsy.SetX(xparam, "Recalc offline HTT (GeV)");
+    xvsy.SetXBins(bins(0.0, 3000.0, 100.0));
+    xvsy.SetY(yparam, "L1 HTT (GeV)");
+    xvsy.SetYBins(bins(0.0, 3000.0, 100.0));
+    xvsy.SetOutName(outName);
+    return xvsy;
+}
+
+TL1XvsY recalcRecoHtt_l1EmuHtt(ntuple_cfg const * dataset)
+{
+    TL1XvsY xvsy;
+    std::string xparam = "recalcRecoHtt";
+    std::string yparam = "l1EmuHtt";
+    std::string outName = dataset->triggerName+"_"+xparam+"_vs_"+yparam;
+    xvsy.SetOverwriteNames(dataset->baseOWdir+"/XvsY/xy_"+outName+".root", "xy_"+xparam+"_vs_"+yparam);
+    xvsy.SetX(xparam, "Recalc offline HTT (GeV)");
+    xvsy.SetXBins(bins(0.0, 3000.0, 100.0));
+    xvsy.SetY(yparam, "Emulated L1 HTT (GeV)");
+    xvsy.SetYBins(bins(0.0, 3000.0, 100.0));
+    xvsy.SetOutName(outName);
+    return xvsy;
+}
+
+TL1XvsY recalcRecoHttNoMEF_l1Htt(ntuple_cfg const * dataset)
+{
+    TL1XvsY xvsy;
+    std::string xparam = "recalcRecoHttNoMEF";
+    std::string yparam = "l1Htt";
+    std::string outName = dataset->triggerName+"_"+xparam+"_vs_"+yparam;
+    xvsy.SetOverwriteNames(dataset->baseOWdir+"/XvsY/xy_"+outName+".root", "xy_"+xparam+"_vs_"+yparam);
+    xvsy.SetX(xparam, "Recalc offline HTT no MEF (GeV)");
+    xvsy.SetXBins(bins(0.0, 3000.0, 100.0));
+    xvsy.SetY(yparam, "L1 HTT (GeV)");
+    xvsy.SetYBins(bins(0.0, 3000.0, 100.0));
+    xvsy.SetOutName(outName);
+    return xvsy;
+}
+
+TL1XvsY recalcRecoHttNoMEF_l1EmuHtt(ntuple_cfg const * dataset)
+{
+    TL1XvsY xvsy;
+    std::string xparam = "recalcRecoHttNoMEF";
+    std::string yparam = "l1EmuHtt";
+    std::string outName = dataset->triggerName+"_"+xparam+"_vs_"+yparam;
+    xvsy.SetOverwriteNames(dataset->baseOWdir+"/XvsY/xy_"+outName+".root", "xy_"+xparam+"_vs_"+yparam);
+    xvsy.SetX(xparam, "Recalc offline HTT no MEF (GeV)");
+    xvsy.SetXBins(bins(0.0, 3000.0, 100.0));
+    xvsy.SetY(yparam, "Emulated L1 HTT (GeV)");
+    xvsy.SetYBins(bins(0.0, 3000.0, 100.0));
+    xvsy.SetOutName(outName);
+    return xvsy;
+}
+
+TL1XvsY recalcRecoHtt_recoHtt(ntuple_cfg const * dataset)
+{
+    TL1XvsY xvsy;
+    std::string xparam = "recalcRecoHtt";
+    std::string yparam = "recoHtt";
+    std::string outName = dataset->triggerName+"_"+xparam+"_vs_"+yparam;
+    xvsy.SetOverwriteNames(dataset->baseOWdir+"/XvsY/xy_"+outName+".root", "xy_"+xparam+"_vs_"+yparam);
+    xvsy.SetX(xparam, "Recalc offline HTT (GeV)");
+    xvsy.SetXBins(bins(0.0, 3000.0, 100.0));
+    xvsy.SetY(yparam, "Reco HTT (GeV)");
+    xvsy.SetYBins(bins(0.0, 3000.0, 100.0));
     xvsy.SetOutName(outName);
     return xvsy;
 }

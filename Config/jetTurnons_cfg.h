@@ -8,31 +8,39 @@
 #include "../Plotting/TL1Turnon.h"
 #include "ntuple_cfg.h"
 
-TL1Turnon jetEtBarrel(ntuple_cfg const * dataset);
-TL1Turnon jetEtEndcap(ntuple_cfg const * dataset);
-TL1Turnon jetEtCentral(ntuple_cfg const * dataset);
+TL1Turnon jetEtB(ntuple_cfg const * dataset);
+TL1Turnon jetEtE(ntuple_cfg const * dataset);
+TL1Turnon jetEtBE(ntuple_cfg const * dataset);
 TL1Turnon jetEtHF(ntuple_cfg const * dataset);
+TL1Turnon emuJetEtB(ntuple_cfg const * dataset);
+TL1Turnon emuJetEtE(ntuple_cfg const * dataset);
+TL1Turnon emuJetEtBE(ntuple_cfg const * dataset);
+TL1Turnon emuJetEtHF(ntuple_cfg const * dataset);
 std::vector<double> bins();
 
 // All Jet Turnons
 std::map< std::string, TL1Turnon* > jetTurnons(ntuple_cfg const * dataset)
 {
     std::map< std::string, TL1Turnon* > turnons;
-    turnons.emplace("jetEtBarrel", new TL1Turnon(jetEtBarrel(dataset)));
-    turnons.emplace("jetEtEndcap", new TL1Turnon(jetEtEndcap(dataset)));
-    turnons.emplace("jetEtCentral", new TL1Turnon(jetEtCentral(dataset)));
+    turnons.emplace("jetEtB", new TL1Turnon(jetEtB(dataset)));
+    turnons.emplace("jetEtE", new TL1Turnon(jetEtE(dataset)));
+    turnons.emplace("jetEtBE", new TL1Turnon(jetEtBE(dataset)));
     turnons.emplace("jetEtHF", new TL1Turnon(jetEtHF(dataset)));
+    turnons.emplace("emuJetEtB", new TL1Turnon(emuJetEtB(dataset)));
+    turnons.emplace("emuJetEtE", new TL1Turnon(emuJetEtE(dataset)));
+    turnons.emplace("emuJetEtBE", new TL1Turnon(emuJetEtBE(dataset)));
+    turnons.emplace("emuJetEtHF", new TL1Turnon(emuJetEtHF(dataset)));
     return turnons;
 }
 
 // Jet Et - barrel
-TL1Turnon jetEtBarrel(ntuple_cfg const * dataset)
+TL1Turnon jetEtB(ntuple_cfg const * dataset)
 {
     TL1Turnon turnon;
     std::string seed = "l1JetEtSeed";
     std::string xparam = "recoJetEt";
     std::string outName = dataset->triggerName+"_"+xparam+"_"+seed+"_barrel";
-    turnon.SetOverwriteNames(dataset->baseOWdir+"/TurnonsJets/dists_"+outName+".root", "dist_"+xparam+"_"+seed);
+    turnon.SetOverwriteNames(dataset->baseOWdir+"/Turnons/dists_"+outName+".root", "dist_"+xparam+"_"+seed);
     turnon.SetSeed(seed, "L1 Jet E_{T}");
     turnon.SetSeeds({0., 36., 68., 128., 200.});
     turnon.SetX(xparam, "Offline Jet E_{T} (GeV)");
@@ -44,13 +52,13 @@ TL1Turnon jetEtBarrel(ntuple_cfg const * dataset)
 }
 
 // Jet Et - end cap
-TL1Turnon jetEtEndcap(ntuple_cfg const * dataset)
+TL1Turnon jetEtE(ntuple_cfg const * dataset)
 {
     TL1Turnon turnon;
     std::string seed = "l1JetEtSeed";
     std::string xparam = "recoJetEt";
     std::string outName = dataset->triggerName+"_"+xparam+"_"+seed+"_endcap";
-    turnon.SetOverwriteNames(dataset->baseOWdir+"/TurnonsJets/dists_"+outName+".root", "dist_"+xparam+"_"+seed);
+    turnon.SetOverwriteNames(dataset->baseOWdir+"/Turnons/dists_"+outName+".root", "dist_"+xparam+"_"+seed);
     turnon.SetSeed(seed, "L1 Jet E_{T}");
     turnon.SetSeeds({0., 36., 68., 128., 200.});
     turnon.SetX(xparam, "Offline Jet E_{T} (GeV)");
@@ -62,13 +70,13 @@ TL1Turnon jetEtEndcap(ntuple_cfg const * dataset)
 }
 
 // Jet Et - central
-TL1Turnon jetEtCentral(ntuple_cfg const * dataset)
+TL1Turnon jetEtBE(ntuple_cfg const * dataset)
 {
     TL1Turnon turnon;
     std::string seed = "l1JetEtSeed";
     std::string xparam = "recoJetEt";
     std::string outName = dataset->triggerName+"_"+xparam+"_"+seed+"_central";
-    turnon.SetOverwriteNames(dataset->baseOWdir+"/TurnonsJets/dists_"+outName+".root", "dist_"+xparam+"_"+seed);
+    turnon.SetOverwriteNames(dataset->baseOWdir+"/Turnons/dists_"+outName+".root", "dist_"+xparam+"_"+seed);
     turnon.SetSeed(seed, "L1 Jet E_{T}");
     turnon.SetSeeds({0., 36., 68., 128., 200.});
     turnon.SetX(xparam, "Offline Jet E_{T} (GeV)");
@@ -86,8 +94,80 @@ TL1Turnon jetEtHF(ntuple_cfg const * dataset)
     std::string seed = "l1JetEtSeed";
     std::string xparam = "recoJetEt";
     std::string outName = dataset->triggerName+"_"+xparam+"_"+seed+"_hf";
-    turnon.SetOverwriteNames(dataset->baseOWdir+"/TurnonsJets/dists_"+outName+".root", "dist_"+xparam+"_"+seed);
+    turnon.SetOverwriteNames(dataset->baseOWdir+"/Turnons/dists_"+outName+".root", "dist_"+xparam+"_"+seed);
     turnon.SetSeed(seed, "L1 Jet E_{T}");
+    turnon.SetSeeds({0., 36., 68., 128., 200.});
+    turnon.SetX(xparam, "Offline Jet E_{T} (GeV)");
+    turnon.SetXBins(bins());
+    turnon.SetOutName(outName);
+    turnon.SetFit(dataset->doFit);
+    turnon.SetAddMark("|#eta| > 3.0");
+    return turnon;
+}
+
+// Emu Jet Et - barrel
+TL1Turnon emuJetEtB(ntuple_cfg const * dataset)
+{
+    TL1Turnon turnon;
+    std::string seed = "l1EmuJetEtSeed";
+    std::string xparam = "recoJetEt";
+    std::string outName = dataset->triggerName+"_"+xparam+"_"+seed+"_barrel";
+    turnon.SetOverwriteNames(dataset->baseOWdir+"/Turnons/dists_"+outName+".root", "dist_"+xparam+"_"+seed);
+    turnon.SetSeed(seed, "Emulated L1 Jet E_{T}");
+    turnon.SetSeeds({0., 36., 68., 128., 200.});
+    turnon.SetX(xparam, "Offline Jet E_{T} (GeV)");
+    turnon.SetXBins(bins());
+    turnon.SetOutName(outName);
+    turnon.SetFit(dataset->doFit);
+    turnon.SetAddMark("|#eta| < 1.479");
+    return turnon;
+}
+
+// Emu Jet Et - end cap
+TL1Turnon emuJetEtE(ntuple_cfg const * dataset)
+{
+    TL1Turnon turnon;
+    std::string seed = "l1EmuJetEtSeed";
+    std::string xparam = "recoJetEt";
+    std::string outName = dataset->triggerName+"_"+xparam+"_"+seed+"_endcap";
+    turnon.SetOverwriteNames(dataset->baseOWdir+"/Turnons/dists_"+outName+".root", "dist_"+xparam+"_"+seed);
+    turnon.SetSeed(seed, "Emulated L1 Jet E_{T}");
+    turnon.SetSeeds({0., 36., 68., 128., 200.});
+    turnon.SetX(xparam, "Offline Jet E_{T} (GeV)");
+    turnon.SetXBins(bins());
+    turnon.SetOutName(outName);
+    turnon.SetFit(dataset->doFit);
+    turnon.SetAddMark("1.479 < |#eta| < 3.0");
+    return turnon;
+}
+
+// Emu Jet Et - central
+TL1Turnon emuJetEtBE(ntuple_cfg const * dataset)
+{
+    TL1Turnon turnon;
+    std::string seed = "l1EmuJetEtSeed";
+    std::string xparam = "recoJetEt";
+    std::string outName = dataset->triggerName+"_"+xparam+"_"+seed+"_central";
+    turnon.SetOverwriteNames(dataset->baseOWdir+"/Turnons/dists_"+outName+".root", "dist_"+xparam+"_"+seed);
+    turnon.SetSeed(seed, "Emulated L1 Jet E_{T}");
+    turnon.SetSeeds({0., 36., 68., 128., 200.});
+    turnon.SetX(xparam, "Offline Jet E_{T} (GeV)");
+    turnon.SetXBins(bins());
+    turnon.SetOutName(outName);
+    turnon.SetFit(dataset->doFit);
+    turnon.SetAddMark("|#eta| < 3.0");
+    return turnon;
+}
+
+// Emu Jet Et - HF
+TL1Turnon emuJetEtHF(ntuple_cfg const * dataset)
+{
+    TL1Turnon turnon;
+    std::string seed = "l1EmuJetEtSeed";
+    std::string xparam = "recoJetEt";
+    std::string outName = dataset->triggerName+"_"+xparam+"_"+seed+"_hf";
+    turnon.SetOverwriteNames(dataset->baseOWdir+"/Turnons/dists_"+outName+".root", "dist_"+xparam+"_"+seed);
+    turnon.SetSeed(seed, "Emulated L1 Jet E_{T}");
     turnon.SetSeeds({0., 36., 68., 128., 200.});
     turnon.SetX(xparam, "Offline Jet E_{T} (GeV)");
     turnon.SetXBins(bins());

@@ -70,7 +70,7 @@ void makeXvsY(const int & CHUNK, const int & NJOBS, const int & NENT, const int 
                 continue;
 
         // Get the relevant event parameters
-        int pu = 0;//event->GetPEvent()->fVertex->nVtx;
+        int pu = event->GetPEvent()->fVertex->nVtx;
         auto sums = event->GetPEvent()->fSums;
 
         double l1MetBE = event->fL1Met;
@@ -91,11 +91,20 @@ void makeXvsY(const int & CHUNK, const int & NJOBS, const int & NENT, const int 
         double recoMeyBE = l1MetBE * TMath::Sin(l1MetPhiBE);
 
         double l1Htt = event->fL1Htt;
+        double recalcL1Htt = event->fRecalcL1Htt;
         double recoHtt = sums->Ht;
+        double recalcRecoHtt = event->fRecalcRecoHtt;
 
         //----- HTT -----//
         if( xvsys.find("recoHtt_l1Htt") != xvsys.end() )
             xvsys["recoHtt_l1Htt"]->Fill(recoHtt, l1Htt, pu);
+        if( event->fMhtPassFlag )
+        {
+            if( xvsys.find("recalcRecoHtt_l1Htt") != xvsys.end() )
+                xvsys["recalcRecoHtt_l1Htt"]->Fill(recalcRecoHtt, l1Htt, pu);
+            if( xvsys.find("recalcRecoHtt_recoHtt") != xvsys.end() )
+                xvsys["recalcRecoHtt_recoHtt"]->Fill(recalcRecoHtt, recoHtt, pu);
+        }
 
         // Fill xvsy with event parameters
         //----- MET -----//

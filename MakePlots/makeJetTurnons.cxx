@@ -27,8 +27,8 @@ void makeJetTurnons(const int & CHUNK, const int & NJOBS, const int & NENT, cons
     std::map< std::string, TL1Turnon* > turnons = jetTurnons(dataset);
 
     std::vector<std::string> inDir = dataset->inFiles;
-    std::string outDir( dataset->outDir+"_hadd/Turnons/" );
-    if(!COMBINE) outDir = dataset->outDir + Form("_CHUNK%i/Turnons/",CHUNK);
+    std::string outDir( dataset->outDir+"_hadd/TurnonsJets/" );
+    if(!COMBINE) outDir = dataset->outDir + Form("_CHUNK%i/TurnonsJets/",CHUNK);
     else inDir.clear();
     TL1EventClass * event(new TL1EventClass(inDir));
 
@@ -63,7 +63,7 @@ void makeJetTurnons(const int & CHUNK, const int & NJOBS, const int & NENT, cons
 
         // Skip events that don't meet the selection criteria
         if( !event->fIsLeadingRecoJet ) continue;
-        if( !event->fIsMatchedL1EmuJet ) continue;
+        if( !event->fIsMatchedL1Jet ) continue;
 
         // Get the relevant event parameters
         int pu = event->GetPEvent()->fVertex->nVtx;

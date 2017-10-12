@@ -67,22 +67,46 @@ void makeTurnons(const int & CHUNK, const int & NJOBS, const int & NENT, const b
                 continue;
         
         // Get the relevant event parameters
-        int pu = 0;//event->GetPEvent()->fVertex->nVtx;
+        int pu = event->GetPEvent()->fVertex->nVtx;
         auto sums = event->GetPEvent()->fSums;
 
         double l1MetBE = event->fL1Met;
+        double l1MetHF = event->fL1MetHF;
+        double l1EmuMetBE = event->fL1EmuMet;
+        double l1EmuMetHF = event->fL1EmuMetHF;
         double caloMetBE = sums->caloMetBE;
+        double caloMetHF = sums->caloMet;
+
         double l1Htt = event->fL1Htt;
+        double l1EmuHtt = event->fL1EmuHtt;
         double recoHtt = sums->Ht;
+        double recalcRecoHtt = event->fRecalcRecoHtt;
 
         //----- MET -----//
         if( event->fMetFilterPassFlag )
+        {
             if( turnons.find("metBE") != turnons.end() )
                 turnons["metBE"]->Fill(caloMetBE, l1MetBE);
+            if( turnons.find("metHF") != turnons.end() )
+                turnons["metHF"]->Fill(caloMetHF, l1MetHF);
+            if( turnons.find("emuMetBE") != turnons.end() )
+                turnons["emuMetBE"]->Fill(caloMetBE, l1EmuMetBE);
+            if( turnons.find("emuMetHF") != turnons.end() )
+                turnons["emuMetHF"]->Fill(caloMetHF, l1EmuMetHF);
+        }
 
         //----- HTT -----//
         if( turnons.find("htt") != turnons.end() )
             turnons["htt"]->Fill(recoHtt, l1Htt);
+        if( turnons.find("emuHtt") != turnons.end() )
+            turnons["emuHtt"]->Fill(recoHtt, l1EmuHtt);
+        if( event->fMhtPassFlag )
+        {
+            if( turnons.find("recalcHtt") != turnons.end() )
+                turnons["recalcHtt"]->Fill(recalcRecoHtt, l1Htt);
+            if( turnons.find("emuRecalcHtt") != turnons.end() )
+                turnons["emuRecalcHtt"]->Fill(recalcRecoHtt, l1EmuHtt);
+        }
     }
 
     // End

@@ -29,8 +29,8 @@ void makeResolutions(const int & CHUNK, const int & NJOBS, const int & NENT, con
     std::map< std::string, TL1Resolution* > resolutions = sumResolutions(dataset);
 
     std::vector<std::string> inDir = dataset->inFiles;
-    std::string outDir( dataset->outDir+"_hadd/Turnons/" );
-    if(!COMBINE) outDir = dataset->outDir + Form("_CHUNK%i/Turnons/",CHUNK);
+    std::string outDir( dataset->outDir+"_hadd/Resolution/" );
+    if(!COMBINE) outDir = dataset->outDir + Form("_CHUNK%i/Resolution/",CHUNK);
     else inDir.clear();
     TL1EventClass * event(new TL1EventClass(inDir));
 
@@ -82,6 +82,14 @@ void makeResolutions(const int & CHUNK, const int & NJOBS, const int & NENT, con
         double l1MetPhiHF = event->fL1MetPhiHF;
         double recoMetPhiBE = sums->caloMetPhiBE;
         double recoMetPhiHF = sums->caloMetPhi;
+
+        // HTT
+        double recoHtt = sums->Ht;
+        double l1Htt = event->fL1Htt;
+
+        if( recoHtt > 1500. && l1Htt > 0. )
+            if( resolutions.find("recoHtt_l1Htt") != resolutions.end() )
+                resolutions["recoHtt_l1Htt"]->Fill(recoHtt, l1Htt, pu);
 
         // Fill resolutions with event parameters. Includes the fill logic
         if( event->fMetFilterPassFlag )

@@ -14,18 +14,20 @@ TL1Resolution caloMetHF_l1MetHF(ntuple_cfg const * dataset);
 TL1Resolution caloMetPhiBE_l1MetPhiBE(ntuple_cfg const * dataset);
 TL1Resolution caloMetPhiHF_l1MetPhiBE(ntuple_cfg const * dataset);
 TL1Resolution caloMetPhiHF_l1MetPhiHF(ntuple_cfg const * dataset);
+TL1Resolution recoHtt_l1Htt(ntuple_cfg const * dataset);
 std::vector<double> bins(std::string plotType);
 
 // All Sum Resolutions
 std::map< std::string, TL1Resolution* > sumResolutions(ntuple_cfg const * dataset)
 {
     std::map< std::string, TL1Resolution* > resolutions;
-    resolutions.emplace("caloMetBE_l1MetBE", new TL1Resolution(caloMetBE_l1MetBE(dataset)));
-    resolutions.emplace("caloMetHF_l1MetBE", new TL1Resolution(caloMetHF_l1MetBE(dataset)));
-    resolutions.emplace("caloMetHF_l1MetHF", new TL1Resolution(caloMetHF_l1MetHF(dataset)));
-    resolutions.emplace("caloMetPhiBE_l1MetPhiBE", new TL1Resolution(caloMetPhiBE_l1MetPhiBE(dataset)));
-    resolutions.emplace("caloMetPhiHF_l1MetPhiBE", new TL1Resolution(caloMetPhiHF_l1MetPhiBE(dataset)));
-    resolutions.emplace("caloMetPhiHF_l1MetPhiHF", new TL1Resolution(caloMetPhiHF_l1MetPhiHF(dataset)));
+    //resolutions.emplace("caloMetBE_l1MetBE", new TL1Resolution(caloMetBE_l1MetBE(dataset)));
+    //resolutions.emplace("caloMetHF_l1MetBE", new TL1Resolution(caloMetHF_l1MetBE(dataset)));
+    //resolutions.emplace("caloMetHF_l1MetHF", new TL1Resolution(caloMetHF_l1MetHF(dataset)));
+    //resolutions.emplace("caloMetPhiBE_l1MetPhiBE", new TL1Resolution(caloMetPhiBE_l1MetPhiBE(dataset)));
+    //resolutions.emplace("caloMetPhiHF_l1MetPhiBE", new TL1Resolution(caloMetPhiHF_l1MetPhiBE(dataset)));
+    //resolutions.emplace("caloMetPhiHF_l1MetPhiHF", new TL1Resolution(caloMetPhiHF_l1MetPhiHF(dataset)));
+    resolutions.emplace("recoHtt_l1Htt", new TL1Resolution(recoHtt_l1Htt(dataset)));
     return resolutions;
 }
 
@@ -134,6 +136,23 @@ TL1Resolution caloMetPhiHF_l1MetPhiHF(ntuple_cfg const * dataset)
     resolution.SetBins(bins(plotType));
     resolution.SetOutName(outName);
     resolution.SetAddMark("Offline E_{T}^{miss} > 40 GeV");
+    return resolution;
+}
+
+TL1Resolution recoHtt_l1Htt(ntuple_cfg const * dataset)
+{
+    TL1Resolution resolution;
+    std::string plotType = "Energy";
+    std::string xparam   = "recoHtt";
+    std::string yparam   = "l1Htt";
+    std::string outName = dataset->triggerName+"_"+xparam+"_"+yparam;
+    resolution.SetPlotType(plotType);
+    resolution.SetOverwriteNames(dataset->baseOWdir+"/Resolution/res_"+outName+".root", "res_"+xparam+"_"+yparam);
+    resolution.SetX(xparam, "Offline HTT");
+    resolution.SetY(yparam, "L1 HTT");
+    resolution.SetBins(bins(plotType));
+    resolution.SetOutName(outName);
+    resolution.SetAddMark("Offline HTT > 1500 GeV");
     return resolution;
 }
 
